@@ -1,0 +1,1213 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import java.util.List;
+import com.emc.sett.impl.*;
+
+/*
+* the MP’s GESC = InstanceSum(the MP’s accounts, the account’s GESC)
+*
+* the MP’s output GST for GESC = InstanceSum(the MP’s accounts, the account’s output GST for GESC)
+*
+* the MP’s input GST for GESC = InstanceSum(the MP’s accounts, the account’s input GST for GESC)
+*
+* the MP’s total GESC = InstanceSum(the MP’s accounts, the account’s total GESC)
+*
+* the MP’s LCSC = InstanceSum(the MP’s accounts, the account’s LCSC)
+*
+* the MP’s output GST for LCSC = InstanceSum(the MP’s accounts, the account’s output GST for LCSC)
+*
+* the MP’s input GST for LCSC = InstanceSum(the MP’s accounts, the account’s input GST for LCSC)
+*
+* the MP’s total LCSC = InstanceSum(the MP’s accounts,  the account’s total LCSC)
+*
+* the MP’s LESD = InstanceSum(the MP’s accounts,  the account’s LESD)
+*
+* the MP’s output GST for LESD = InstanceSum(the MP’s accounts, the account’s output GST for LESD)
+*
+* the MP’s input GST for LESD = InstanceSum(the MP’s accounts, the account’s input GST for LESD)
+*
+* the MP’s total LESD = InstanceSum(the MP’s accounts,  the account’s total LESD)
+*
+* the MP’s FSSC = InstanceSum(the MP’s accounts, the account’s FSSC)
+*
+* the MP’s output GST for FSSC = 0
+*
+* the MP’s input GST for FSSC = 0
+*
+* the MP’s total FSSC = InstanceSum(the MP’s accounts, the account’s total FSSC)
+*
+* the MP’s BESC = InstanceSum(the MP’s accounts, the account’s BESC)
+*
+* the MP’s input GST for BESC = InstanceSum(the MP’s accounts, the account’s input GST for BESC)
+*
+* the MP’s output GST for BESC = InstanceSum(the MP’s accounts, the account’s output GST for BESC)
+*
+* the MP’s total BESC = InstanceSum(the MP’s accounts, the account’s total BESC)
+*
+* the MP’s NESC = InstanceSum(the MP’s accounts, the account’s NESC)
+*
+* the MP’s input GST for NESC = InstanceSum(the MP’s accounts, the account’s input GST for NESC)
+*
+* the MP’s output GST for NESC = InstanceSum(the MP’s accounts, the account’s output GST for NESC)
+*
+* the MP’s total NESC = InstanceSum(the MP’s accounts, the account’s total NESC)
+*/
+rule "NPSC in Settlement - participant summary (gesc lcsc lesd fssc besc nesc)"
+ruleflow-group "acct_stmt"
+salience -10
+    when
+    	$m : Participant( totalGesc == null, $id : participantId )
+    	$as : List() from collect( Account( participantId == $id ) )
+        $gesc : BigDecimal() from accumulate(
+        							Account( gesc != null, amt : gesc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aGesc : BigDecimal() from accumulate(
+        							Account( opGstGesc != null, amt : opGstGesc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vGesc : BigDecimal() from accumulate(
+        							Account( ipGstGesc != null, amt : ipGstGesc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tGesc : BigDecimal() from accumulate(
+        							Account( totalGesc != null, amt : totalGesc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $lcsc : BigDecimal() from accumulate(
+        							Account( lcsc != null, amt : lcsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aLcsc : BigDecimal() from accumulate(
+        							Account( opGstLcsc != null, amt : opGstLcsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vLcsc : BigDecimal() from accumulate(
+        							Account( ipGstLcsc != null, amt : ipGstLcsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tLcsc : BigDecimal() from accumulate(
+        							Account( totalLcsc != null, amt : totalLcsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $lesd : BigDecimal() from accumulate(
+        							Account( lesd != null, amt : lesd ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aLesd : BigDecimal() from accumulate(
+        							Account( opGstLesd != null, amt : opGstLesd ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vLesd : BigDecimal() from accumulate(
+        							Account( ipGstLesd != null, amt : ipGstLesd ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tLesd : BigDecimal() from accumulate(
+        							Account( totalLesd != null, amt : totalLesd ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $fssc : BigDecimal() from accumulate(
+        							Account( fssc != null, amt : fssc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tFssc : BigDecimal() from accumulate(
+        							Account( totalFssc != null, amt : totalFssc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $besc : BigDecimal() from accumulate(
+        							Account( besc != null, amt : besc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aBesc : BigDecimal() from accumulate(
+        							Account( opGstBesc != null, amt : opGstBesc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vBesc : BigDecimal() from accumulate(
+        							Account( ipGstBesc != null, amt : ipGstBesc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tBesc : BigDecimal() from accumulate(
+        							Account( totalBesc != null, amt : totalBesc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $nesc : BigDecimal() from accumulate(
+        							Account( nesc != null, amt : nesc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aNesc : BigDecimal() from accumulate(
+        							Account( opGstNesc != null, amt : opGstNesc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vNesc : BigDecimal() from accumulate(
+        							Account( ipGstNesc != null, amt : ipGstNesc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tNesc : BigDecimal() from accumulate(
+        							Account( totalNesc != null, amt : totalNesc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $m.setGesc( $gesc );
+        $m.setOpGstGesc( $aGesc );
+        $m.setIpGstGesc( $vGesc );
+        $m.setTotalGesc( $tGesc );
+        $m.setLcsc( $lcsc );
+        $m.setOpGstLcsc( $aLcsc );
+        $m.setIpGstLcsc( $vLcsc );
+        $m.setTotalLcsc( $tLcsc );
+        $m.setLesd( $lesd );
+        $m.setOpGstLesd( $aLesd );
+        $m.setIpGstLesd( $vLesd );
+        $m.setTotalLesd( $tLesd );
+        $m.setFssc( $fssc );
+        $m.setOpGstFssc( BigDecimal.ZERO );
+        $m.setIpGstFssc( BigDecimal.ZERO );
+        $m.setTotalFssc( $tFssc );
+        $m.setBesc( $besc );
+        $m.setOpGstBesc( $aBesc );
+        $m.setIpGstBesc( $vBesc );
+        $m.setTotalBesc( $tBesc );
+        $m.setNesc( $nesc );
+        $m.setOpGstNesc( $aNesc );
+        $m.setIpGstNesc( $vNesc );
+        $m.setTotalNesc( $tNesc );
+        update( $m );
+end
+
+/*
+*
+* the MP’s RSC = InstanceSum(the MP’s accounts, the account’s RSC)
+*
+* the MP’s output GST for RSC = InstanceSum(the MP’s accounts, the account’s output GST for RSC)
+*
+* the MP’s input GST for RSC = InstanceSum(the MP’s accounts, the account’s input GST for RSC)
+*
+* the MP’s total RSC = InstanceSum(the MP’s accounts, the account’s total RSC)
+*
+* the MP’s RSD = InstanceSum(the MP’s accounts, the account’s RSD)
+*
+* the MP’s output GST for RSD = InstanceSum(the MP’s accounts, the account’s output GST for RSD)
+*
+* the MP’s input GST for RSD = InstanceSum(the MP’s accounts, the account’s input GST for RSD)
+*
+* the MP’s total RSD = InstanceSum(the MP’s accounts, the account’s total RSD)
+*
+* the MP’s RCC = InstanceSum(the MP’s accounts, the account’s RCC)
+*
+* the MP’s output GST for RCC = InstanceSum(the MP’s accounts, the account’s output GST for RCC)
+*
+* the MP’s input GST for RCC = InstanceSum(the MP’s accounts, the account’s input GST for RCC)
+*
+* the MP’s total RCC = InstanceSum(the MP’s accounts, the account’s total RCC)
+*
+* the MP’s NRSC = InstanceSum(the MP’s accounts, the account’s NRSC)
+*
+* the MP’s output GST for NRSC = InstanceSum(the MP’s accounts, the account’s output GST for NRSC)
+*
+* the MP’s input GST for NRSC = InstanceSum(the MP’s accounts, the account’s input GST for NRSC)
+*
+* the MP’s total NRSC = InstanceSum(the MP’s accounts, the account’s total NRSC)
+*
+* the MP’s FSC = InstanceSum(the MP’s accounts, the account’s FSC)
+*
+* the MP’s output GST for FSC = InstanceSum(the MP’s accounts, the account’s output GST for FSC)
+*
+* the MP’s input GST for FSC = InstanceSum(the MP’s accounts, the account’s input GST for FSC)
+*
+* the MP’s total FSC = InstanceSum(the MP’s accounts, the account’s total FSC)
+*
+* the MP’s FSD = InstanceSum(the MP’s accounts, the account’s FSD)
+*
+* the MP’s output GST for FSD = InstanceSum(the MP’s accounts, the account’s output GST for FSD)
+*
+* the MP’s input GST for FSD = InstanceSum(the MP’s accounts, the account’s input GST for FSD)
+*
+* the MP’s total FSD = InstanceSum(the MP’s accounts, the account’s total FSD)
+*/
+rule "NPSC in Settlement - participant summary (rsc rsd rcc rsc nrsc fsc fsd)"
+ruleflow-group "acct_stmt"
+salience -10
+    when
+    	$m : Participant( totalRsc == null, $id : participantId )
+    	$as : List() from collect( Account( participantId == $id ) )
+        $rsc : BigDecimal() from accumulate(
+        							Account( rsc != null, amt : rsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aRsc : BigDecimal() from accumulate(
+        							Account( opGstRsc != null, amt : opGstRsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vRsc : BigDecimal() from accumulate(
+        							Account( ipGstRsc != null, amt : ipGstRsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tRsc : BigDecimal() from accumulate(
+        							Account( totalRsc != null, amt : totalRsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $rsd : BigDecimal() from accumulate(
+        							Account( rsd != null, amt : rsd ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aRsd : BigDecimal() from accumulate(
+        							Account( opGstRsd != null, amt : opGstRsd ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vRsd : BigDecimal() from accumulate(
+        							Account( ipGstRsd != null, amt : ipGstRsd ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tRsd : BigDecimal() from accumulate(
+        							Account( totalRsd != null, amt : totalRsd ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $rcc : BigDecimal() from accumulate(
+        							Account( rcc != null, amt : rcc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aRcc : BigDecimal() from accumulate(
+        							Account( opGstRcc != null, amt : opGstRcc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vRcc : BigDecimal() from accumulate(
+        							Account( ipGstRcc != null, amt : ipGstRcc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tRcc : BigDecimal() from accumulate(
+        							Account( totalRcc != null, amt : totalRcc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $nrsc : BigDecimal() from accumulate(
+        							Account( nrsc != null, amt : nrsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aNrsc : BigDecimal() from accumulate(
+        							Account( opGstNrsc != null, amt : opGstNrsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vNrsc : BigDecimal() from accumulate(
+        							Account( ipGstNrsc != null, amt : ipGstNrsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tNrsc : BigDecimal() from accumulate(
+        							Account( totalNrsc != null, amt : totalNrsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $fsc : BigDecimal() from accumulate(
+        							Account( fsc != null, amt : fsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aFsc : BigDecimal() from accumulate(
+        							Account( opGstFsc != null, amt : opGstFsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vFsc : BigDecimal() from accumulate(
+        							Account( ipGstFsc != null, amt : ipGstFsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tFsc : BigDecimal() from accumulate(
+        							Account( totalFsc != null, amt : totalFsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $fsd : BigDecimal() from accumulate(
+        							Account( fsd != null, amt : fsd ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aFsd : BigDecimal() from accumulate(
+        							Account( opGstFsd != null, amt : opGstFsd ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vFsd : BigDecimal() from accumulate(
+        							Account( ipGstFsd != null, amt : ipGstFsd ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tFsd : BigDecimal() from accumulate(
+        							Account( totalFsd != null, amt : totalFsd ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $m.setRsc( $rsc );
+        $m.setOpGstRsc( $aRsc );
+        $m.setIpGstRsc( $vRsc );
+        $m.setTotalRsc( $tRsc );
+        $m.setRsd( $rsd );
+        $m.setOpGstRsd( $aRsd );
+        $m.setIpGstRsd( $vRsd );
+        $m.setTotalRsd( $tRsd );
+        $m.setRcc( $rcc );
+        $m.setOpGstRcc( $aRcc );
+        $m.setIpGstRcc( $vRcc );
+        $m.setTotalRcc( $tRcc );
+        $m.setNrsc( $nrsc );
+        $m.setOpGstNrsc( $aNrsc );
+        $m.setIpGstNrsc( $vNrsc );
+        $m.setTotalNrsc( $tNrsc );
+        $m.setFsc( $fsc );
+        $m.setOpGstFsc( $aFsc );
+        $m.setIpGstFsc( $vFsc );
+        $m.setTotalFsc( $tFsc );
+        $m.setFsd( $fsd );
+        $m.setOpGstFsd( $aFsd );
+        $m.setIpGstFsd( $vFsd );
+        $m.setTotalFsd( $tFsd );
+        update( $m );
+end
+
+/*
+* the MP’s FCC = InstanceSum(the MP’s accounts, the account’s FCC) 
+*
+* the MP’s output GST for FCC = InstanceSum(the MP’s accounts, the account’s output GST for FCC) 
+*
+* the MP’s input GST for FCC = InstanceSum(the MP’s accounts, the account’s input GST for FCC) 
+*
+* the MP’s total FCC = InstanceSum(the MP’s accounts, the account’s total FCC) 
+*
+* the MP’s NFSC = InstanceSum(the MP’s accounts, the account’s NFSC) 
+*
+* the MP’s output GST for NFSC = InstanceSum(the MP’s accounts, the account’s output GST for NFSC) 
+*
+* the MP’s input GST for NFSC = InstanceSum(the MP’s accounts, the account’s input GST for NFSC) 
+*
+* the MP’s total NFSC = InstanceSum(the MP’s accounts, the account’s total NFSC) 
+*
+* the MP’s NTSC = InstanceSum(the MP’s accounts, the account’s NTSC) 
+*
+* the MP’s output GST for NTSC = InstanceSum(the MP’s accounts, the account’s output GST for NTSC) 
+*
+* the MP’s input GST for NTSC = InstanceSum(the MP’s accounts, the account’s input GST for NTSC) 
+*
+* the MP’s total NTSC = InstanceSum(the MP’s accounts, the account’s total NTSC) 
+*
+* the MP’s VCSC = InstanceSum(the MP’s accounts, the account’s VCSC) 
+*
+* the MP’s output GST for VCSC = InstanceSum(the MP’s accounts, the account’s output GST for VCSC) 
+*
+* the MP’s input GST for VCSC = InstanceSum(the MP’s accounts, the account’s input GST for VCSC) 
+*
+* the MP’s total VCSC = InstanceSum(the MP’s accounts, the account’s total VCSC) 
+*
+* the MP’s HEUC = InstanceSum(the MP’s accounts, the account’s HEUSA) 
+*
+* the MP’s output GST for HEUC = InstanceSum(the MP’s accounts, the account’s output GST for HEUSA) 
+*
+* the MP’s input GST for HEUC = InstanceSum(the MP’s accounts, the account’s input GST for HEUC) 
+*
+* the MP’s total HEUC = InstanceSum(the MP’s accounts, the account’s total HEUSA) 
+*
+* the MP’s MEUC = InstanceSum(the MP’s accounts, the account’s MEUSA) 
+*
+* the MP’s output GST for MEUC = InstanceSum(the MP’s accounts, the account’s output GST for MEUSA) 
+*
+* the MP’s input GST for MEUC = InstanceSum(the MP’s accounts, the account’s input GST for MEUC) 
+*
+* the MP’s total MEUC = InstanceSum(the MP’s accounts, the account’s total MEUSA) 
+*/
+rule "NPSC in Settlement - participant summary (fcc nfsc ntse vcsc heuc meuc)"
+ruleflow-group "acct_stmt"
+salience -10
+    when
+    	$m : Participant( totalFcc == null, $id : participantId )
+    	$as : List() from collect( Account( participantId == $id ) )
+        $fcc : BigDecimal() from accumulate(
+        							Account( fcc != null, amt : fcc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aFcc : BigDecimal() from accumulate(
+        							Account( opGstFcc != null, amt : opGstFcc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vFcc : BigDecimal() from accumulate(
+        							Account( ipGstFcc != null, amt : ipGstFcc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tFcc : BigDecimal() from accumulate(
+        							Account( totalFcc != null, amt : totalFcc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $nfsc : BigDecimal() from accumulate(
+        							Account( nfsc != null, amt : nfsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aNfsc : BigDecimal() from accumulate(
+        							Account( opGstNfsc != null, amt : opGstNfsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vNfsc : BigDecimal() from accumulate(
+        							Account( ipGstNfsc != null, amt : ipGstNfsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tNfsc : BigDecimal() from accumulate(
+        							Account( totalNfsc != null, amt : totalNfsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $ntsc : BigDecimal() from accumulate(
+        							Account( ntsc != null, amt : ntsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aNtsc : BigDecimal() from accumulate(
+        							Account( opGstNtsc != null, amt : opGstNtsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vNtsc : BigDecimal() from accumulate(
+        							Account( ipGstNtsc != null, amt : ipGstNtsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tNtsc : BigDecimal() from accumulate(
+        							Account( totalNtsc != null, amt : totalNtsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vcsc : BigDecimal() from accumulate(
+        							Account( vcsc != null, amt : vcsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aVcsc : BigDecimal() from accumulate(
+        							Account( opGstVcsc != null, amt : opGstVcsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vVcsc : BigDecimal() from accumulate(
+        							Account( ipGstVcsc != null, amt : ipGstVcsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tVcsc : BigDecimal() from accumulate(
+        							Account( totalVcsc != null, amt : totalVcsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $heuc : BigDecimal() from accumulate(
+        							Account( heusa != null, amt : heusa ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aHeuc : BigDecimal() from accumulate(
+        							Account( opGstHeusa != null, amt : opGstHeusa ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vHeuc : BigDecimal() from accumulate(
+        							Account( ipGstHeuc != null, amt : ipGstHeuc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tHeuc : BigDecimal() from accumulate(
+        							Account( totalHeusa != null, amt : totalHeusa ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $meuc : BigDecimal() from accumulate(
+        							Account( meusa != null, amt : meusa ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aMeuc : BigDecimal() from accumulate(
+        							Account( opGstMeusa != null, amt : opGstMeusa ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vMeuc : BigDecimal() from accumulate(
+        							Account( ipGstMeuc != null, amt : ipGstMeuc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tMeuc : BigDecimal() from accumulate(
+        							Account( totalMeusa != null, amt : totalMeusa ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $m.setFcc( $fcc );
+        $m.setOpGstFcc( $aFcc );
+        $m.setIpGstFcc( $vFcc );
+        $m.setTotalFcc( $tFcc );
+        $m.setNfsc( $nfsc );
+        $m.setOpGstNfsc( $aNfsc );
+        $m.setIpGstNfsc( $vNfsc );
+        $m.setTotalNfsc( $tNfsc );
+        $m.setNtsc( $ntsc );
+        $m.setOpGstNtsc( $aNtsc );
+        $m.setIpGstNtsc( $vNtsc );
+        $m.setTotalNtsc( $tNtsc );
+        $m.setVcsc( $vcsc );
+        $m.setOpGstVcsc( $aVcsc );
+        $m.setIpGstVcsc( $vVcsc );
+        $m.setTotalVcsc( $tVcsc );
+        $m.setHeuc( $heuc );
+        $m.setOpGstHeuc( $aHeuc );
+        $m.setIpGstHeuc( $vHeuc );
+        $m.setTotalHeuc( $tHeuc );
+        $m.setMeuc( $meuc );
+        $m.setOpGstMeuc( $aMeuc );
+        $m.setIpGstMeuc( $vMeuc );
+        $m.setTotalMeuc( $tMeuc );
+        update( $m );
+end
+
+/*
+* the MP’s NASC = InstanceSum(the MP’s accounts, the account’s NASC) 
+*
+* the MP’s output GST for NASC = InstanceSum(the MP’s accounts, the account’s output GST for NASC) 
+*
+* the MP’s input GST for NASC = InstanceSum(the MP’s accounts, the account’s input GST for NASC) 
+*
+* the MP’s total NASC = InstanceSum(the MP’s accounts, the account’s total NASC) 
+*
+* the MP’s NPSC = InstanceSum(the MP’s accounts, the account’s NPSC) 
+*
+* the MP’s output GST for NPSC = InstanceSum(the MP’s accounts, the account’s output GST for NPSC) 
+*
+* the MP’s input GST for NPSC = InstanceSum(the MP’s accounts, the account’s input GST for NPSC) 
+*
+* the MP’s total NPSC = InstanceSum(the MP’s accounts, the account’s total NPSC) 
+*
+* the MP’s GMEE = InstanceSum(the MP’s accounts, the account’s included GMEE) 
+*
+* the MP’s output GST for GMEE = InstanceSum(the MP’s accounts, the account’s output GST for GMEE) 
+*
+* the MP’s input GST for GMEE = InstanceSum(the MP’s accounts, the account’s input GST for included GMEE) 
+*
+* the MP’s total GMEE = InstanceSum(the MP’s accounts, the account’s total of included GMEE) 
+*
+* the MP’s GMEF = InstanceSum(the MP’s accounts, the account’s included GMEF) 
+*
+* the MP’s output GST for GMEF = InstanceSum(the MP’s accounts, the account’s output GST for included GMEF) 
+*
+* the MP’s input GST for GMEF = InstanceSum(the MP’s accounts, the account’s input GST for GMEF) 
+*
+* the MP’s total GMEF = InstanceSum(the MP’s accounts, the account’s total of included GMEF) 
+*
+* the MP’s LMEE = InstanceSum(the MP’s accounts, the account’s included LMEE) 
+*
+* the MP’s output GST for LMEE = InstanceSum(the MP’s accounts, the account’s output GST for included LMEE) 
+*
+* the MP’s input GST for LMEE = InstanceSum(the MP’s accounts, the account’s input GST for LMEE) 
+*
+* the MP’s total LMEE = InstanceSum(the MP’s accounts, the account’s total of included LMEE) 
+*
+* the MP’s LMEF = InstanceSum(the MP’s accounts, the account’s included LMEF) 
+*
+* the MP’s output GST for LMEF = InstanceSum(the MP’s accounts, the account’s output GST for included LMEF) 
+*
+* the MP’s input GST for LMEF = InstanceSum(the MP’s accounts, the account’s input GST for LMEF) 
+*
+* the MP’s total LMEF = InstanceSum(the MP’s accounts, the account’s total of included LMEF) 
+*/
+rule "NPSC in Settlement - participant summary (nasc npsc gmee gmef lmee lmef)"
+ruleflow-group "acct_stmt"
+salience -10
+    when
+    	$m : Participant( totalNasc == null, $id : participantId )
+    	$as : List() from collect( Account( participantId == $id ) )
+        $nasc : BigDecimal() from accumulate(
+        							Account( nasc != null, amt : nasc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aNasc : BigDecimal() from accumulate(
+        							Account( opGstNasc != null, amt : opGstNasc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vNasc : BigDecimal() from accumulate(
+        							Account( ipGstNasc != null, amt : ipGstNasc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tNasc : BigDecimal() from accumulate(
+        							Account( totalNasc != null, amt : totalNasc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $npsc : BigDecimal() from accumulate(
+        							Account( npsc != null, amt : npsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aNpsc : BigDecimal() from accumulate(
+        							Account( opGstNpsc != null, amt : opGstNpsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vNpsc : BigDecimal() from accumulate(
+        							Account( ipGstNpsc != null, amt : ipGstNpsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tNpsc : BigDecimal() from accumulate(
+        							Account( totalNpsc != null, amt : totalNpsc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $gmee : BigDecimal() from accumulate(
+        							Account( incGmee != null, amt : incGmee ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aGmee : BigDecimal() from accumulate(
+        							Account( opGstGmee != null, amt : opGstGmee ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vGmee : BigDecimal() from accumulate(
+        							Account( ipGstIncGmee != null, amt : ipGstIncGmee ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tGmee : BigDecimal() from accumulate(
+        							Account( totalIncGmee != null, amt : totalIncGmee ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $gmef : BigDecimal() from accumulate(
+        							Account( incGmef != null, amt : incGmef ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aGmef : BigDecimal() from accumulate(
+        							Account( opGstIncGmef != null, amt : opGstIncGmef ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vGmef : BigDecimal() from accumulate(
+        							Account( ipGstGmef != null, amt : ipGstGmef ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tGmef : BigDecimal() from accumulate(
+        							Account( totalIncGmef != null, amt : totalIncGmef ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $lmee : BigDecimal() from accumulate(
+        							Account( incLmee != null, amt : incLmee ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aLmee : BigDecimal() from accumulate(
+        							Account( opGstIncLmee != null, amt : opGstIncLmee ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vLmee : BigDecimal() from accumulate(
+        							Account( ipGstLmee != null, amt : ipGstLmee ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tLmee : BigDecimal() from accumulate(
+        							Account( totalIncLmee != null, amt : totalIncLmee ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $lmef : BigDecimal() from accumulate(
+        							Account( incLmef != null, amt : incLmef ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aLmef : BigDecimal() from accumulate(
+        							Account( opGstIncLmef != null, amt : opGstIncLmef ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vLmef : BigDecimal() from accumulate(
+        							Account( ipGstLmef != null, amt : ipGstLmef ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tLmef : BigDecimal() from accumulate(
+        							Account( totalIncLmef != null, amt : totalIncLmef ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $m.setNasc( $nasc );
+        $m.setOpGstNasc( $aNasc );
+        $m.setIpGstNasc( $vNasc );
+        $m.setTotalNasc( $tNasc );
+        $m.setNpsc( $npsc );
+        $m.setOpGstNpsc( $aNpsc );
+        $m.setIpGstNpsc( $vNpsc );
+        $m.setTotalNpsc( $tNpsc );
+        $m.setGmee( $gmee );
+        $m.setOpGstGmee( $aGmee );
+        $m.setIpGstGmee( $vGmee );
+        $m.setTotalGmee( $tGmee );
+        $m.setGmef( $gmef );
+        $m.setOpGstGmef( $aGmef );
+        $m.setIpGstGmef( $vGmef );
+        $m.setTotalGmef( $tGmef );
+        $m.setLmee( $lmee );
+        $m.setOpGstLmee( $aLmee );
+        $m.setIpGstLmee( $vLmee );
+        $m.setTotalLmee( $tLmee );
+        $m.setLmef( $lmef );
+        $m.setOpGstLmef( $aLmef );
+        $m.setIpGstLmef( $vLmef );
+        $m.setTotalLmef( $tLmef );
+        update( $m );
+end
+
+/*
+* the MP’s NMEA = InstanceSum(the MP’s accounts, the account’s included NMEA) 
+*
+* the MP’s output GST for NMEA = InstanceSum(the MP’s accounts, the account’s output GST for included NMEA) 
+*
+* the MP’s input GST for NMEA = InstanceSum(the MP’s accounts, the account’s input GST for included NMEA) 
+*
+* the MP’s total NMEA = InstanceSum(the MP’s accounts, the account’s total of included NMEA) 
+*
+* the MP’s NELC = InstanceSum(the MP’s accounts, the account’s NELC) 
+*
+* the MP’s output GST for NELC = InstanceSum(the MP’s accounts, the account’s output GST for NELC) 
+*
+* the MP’s input GST for NELC = InstanceSum(the MP’s accounts, the account’s input GST for NELC) 
+*
+* the MP’s total NELC = InstanceSum(the MP’s accounts, the account’s total NELC) 
+*
+* the MP’s NEGC = InstanceSum(the MP’s accounts, the account’s NEGC) 
+*
+* the MP’s output GST for NEGC = InstanceSum(the MP’s accounts, the account’s output GST for NEGC) 
+*
+* the MP’s input GST for NEGC = InstanceSum(the MP’s accounts, the account’s input GST for NEGC) 
+*
+* the MP’s total NEGC = InstanceSum(the MP’s accounts, the account’s total NEGC) 
+*
+* the MP’s NEAA = InstanceSum(the MP’s accounts, the account’s NEAA) 
+*
+* the MP’s output GST for NEAA = InstanceSum(the MP’s accounts, the account’s output GST for NEAA) 
+*
+* the MP’s input GST for NEAA = InstanceSum(the MP’s accounts, the account’s input GST for NEAA) 
+*
+* the MP’s total NEAA = InstanceSum(the MP’s accounts, the account’s total NEAA) 
+*
+* the MP’s NEAD = InstanceSum(the MP’s accounts, the account’s NEAD) 
+*
+* the MP’s output GST for NEAD = InstanceSum(the MP’s accounts, the account’s output GST for NEAD) 
+*
+* the MP’s input GST for NEAD = InstanceSum(the MP’s accounts, the account’s input GST for NEAD) 
+*
+* the MP’s total NEAD = InstanceSum(the MP’s accounts, the account’s total NEAD) 
+*/
+rule "NPSC in Settlement - participant summary (nmea nelc negc neaa nead)"
+ruleflow-group "acct_stmt"
+salience -10
+    when
+    	$m : Participant( totalNmea == null, $id : participantId )
+    	$as : List() from collect( Account( participantId == $id ) )
+        $nmea : BigDecimal() from accumulate(
+        							Account( incNmea != null, amt : incNmea ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aNmea : BigDecimal() from accumulate(
+        							Account( opGstIncNmea != null, amt : opGstIncNmea ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vNmea : BigDecimal() from accumulate(
+        							Account( ipGstIncNmea != null, amt : ipGstIncNmea ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tNmea : BigDecimal() from accumulate(
+        							Account( totalIncNmea != null, amt : totalIncNmea ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $nelc : BigDecimal() from accumulate(
+        							Account( nelc != null, amt : nelc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aNelc : BigDecimal() from accumulate(
+        							Account( opGstNelc != null, amt : opGstNelc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vNelc : BigDecimal() from accumulate(
+        							Account( ipGstNelc != null, amt : ipGstNelc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tNelc : BigDecimal() from accumulate(
+        							Account( totalNelc != null, amt : totalNelc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $negc : BigDecimal() from accumulate(
+        							Account( negc != null, amt : negc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aNegc : BigDecimal() from accumulate(
+        							Account( opGstNegc != null, amt : opGstNegc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vNegc : BigDecimal() from accumulate(
+        							Account( ipGstNegc != null, amt : ipGstNegc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tNegc : BigDecimal() from accumulate(
+        							Account( totalNegc != null, amt : totalNegc ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $neaa : BigDecimal() from accumulate(
+        							Account( neaa != null, amt : neaa ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aNeaa : BigDecimal() from accumulate(
+        							Account( opGstNeaa != null, amt : opGstNeaa ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vNeaa : BigDecimal() from accumulate(
+        							Account( ipGstNeaa != null, amt : ipGstNeaa ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tNeaa : BigDecimal() from accumulate(
+        							Account( totalNeaa != null, amt : totalNeaa ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $nead : BigDecimal() from accumulate(
+        							Account( nead != null, amt : nead ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aNead : BigDecimal() from accumulate(
+        							Account( opGstNead != null, amt : opGstNead ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vNead : BigDecimal() from accumulate(
+        							Account( ipGstNead != null, amt : ipGstNead ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tNead : BigDecimal() from accumulate(
+        							Account( totalNead != null, amt : totalNead ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $m.setNmea( $nmea );
+        $m.setOpGstNmea( $aNmea );
+        $m.setIpGstNmea( $vNmea );
+        $m.setTotalNmea( $tNmea );
+        $m.setNelc( $nelc );
+        $m.setOpGstNelc( $aNelc );
+        $m.setIpGstNelc( $vNelc );
+        $m.setTotalNelc( $tNelc );
+        $m.setNegc( $negc );
+        $m.setOpGstNegc( $aNegc );
+        $m.setIpGstNegc( $vNegc );
+        $m.setTotalNegc( $tNegc );
+        $m.setNeaa( $neaa );
+        $m.setOpGstNeaa( $aNeaa );
+        $m.setIpGstNeaa( $vNeaa );
+        $m.setTotalNeaa( $tNeaa );
+        $m.setNead( $nead );
+        $m.setOpGstNead( $aNead );
+        $m.setIpGstNead( $vNead );
+        $m.setTotalNead( $tNead );
+        update( $m );
+end
+
+/*
+* the MP’s EMCADM = InstanceSum(the MP’s accounts, the account’s EMCADM) 
+*
+* the MP’s output GST for EMCADM = InstanceSum(the MP’s accounts, the account’s output GST for EMCADM) 
+*
+* the MP’s input GST for EMCADM = InstanceSum(the MP’s accounts, the account’s input GST for EMCADM) 
+*
+* the MP’s total EMCADM = InstanceSum(the MP’s accounts, the account’s total EMCADM)
+*
+* the MP’s PSOADM = InstanceSum(the MP’s accounts, the account’s PSOADM) 
+*
+* the MP’s output GST for PSOADM = InstanceSum(the MP’s accounts, the account’s output GST for PSOADM) 
+*
+* the MP’s input GST for PSOADM = InstanceSum(the MP’s accounts, the account’s input GST for PSOADM) 
+*
+* the MP’s total PSOADM = InstanceSum(the MP’s accounts, the account’s total PSOADM) 
+*
+* the MP’s net total = InstanceSum(the MP’s accounts, the account’s net amount) 
+*
+* the MP’s output GST for total = InstanceSum(the MP’s accounts, the account’s output GST total) 
+*
+* the MP’s input GST for total = InstanceSum(the MP’s accounts, the account’s input GST total) 
+*
+* the MP’s total amount = InstanceSum(the MP’s accounts, the account’s total amount) 
+*/
+rule "NPSC in Settlement - participant summary (emcadm psoadm total)"
+ruleflow-group "acct_stmt"
+salience -10
+    when
+    	$m : Participant( totalAmount == null, $id : participantId )
+    	$as : List() from collect( Account( participantId == $id ) )
+        $emcAdm : BigDecimal() from accumulate(
+        							Account( emcAdm != null, amt : emcAdm ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aEmcAdm : BigDecimal() from accumulate(
+        							Account( opGstEmcAdm != null, amt : opGstEmcAdm ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vEmcAdm : BigDecimal() from accumulate(
+        							Account( ipGstEmcAdm != null, amt : ipGstEmcAdm ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tEmcAdm : BigDecimal() from accumulate(
+        							Account( totalEmcAdm != null, amt : totalEmcAdm ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $psoAdm : BigDecimal() from accumulate(
+        							Account( psoAdm != null, amt : psoAdm ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aPsoAdm : BigDecimal() from accumulate(
+        							Account( opGstPsoAdm != null, amt : opGstPsoAdm ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vPsoAdm : BigDecimal() from accumulate(
+        							Account( ipGstPsoAdm != null, amt : ipGstPsoAdm ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tPsoAdm : BigDecimal() from accumulate(
+        							Account( totalPsoAdm != null, amt : totalPsoAdm ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $net : BigDecimal() from accumulate(
+        							Account( netAmount != null, amt : netAmount ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $aTotal : BigDecimal() from accumulate(
+        							Account( opGstTotal != null, amt : opGstTotal ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vTotal : BigDecimal() from accumulate(
+        							Account( ipGstTotal != null, amt : ipGstTotal ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tTotal : BigDecimal() from accumulate(
+        							Account( totalAmount != null, amt : totalAmount ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $m.setEmcAdm( $emcAdm );
+        $m.setOpGstEmcAdm( $aEmcAdm );
+        $m.setIpGstEmcAdm( $vEmcAdm );
+        $m.setTotalEmcAdm( $tEmcAdm );
+        $m.setPsoAdm( $psoAdm );
+        $m.setOpGstPsoAdm( $aPsoAdm );
+        $m.setIpGstPsoAdm( $vPsoAdm );
+        $m.setTotalPsoAdm( $tPsoAdm );
+        $m.setNetTotal( $net );
+        $m.setOpGstTotal( $aTotal );
+        $m.setIpGstTotal( $vTotal );
+        $m.setTotalAmount( $tTotal );
+        update( $m );
+end
+									

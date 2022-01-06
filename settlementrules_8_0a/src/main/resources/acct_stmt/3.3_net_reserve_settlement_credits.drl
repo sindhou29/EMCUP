@@ -1,0 +1,236 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import java.util.List;
+import com.emc.sett.impl.*;
+
+global java.math.BigDecimal inGstRate;
+global java.math.BigDecimal outGstRate;
+
+/*
+* the interval’s RSC  = InstanceSum(the interval’s nodes, the node’s RSC)
+*
+* the interval’s RSD  = InstanceSum(the interval’s nodes, the node’s RSD)
+*
+* the interval’s RCC  = InstanceSum(the interval’s nodes, the node’s RCC)
+*
+* the interval’s total RCC = the interval’s RCC
+*
+* the interval's facility RSC = InstanceSum(the interval’s nodes, the node’s facility RSC)
+*/
+rule "3.3.1-3 Reserve Settlement (RSC, RSD and RCC) - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( rcc == null, $pd : periodId, $sa : accountId )
+    	$ns : List() from collect( Facility( $pd == periodId && $sa == accountId ) )
+        $rsc : BigDecimal() from accumulate(
+        							Facility( rsc != null, amt : rsc ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $rsd : BigDecimal() from accumulate(
+        							Facility( rsd != null, amt : rsd ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $rcc : BigDecimal() from accumulate(
+        							Facility( rcc != null, amt : rcc ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $frsc : BigDecimal() from accumulate(
+        							Facility( facilityRsc != null, amt : facilityRsc ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setRsc( $rsc );
+        $i.setRsd( $rsd );
+        $i.setRcc( $rcc );
+        $i.setTotalRcc( $rcc );
+        $i.setFacilityRsc( $frsc );
+        update( $i );
+end
+
+/*
+* the interval’s input GST for RSC = the interval’s RSC * the input GST if
+* for(the interval’s account, the account is GST taxable)
+*
+* the interval’s total RSC = the interval’s RSC + the interval’s input GST for RSC
+*/
+rule "3.3.1 Reserve Settlement Credit (RSC) - Calculate taxable GST amount"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( ipGstRsc == null, $id : accountId, $rsc : rsc )
+    	Account( accountId == $id && taxable == true )
+    then
+        $i.setIpGstRsc( $rsc.multiply(inGstRate) );
+        $i.setTotalRsc( $rsc.add($rsc.multiply(inGstRate)) );
+        update( $i );
+end
+
+/*
+* the interval’s input GST for RSC = the interval’s RSC * the input GST if
+* for(the interval’s account, the account is not GST taxable)
+*
+* the interval’s total RSC = the interval’s RSC + the interval’s input GST for RSC
+*/
+rule "3.3.1 Reserve Settlement Credit (RSC) - Calculate non-taxable GST amount"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( ipGstRsc == null, $id : accountId, $rsc : rsc )
+    	Account( accountId == $id && taxable == false )
+    then
+        $i.setIpGstRsc( BigDecimal.ZERO );
+        $i.setTotalRsc( $rsc );
+        update( $i );
+end
+
+/*
+* the interval’s output GST for RSD = the interval’s RSD * the output GST 
+*
+* the interval’s total RSD = the interval’s RSD + the interval’s output GST for RSD
+*/
+rule "3.3.2 Reserve Settlement Debit (RSD) - Calculate taxable GST amount"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( opGstRsd == null, $id : accountId, $rsd : rsd )
+    then
+        $i.setOpGstRsd( $rsd.multiply(outGstRate) );
+        $i.setTotalRsd( $rsd.add($rsd.multiply(outGstRate)) );
+        update( $i );
+end
+
+/*
+* the interval’s NRSC = the interval’s RSC + the interval’s RCC – the interval’s RSD
+*
+* the interval’s total NRSC = the interval’s total RSC + the interval’s RCC – the interval’s total RSD
+*/
+rule "3.3.4 Net Reserve Settlement Credit (NRSC) - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( nrsc == null, rsc != null && rcc != null && rsd != null && totalRsc != null && totalRsd != null )
+    then
+        $i.setNrsc( $i.getRsc().add( $i.getRcc() ).subtract( $i.getRsd() ) );
+        $i.setTotalNrsc( $i.getTotalRsc().add( $i.getRcc() ).subtract( $i.getTotalRsd() ) );
+        update( $i );
+end
+
+/*
+* the account’s RSD = InstanceSum(the account’s intervals, the interval’s RSD) * -1
+*
+* the account’s input GST for RSD = 0
+*
+* the account’s output GST for RSD = Round(InstanceSum(the account’s intervals, the interval’s output GST for RSD), 2) * -1
+*
+* the account’s total RSD = the account’s RSD + the account’s output GST for RSD
+*
+* the account’s RSC = InstanceSum(the account’s intervals, the interval’s RSC)
+*
+* the account’s input GST for RSC = Round(InstanceSum(the account’s intervals, the interval’s input GST for RSC), 2)
+*
+* the account’s output GST for RSC = 0
+*
+* the account’s total RSC = Round(InstanceSum(the account’s intervals, the interval’s total RSC), 2)
+*
+* the account’s RCC = InstanceSum(the account’s intervals, the interval’s RCC)
+*
+* the account’s input GST for RCC = 0
+*
+* the account’s output GST for RCC = 0
+*
+* the account’s total RCC = Round(InstanceSum(the account’s intervals, the interval’s total RCC), 2)
+*
+* the account's facility RSC = InstanceSum(the account’s intervals, the interval’s facility RSC)
+*
+* the account’s NRSC = InstanceSum(the account's intervals, the interval’s NRSC)
+*
+* the account’s input GST for NRSC = Round(instanceSum(the account's intervals, the interval’s input GST for RSC), 2)
+*
+* the account’s output GST for NRSC = Round(instanceSum(the account's intervals, 0 - the interval’s output GST for RSD), 2)
+*
+* the account’s total NRSC = the account’s NRSC + the account’s input GST for NRSC + the account’s output GST for NRSC
+*/
+rule "3.3.4 Net Reserve Settlement Credit (NRSC) - account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( nrsc == null, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $nrsc : BigDecimal() from accumulate(
+        							Period( nrsc != null, amt : nrsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $rsd : BigDecimal() from accumulate(
+        							Period( rsd != null, amt : rsd ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $arsd : BigDecimal() from accumulate(
+        							Period( opGstRsd != null, amt : opGstRsd ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $rsc : BigDecimal() from accumulate(
+        							Period( rsc != null, amt : rsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vrsc : BigDecimal() from accumulate(
+        							Period( ipGstRsc != null, amt : ipGstRsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $trsc : BigDecimal() from accumulate(
+        							Period( totalRsc != null, amt : totalRsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $rcc : BigDecimal() from accumulate(
+        							Period( rcc != null, amt : rcc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $trcc : BigDecimal() from accumulate(
+        							Period( totalRcc != null, amt : totalRcc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $frsc : BigDecimal() from accumulate(
+        							Period( facilityRsc != null, amt : facilityRsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setRsd( $rsd.negate() );
+        $a.setIpGstRsd( BigDecimal.ZERO );
+        $a.setOpGstRsd( $arsd.setScale(2, BigDecimal.ROUND_HALF_UP).negate() );
+        $a.setTotalRsd( $a.getRsd().add( $a.getOpGstRsd() ) );
+        $a.setRsc( $rsc );
+        $a.setIpGstRsc( $vrsc.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setOpGstRsc( BigDecimal.ZERO );
+        $a.setTotalRsc( $trsc.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setRcc( $rcc );
+        $a.setIpGstRcc( BigDecimal.ZERO );
+        $a.setOpGstRcc( BigDecimal.ZERO );
+        $a.setTotalRcc( $trcc );
+        $a.setFacilityRsc( $frsc );
+        $a.setNrsc( $nrsc );
+        $a.setIpGstNrsc( $vrsc.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setOpGstNrsc( $arsd.negate().setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setTotalNrsc( $a.getNrsc().add( $a.getIpGstNrsc() ).add( $a.getOpGstNrsc() ) );
+        update( $a );
+end

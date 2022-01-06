@@ -1,0 +1,397 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import java.util.List;
+import com.emc.sett.impl.*;
+
+global java.math.BigDecimal inGstRate;
+global java.math.BigDecimal outGstRate;
+
+/*
+* the interval’s sum of Max IEQ  = instanceSum(the interval’s nodes, Maximum(the node's IEQ, 0)) if
+* For(the interval’s account, the account is not a MSSL)
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - max IEQ at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( maxIeq == null, $pd : periodId, $sa : accountId )
+    	Account( accountId == $sa && msslAccount == false )
+    	$ns : List() from collect( Facility( $pd == periodId && $sa == accountId ) )
+        $ieq : BigDecimal() from accumulate(
+        							Facility( ieq != null, amt : ieq ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt.max(BigDecimal.ZERO)); ),
+									reverse( tt = tt.subtract(amt.max(BigDecimal.ZERO)); ),
+									result( tt ) )
+    then
+        $i.setMaxIeq( $ieq );
+        update( $i );
+end
+
+/*
+* the interval’s sum of Max IEQ  = instanceSum(the interval’s nodes, Maximum(the node's IEQ, 0)) if
+* For(the interval’s account, the account is not a MSSL)
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - max IEQ at period level for MSSL"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( maxIeq == null, $sa : accountId )
+    	Account( accountId == $sa && msslAccount == true )
+    then
+        $i.setMaxIeq( BigDecimal.ZERO );
+        update( $i );
+end
+
+/*
+* the interval’s node count = InstanceCount(the interval’s nodes)
+*
+* the interval’s MEP = InstanceSum(the interval’s nodes, the node’s MEP)
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - period level from nodes"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( mep == null, $pd : periodId, $sa : accountId )
+    	$ns : List() from collect( Facility( $pd == periodId && $sa == accountId ) )
+        $mep : BigDecimal() from accumulate(
+        							Facility( mep != null, amt : mep ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setNodeCount( new BigDecimal($ns.size()) );
+        $i.setMep( $mep );
+        update( $i );
+end
+
+/*
+* the node’s VCRP = the node’s MEP * Maximum(the node’s IEQ, 0)
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - VCRP at node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( vcrp == null, ieq != null && mep != null, $mep : mep, $ieq : ieq )
+    then
+        $n.setVcrp( $mep.multiply( $ieq.max(BigDecimal.ZERO) ) );
+        update( $n );
+end
+
+/*
+* the interval’s VCRP = Round(the interval’s MEP / the interval’s node count, 2) if
+* the interval’s sum of Max IEQ = 0
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - VCRP with zero IEQ at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( vcrp == null, maxIeq != null && maxIeq == 0, mep != null && nodeCount != null && nodeCount > 0, $mep : mep, $nodeCount : nodeCount )
+    then
+        $i.setVcrp( $mep.divide( $nodeCount, 2, BigDecimal.ROUND_HALF_UP ) );
+        update( $i );
+end
+
+/*
+* the interval’s VCRP = Round(the interval’s MEP / the interval’s node count, 2) if
+* the interval’s sum of Max IEQ = 0
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - VCRP with zero IEQ and node count at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( vcrp == null, maxIeq != null && maxIeq == 0, mep != null && nodeCount != null && nodeCount == 0, $mep : mep, $nodeCount : nodeCount )
+    then
+        $i.setVcrp( BigDecimal.ZERO );
+        update( $i );
+end
+
+/*
+* the interval’s VCRP = Round((InstanceSum(the interval’s nodes, the node’s VCRP)) / the interval’s sum of Max IEQ, 2) if
+* the interval’s sum of Max IEQ > 0
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - VCRP with IEQ at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( vcrp == null, maxIeq != null && maxIeq > 0, $maxIeq : maxIeq, $pd : periodId, $sa : accountId )
+    	$ns : List() from collect( Facility( $pd == periodId && $sa == accountId ) )
+        $vcrp : BigDecimal() from accumulate(
+        							Facility( vcrp != null, amt : vcrp ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setVcrp( $vcrp.divide( $maxIeq, 2, BigDecimal.ROUND_HALF_UP ) );
+        update( $i );
+end
+
+/*
+* the TVC’s VCRP = For(the tvc’s interval, the interval’s VCRP)
+*
+* the TVC’s credit = Round((the TVC’s TVP – the TVC’s VCRP) * the TVC’s TVQ, 2)
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - at TVC level"
+ruleflow-group "acct_stmt"
+    when
+    	$t : Tvc( vcsc == null, tvp != null && tvq != null, $pd : periodId, $sa : accountId, $tvp : tvp, $tvq : tvq )
+    	Period( accountId == $sa && periodId == $pd, vcrp != null, $vcrp : vcrp )
+    then
+        $t.setVcrp( $vcrp );
+        $t.setVcsc( $tvp.subtract( $vcrp ).multiply( $tvq ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $t );
+end
+
+/*
+* the interval’s TVCSC = InstanceSum(the interval’s tvcs, the TVC’s credit)
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - tvcsc at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( tvcsc == null, $pd : periodId, $sa : accountId )
+    	$tvs : List() from collect( Tvc( $pd == periodId && $sa == accountId ) )
+        $vcsc : BigDecimal() from accumulate(
+        							Tvc( vcsc != null, amt : vcsc ) from $tvs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setTvcsc( $vcsc );
+        update( $i );
+end
+
+/*
+* the vesting contract’s VCRP = For(the vesting contract’s interval, the interval’s VCRP)
+*
+* the vesting contract’s credit = Round((the vesting contract’s HP – the vesting contract’s VCRP) * the vesting contract’s HQ, 2)
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - at Vesting level"
+ruleflow-group "acct_stmt"
+    when
+    	$v : Vesting( vcsc == null, hp != null && hq != null, $pd : periodId, $sa : accountId, $hp : hp, $hq : hq )
+    	Period( accountId == $sa && periodId == $pd, vcrp != null, $vcrp : vcrp )
+    then
+        $v.setVcrp( $vcrp );
+        $v.setVcsc( $hp.subtract( $vcrp ).multiply( $hq ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $v );
+end
+
+/*
+* the interval’s AVCSC = InstanceSum(the interval’s vesting contracts, the vesting contract’s credit)
+*
+* the interval’s VCSC = the interval’s AVCSC + the interval’s TVCSC
+*
+* the interval’s VCSC = the interval’s AVCSC if
+* the interval’s TVCSC is unknown
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - avcsc and vcsc at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( avcsc == null, tvcsc != null, $pd : periodId, $sa : accountId )
+    	$avs : List() from collect( Vesting( $pd == periodId && $sa == accountId ) )
+        $vcsc : BigDecimal() from accumulate(
+        							Vesting( vcsc != null, amt : vcsc ) from $avs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setAvcsc( $vcsc );
+        $i.setVcsc( $vcsc.add( $i.getTvcsc() ) );
+        update( $i );
+end
+
+/*
+* the market’s VCSC = instanceSumIf(the market's intervals, the interval’s VCSC, For(the interval’s account, the account is not a MSSL))
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - vcsc at market level"
+ruleflow-group "acct_stmt"
+    when
+    	$m : Market( vcsc == null, $pd : periodId )
+    	//Account( msslAccount == false, $sa : accountId )
+    	$ns : List() from collect( Period( $pd == periodId && vcsc != null ) )
+        $vcsc : BigDecimal() from accumulate(
+        							Period( vcsc != null, amt : vcsc ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $m.setVcsc( $vcsc );
+        update( $m );
+end
+
+/*
+* the interval’s VCSCK = For(the interval’s market, the market’s VCSC) * -1 if
+* For(the interval’s account, the account is a MSSL)
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - vcsck at period level for MSSL"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( vcsck == null, $sa : accountId, $pd : periodId )
+    	Account( accountId == $sa && msslAccount == true )
+    	Market( periodId == $pd, vcsc != null, $vcsc : vcsc )
+    then
+        $i.setVcsck( $vcsc.negate() );
+        update( $i );
+end
+
+/*
+* the interval’s HQ for MSSL = InstanceSum(the interval’s vesting contracts, the vesting contract’s HQ)
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - HQ at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( hqk == null, $pd : periodId, $sa : accountId )
+    	$avs : List() from collect( Vesting( $pd == periodId && $sa == accountId ) )
+        $hq : BigDecimal() from accumulate(
+        							Vesting( hq != null, amt : hq ) from $avs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setHqk( $hq );
+        update( $i );
+end
+
+/*
+* the interval’s HP for MSSL = the interval’s VCRP * the interval’s HQ for MSSL if
+* For(the interval’s account, the account is not a MSSL)
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - HP at period level for MSSL"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( hpk == null, vcrp != null && hqk != null, $sa : accountId, $pd : periodId, $vcrp : vcrp, $hqk : hqk )
+    	Account( accountId == $sa && msslAccount == false )
+    then
+        $i.setHpk( $vcrp.multiply( $hqk ) );
+        update( $i );
+end
+
+/*
+* the market’s HQ = InstanceSumIf(the market’s intervals, the interval’s HQ for MSSL, For(the interval’s account, the account is not a MSSL))
+*
+* the market’s HP for MSSL = InstanceSum(the market’s intervals, the interval’s HP for MSSL)
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - HQ and HP at market level"
+ruleflow-group "acct_stmt"
+    when
+    	$m : Market( hq == null, $pd : periodId )
+    	//Account( msslAccount == false, $sa : accountId )
+    	$ns : List() from collect( Period( $pd == periodId && hqk != null && hpk != null ) )
+        $hqk : BigDecimal() from accumulate(
+        							Period( hqk != null, amt : hqk ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $hpk : BigDecimal() from accumulate(
+        							Period( hpk != null, amt : hpk ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $m.setHq( $hqk );
+        $m.setHpk( $hpk );
+        //$m.setVcrp( $hpk.divide( $hqk, 2, BigDecimal.ROUND_HALF_UP ) );
+        update( $m );
+end
+
+/*
+* the market’s VCRP = Round(the market’s HP for MSSL / the market’s HQ, 2)
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - VCRP at market level"
+ruleflow-group "acct_stmt"
+    when
+    	$m : Market( vcrp == null, hpk != null && hq != 0, $hq : hq , $hpk : hpk )
+    then
+        $m.setVcrp( $hpk.divide( $hq, 2, BigDecimal.ROUND_HALF_UP ) );
+        update( $m );
+end
+
+/*
+* the interval’s VCRPK = For(the interval’s market, the market’s VCRP) if
+* For(the interval’s account, the account is a MSSL)
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - VCRPK at period level for MSSL"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( vcrpk == null, $sa : accountId, $pd : periodId )
+    	Account( accountId == $sa && msslAccount == true )
+    	Market( periodId == $pd, vcrp != null, $vcrp : vcrp )
+    	//Market( periodId == $pd, vcsc != null, $vcrp : vcrp )
+    then
+        $i.setVcrpk( $vcrp );
+        update( $i );
+end
+
+/*
+* The interval’s VCRPK for non-mssl = For(the interval’s market, the market’s VCRP) if
+* both
+* For(the interval’s account, the account is not a MSSL) and
+* the interval’s node count < 1
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - VCRPK at period level for non-MSSL"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( vcrpkNonMssl == null, nodeCount != null && nodeCount < 1, $sa : accountId, $pd : periodId )
+    	Account( accountId == $sa && msslAccount == false )
+    	Market( periodId == $pd, vcrp != null, $vcrp : vcrp )
+    	//Market( periodId == $pd, vcsc != null, $vcrp : vcrp )
+    then
+        $i.setVcrpkNonMssl( $vcrp );
+        update( $i );
+end
+
+/*
+* the account's VCSC = InstanceSum(the account's intervals, the interval's VCSC) if
+* the account is not a MSSL
+*
+* the account’s input GST for VCSC = 0
+*
+* the account’s output GST for VCSC = 0
+*
+* the account’s total VCSC = the account’s VCSC
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - account level for non-MSSL"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( vcsc == null, msslAccount == false, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $vcsc : BigDecimal() from accumulate(
+        							Period( vcsc != null, amt : vcsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setVcsc( $vcsc );
+        $a.setIpGstVcsc( BigDecimal.ZERO );
+        $a.setOpGstVcsc( BigDecimal.ZERO );
+        $a.setTotalVcsc( $vcsc );
+        update( $a );
+end
+
+/*
+* the account's VCSC = InstanceSum(the account's intervals, the interval's VCSCK) if
+* the account is a MSSL
+*
+* the account’s total VCSC = the account’s VCSC
+*/
+rule "3.6.1 Vesting Contract Settlement Credit (VCSC) - account level for MSSL"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( vcsc == null, msslAccount == true, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $vcsc : BigDecimal() from accumulate(
+        							Period( vcsck != null, amt : vcsck ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setVcsc( $vcsc );
+        $a.setIpGstVcsc( BigDecimal.ZERO );
+        $a.setOpGstVcsc( BigDecimal.ZERO );
+        $a.setTotalVcsc( $vcsc );
+        update( $a );
+end

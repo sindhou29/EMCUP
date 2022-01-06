@@ -1,0 +1,3 @@
+com\emc\settlement_rules_process\PrepareDataTaskHandler.class
+com\emc\settlement_rules_process\WriteDataTaskHandler.class
+com\emc\settlement_rules_process\RulesTaskHandler.class

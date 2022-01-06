@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<deployment-descriptor xsi:schemaLocation="http://www.jboss.org/jbpm deployment-descriptor.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <persistence-unit>org.jbpm.domain</persistence-unit>
+    <audit-persistence-unit>org.jbpm.domain</audit-persistence-unit>
+    <audit-mode>JPA</audit-mode>
+    <persistence-mode>JPA</persistence-mode>
+    <runtime-strategy>PER_PROCESS_INSTANCE</runtime-strategy>
+    <marshalling-strategies>
+        <marshalling-strategy>
+            <resolver>mvel</resolver>
+            <identifier>new org.drools.persistence.jpa.marshaller.JPAPlaceholderResolverStrategy("com.emc:settlement-workflow:1.117", classLoader)</identifier>
+            <parameters/>
+        </marshalling-strategy>
+    </marshalling-strategies>
+    <event-listeners/>
+    <task-event-listeners/>
+    <globals/>
+    <work-item-handlers>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new org.jbpm.process.instance.impl.demo.SystemOutWorkItemHandler()</identifier>
+            <parameters/>
+            <name>Log</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new org.jbpm.process.workitem.bpmn2.ServiceTaskHandler(ksession, classLoader)</identifier>
+            <parameters/>
+            <name>Service Task</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new org.jbpm.process.workitem.webservice.WebServiceWorkItemHandler(ksession, classLoader)</identifier>
+            <parameters/>
+            <name>WebService</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new org.jbpm.process.workitem.rest.RESTWorkItemHandler(classLoader)</identifier>
+            <parameters/>
+            <name>Rest</name>
+        </work-item-handler>
+        <!--<work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.common.GenericRestWorkItemHandler()</identifier>
+            <parameters/>
+            <name>CustomWIHandler</name>
+        </work-item-handler>-->
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.fileupload.BilateralContractUploadMainWIH()</identifier>
+            <parameters/>
+            <name>BilateralContractUploadMainWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.fileupload.BilateralContractValidateAndUploadDataWIH()</identifier>
+            <parameters/>
+            <name>BilateralContractValidateAndUploadDataWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.fileupload.CMFEmailNotificationWIH()</identifier>
+            <parameters/>
+            <name>CMFEmailNotificationWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.fileupload.CMFProcessPollerWIH()</identifier>
+            <parameters/>
+            <name>CMFProcessPollerWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.fileupload.EMCPSOBudgetUploadWIH()</identifier>
+            <parameters/>
+            <name>EMCPSOBudgetUploadWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.fileupload.ForwardSalesContractUploadMainWIH()
+            </identifier>
+            <parameters/>
+            <name>ForwardSalesContractUploadMainWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.fileupload.JMSListenerMainWIH()</identifier>
+            <parameters/>
+            <name>JMSListenerMainWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.fileupload.MMVolumeFileUploadWIH()</identifier>
+            <parameters/>
+            <name>MMVolumeFileUploadWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.fileupload.SaveClawbackQuantitiesFileWIH()</identifier>
+            <parameters/>
+            <name>SaveClawbackQuantitiesFileWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.fileupload.SaveMSSLMeteringFileWIH()</identifier>
+            <parameters/>
+            <name>SaveMSSLMeteringFileWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.fileupload.VerifyAndLoadClawbackQuantitiesDataWIH()
+            </identifier>
+            <parameters/>
+            <name>VerifyAndLoadClawbackQuantitiesDataWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.fileupload.VerifyAndLoadMSSLMeteringDataWIH()
+            </identifier>
+            <parameters/>
+            <name>VerifyAndLoadMSSLMeteringDataWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.fileupload.VestingContractUploadMainWIH()</identifier>
+            <parameters/>
+            <name>VestingContractUploadMainWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.scheduled.ScheduledBilateralDataVerificationWIH()
+            </identifier>
+            <parameters/>
+            <name>ScheduledBilateralDataVerificationWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new
+                com.emc.settlement.workitemhandler.scheduled.ScheduledClawbackFileReceivingVerificationWIH()
+            </identifier>
+            <parameters/>
+            <name>ScheduledClawbackFileReceivingVerificationWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.scheduled.ScheduledCMWHDataVerificationWIH()
+            </identifier>
+            <parameters/>
+            <name>ScheduledCMWHDataVerificationWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new
+                com.emc.settlement.workitemhandler.scheduled.ScheduledEMCPSOBudgetDataVerificationWIH()
+            </identifier>
+            <parameters/>
+            <name>ScheduledEMCPSOBudgetDataVerificationWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.scheduled.ScheduledFSCFileReceivingVerificationWIH()
+            </identifier>
+            <parameters/>
+            <name>ScheduledFSCFileReceivingVerificationWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.scheduled.ScheduledFSCDataVerificationWIH()</identifier>
+            <parameters/>
+            <name>ScheduledFSCDataVerificationWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.scheduled.ScheduledMEUCDataVerificationWIH()
+            </identifier>
+            <parameters/>
+            <name>ScheduledMEUCDataVerificationWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.scheduled.ScheduledMSSLDataVerificationWIH()
+            </identifier>
+            <parameters/>
+            <name>ScheduledMSSLDataVerificationWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new
+                com.emc.settlement.workitemhandler.scheduled.ScheduledMSSLFileReceivingVerificationWIH()
+            </identifier>
+            <parameters/>
+            <name>ScheduledMSSLFileReceivingVerificationWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new
+                com.emc.settlement.workitemhandler.scheduled.ScheduledPendingForAuthorizationEMCPSOFeesDataExistenceWIH()
+            </identifier>
+            <parameters/>
+            <name>ScheduledPendingForAuthorizationEMCPSOFeesDataExistenceWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.scheduled.ScheduledRegenerationOfMCRDataWIH()
+            </identifier>
+            <parameters/>
+            <name>ScheduledRegenerationOfMCRDataWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.scheduled.ScheduledRerunAccountsVerificationWIH()
+            </identifier>
+            <parameters/>
+            <name>ScheduledRerunAccountsVerificationWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.scheduled.ScheduledRiskExposureVerificationWIH()
+            </identifier>
+            <parameters/>
+            <name>ScheduledRiskExposureVerificationWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.scheduled.ScheduledDailyRunSummaryWIH()
+            </identifier>
+            <parameters/>
+            <name>ScheduledDailyRunSummaryWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new
+                com.emc.settlement.workitemhandler.scheduled.ScheduledVestingContractDataVerificationWIH()
+            </identifier>
+            <parameters/>
+            <name>ScheduledVestingContractDataVerificationWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new
+                com.emc.settlement.workitemhandler.scheduled.ScheduledVestingContractFileReceivingVerificationWIH()
+            </identifier>
+            <parameters/>
+            <name>ScheduledVestingContractFileReceivingVerificationWIH</name>
+        </work-item-handler>
+        <!--  Run Related -->
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.runrelated.AccountingInterfaceWIH()</identifier>
+            <parameters/>
+            <name>AccountingInterfaceWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.runrelated.ApproveSettlementRunWIH()</identifier>
+            <parameters/>
+            <name>ApproveSettlementRunWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.runrelated.CaptureFSCPenaltyQuantityWIH()</identifier>
+            <parameters/>
+            <name>CaptureFSCPenaltyQuantityWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.runrelated.CashFlowReconciliationWIH()</identifier>
+            <parameters/>
+            <name>CashFlowReconciliationWIH</name>
+        </work-item-handler>        
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.runrelated.FinalAuthoriseSettlementRunWIH()</identifier>
+            <parameters/>
+            <name>FinalAuthoriseSettlementRunWIH</name>
+        </work-item-handler>        
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.runrelated.LoadPendingCMFFilesWIH()</identifier>
+            <parameters/>
+            <name>LoadPendingCMFFilesWIH</name>
+        </work-item-handler>        
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.runrelated.ForceDenySettlementRunWIH()</identifier>
+            <parameters/>
+            <name>ForceDenySettlementRunWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.runrelated.RerunInclusionsWIH()</identifier>
+            <parameters/>
+            <name>RerunInclusionsWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.runrelated.SettlementRunProcessWIH()</identifier>
+            <parameters/>
+            <name>SettlementRunProcessWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.runrelated.RunValidationsWIH()</identifier>
+            <parameters/>
+            <name>RunValidationsWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.runrelated.SettlementMainProcessWIH()</identifier>
+            <parameters/>
+            <name>SettlementMainProcessWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.runrelated.ExecuteRunWIH()</identifier>
+            <parameters/>
+            <name>ExecuteRunWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.runrelated.SetPackageAuthorizationWIH()</identifier>
+            <parameters/>
+            <name>SetPackageAuthorizationWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.common.VerifyMCEDataWIH()</identifier>
+            <parameters/>
+            <name>VerifyMCEDataWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.runrelated.IPDataVerificationsValidationsWIH()</identifier>
+            <parameters/>
+            <name>IPDataVerificationsValidationsWIH</name>
+        </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.emc.settlement.workitemhandler.runrelated.PerformTestRunWIH()</identifier>
+            <parameters/>
+            <name>PerformTestRunWIH</name>
+        </work-item-handler>
+         <!--  Run Related -->
+		
+    </work-item-handlers>
+    <environment-entries>
+    	<environment-entry>
+            <resolver>mvel</resolver>
+            <identifier>true</identifier>
+            <parameters/>
+            <name>org.kie.api.persistence.pessimistic</name>
+		</environment-entry>
+	</environment-entries>
+    <configurations/>
+    <required-roles/>
+    <remoteable-classes>
+        <remoteable-class>org.drools.core.spi.ProcessContext</remoteable-class>
+    </remoteable-classes>
+    <limit-serialization-classes>false</limit-serialization-classes>
+</deployment-descriptor>

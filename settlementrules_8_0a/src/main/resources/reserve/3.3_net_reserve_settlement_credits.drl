@@ -1,0 +1,157 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import com.emc.sett.impl.*;
+
+/*
+* the reserve’s RSC = Round(the reserve’s MRP * (the reserve’s GRQ + the reserve’s LRQ), 2)
+*
+* the reserve’s RSQ = the reserve's GRQ + the reserve's LRQ
+*
+* the reserve's facility RSC = Round(the reserve's MRP * the reserve's LRQ, 2)
+*
+* the reserve’s accounting RSC = the reserve’s RSC * 1
+*/
+rule "3.3.1 Reserve Settlement Credit (RSC) - Reserve level"
+ruleflow-group "reserve"
+    when
+    	$r : Reserve( rsc == null, mrp != null && grq != null && lrq != null,  $mrp :  mrp, $grq : grq, $lrq : lrq )
+    then
+        $r.setRsc( $grq.add($lrq).multiply($mrp).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $r.setRsq( $grq.add($lrq) );
+        $r.setFacilityRsc( $mrp.multiply($lrq).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $r.setAccountingRsc( $grq.add($lrq).multiply($mrp).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $r );
+end
+
+/*
+* the node’s RSC = InstanceSum(the node’s reserves, the reserve’s RSC)
+*
+* the node's facility RSC = InstanceSum(the node’s reserves, the reserve’s facility RSC)
+*
+* the node's accounting RSC = the node's RSC * 1
+*/
+rule "3.3.1 Reserve Settlement Credit (RSC) - Node level"
+ruleflow-group "reserve"
+    when
+        $n : Facility( rsc == null, $pd : periodId, $nde : facilityId )
+        $rsc : BigDecimal() from $n.sumRscOverAllMnn()
+        $facilityRsc : BigDecimal() from $n.sumFacilityRscOverAllMnn()
+    then
+        $n.setRsc( $rsc );
+        $n.setFacilityRsc( $facilityRsc );
+        $n.setAccountingRsc( $rsc );
+        update( $n );
+end
+
+/*
+* the market’s RSC = InstanceSum(the market's reserve classes, the reserve's RSC)
+*/
+rule "3.3.2 Reserve Settlement Debit (RSD) - RSC at Market level"
+ruleflow-group "reserve"
+    when
+        $m : Market( rsc == null, $pd : periodId )
+        $rsc : BigDecimal() from $m.sumAllReservesRsc();
+    then
+        $m.setRsc( $rsc );
+        update( $m );
+end
+
+/*
+* the class’s RSC = InstanceSum(the class’s reserves, the reserve’s RSC)
+*/
+rule "3.3.2 Reserve Settlement Debit (RSD) - RSC at RsvClass level"
+ruleflow-group "reserve"
+    when
+        $c : RsvClass( rsc == null, $pd : periodId, $cls : reserveClass )
+        $rsc : BigDecimal() from $c.sumAllReservesRsc();
+    then
+        $c.setRsc( $rsc );
+        update( $c );
+end
+
+/*
+* the reserve’s RSD = Round(For(the reserve’s node, the node’s RRS) * For(the reserve’s class, the class’s RSC), 2)
+*
+* the reserve’s accounting RSD = the reserve’s RSD * -1
+*/
+rule "3.3.2 Reserve Settlement Debit (RSD) - Reserve level"
+ruleflow-group "reserve"
+    when
+    	$r : Reserve( rsd == null, $pd : periodId, $cls : name, $nde : node )
+        $n : Facility( $pd == periodId && $nde == facilityId, rrs != null, $rrs : rrs )
+        $c : RsvClass( $pd == periodId && $cls == reserveClass, rsc != null, $rsc : rsc )
+    then
+        $r.setRsd( $rrs.multiply($rsc).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $r.setAccountingRsd( $rrs.multiply($rsc).setScale(2, BigDecimal.ROUND_HALF_UP).negate() );
+        update( $r );
+end
+
+/*
+* the node’s RSD = InstanceSum(the node's reserves, the reserve’s RSD)
+*
+* the node's accounting RSD = the node's RSD * -1
+*/
+rule "3.3.2 Reserve Settlement Debit (RSD) - Node level"
+ruleflow-group "reserve"
+    when
+        $n : Facility( rsd == null, $pd : periodId, $nde : facilityId )
+    	$r : Reserve( $pd == periodId && $nde == node, rsd != null )
+        $rsd : BigDecimal() from $n.sumRsdOverAllMnn()
+    then
+        $n.setRsd( $rsd );
+        $n.setAccountingRsd( $rsd.negate() );
+        update( $n );
+end
+
+/*
+* the reserve’s BRQ Purchased = InstanceSum(the reserve’s bilateral contracts, the BRQ contract’s BRQ Purchased)
+*
+* the reserve’s BRQ Sold = InstanceSum(the reserve’s bilateral contracts, the BRQ contract’s BRQ Sold)
+*
+* the reserve’s RCC = Round(the reserve’s MRP * (the reserve’s BRQ Purchased - the reserve’s BRQ Sold), 2)
+*
+* the reserve’s accounting RCC = the reserve’s RCC * 1
+*/
+rule "3.3.3 Reserve Contract Credit (RCC) - Reserve level"
+ruleflow-group "reserve"
+    when
+    	$r : Reserve( rcc == null, $mrp : mrp )
+        $purchased : BigDecimal() from $r.sumPurchasedBrqOverAllSettlementAccounts()
+        $sold : BigDecimal() from $r.sumSoldBrqOverAllSettlementAccounts()
+    then
+        $r.setBrqPurchased( $purchased );
+        $r.setBrqSold( $sold );
+        $r.setRcc( $purchased.subtract($sold).multiply($mrp).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $r.setAccountingRcc( $purchased.subtract($sold).multiply($mrp).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $r );
+end
+
+/*
+* the node’s RCC = InstanceSum(the node's reserves, the reserve’s RCC)
+*
+* the node's accounting RCC = the node's RCC * 1
+*/
+rule "3.3.3 Reserve Contract Credit (RCC) - Node level"
+ruleflow-group "reserve"
+    when
+        $n : Facility( rcc == null, $pd : periodId, $nde : facilityId )
+        $rcc : BigDecimal() from $n.sumRccOverAllMnn()
+    then
+        $n.setRcc( $rcc );
+        $n.setAccountingRcc( $rcc );
+        update( $n );
+end
+
+/*
+* the node’s NRSC = the node’s RSC + the node’s RCC – the node’s RSD
+*/
+rule "3.3.4 Net Reserve Settlement Credit (NRSC) - Node level"
+ruleflow-group "reserve"
+    when
+        $n : Facility( nrsc == null, rsc != null && rcc != null && rsd != null, $rsc : rsc, $rcc : rcc, $rsd : rsd )
+    then
+        $n.setNrsc( $rsc.add($rcc).subtract($rsd) );
+        update( $n );
+end
+

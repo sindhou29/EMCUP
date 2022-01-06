@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- origin at X=0.0 Y=0.0 -->
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:java="http://www.java.com/javaTypes" xmlns:tns="http://www.jboss.org/drools" xmlns="http://www.jboss.org/drools" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd" id="Definition" exporter="org.eclipse.bpmn2.modeler.core" exporterVersion="1.4.3.Final-v20180418-1358-B1" expressionLanguage="http://www.mvel.org/2.0" targetNamespace="http://www.jboss.org/drools" typeLanguage="http://www.java.com/javaTypes">
+  <bpmn2:itemDefinition id="ItemDefinition_2" isCollection="false" structureRef="com.emc.settlement.model.backend.pojo.SettlementRunParams"/>
+  <bpmn2:itemDefinition id="ItemDefinition_4" isCollection="false" structureRef="com.emc.drcap.nemsprerequisite.CompareMCRDataDO"/>
+  <bpmn2:itemDefinition id="ItemDefinition_6" isCollection="false" structureRef="com.emc.drcap.nemsprerequisite.CompareMCRPricesDO"/>
+  <bpmn2:itemDefinition id="ItemDefinition_1036" isCollection="false" structureRef="java.lang.Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_454" isCollection="false" structureRef="java.lang.Boolean"/>
+  <bpmn2:itemDefinition id="ItemDefinition_504" isCollection="false" structureRef="java.util.List"/>
+  <bpmn2:itemDefinition id="ItemDefinition_664" isCollection="false" structureRef="java.lang.String"/>
+  <bpmn2:itemDefinition id="ItemDefinition_918" isCollection="false" structureRef="com.emc.drcap.nemsprerequisite.StringListList"/>
+  <bpmn2:itemDefinition id="ItemDefinition_138" isCollection="false" structureRef="java.lang.RuntimeException"/>
+  <bpmn2:itemDefinition id="ItemDefinition_3" isCollection="false" structureRef="org.slf4j.Logger"/>
+  <bpmn2:itemDefinition id="ItemDefinition_7" isCollection="false" structureRef="org.slf4j.LoggerFactory"/>
+  <bpmn2:error id="Error_1" errorCode="runtimeException" name="runtimeException" structureRef="ItemDefinition_138"/>
+  <bpmn2:process id="CompareMCRData" tns:packageName="com.emc.settlement.common" name="CompareMCRData" isExecutable="true" processType="Private">
+    <bpmn2:extensionElements>
+      <tns:import name="com.emc.settlement.model.backend.pojo.SettlementRunParams"/>
+      <tns:import name="com.emc.drcap.nemsprerequisite.CompareMCRDataDO"/>
+      <tns:import name="com.emc.drcap.nemsprerequisite.CompareMCRPricesDO"/>
+      <tns:import name="java.util.List"/>
+      <tns:import name="com.emc.drcap.nemsprerequisite.StringListList"/>
+      <tns:import name="java.lang.RuntimeException"/>
+      <tns:import name="org.slf4j.Logger"/>
+      <tns:import name="org.slf4j.LoggerFactory"/>
+    </bpmn2:extensionElements>
+    <bpmn2:property id="settlementParam" itemSubjectRef="ItemDefinition_2" name="settlementParam"/>
+    <bpmn2:property id="wsCompareMCRDataResponse" itemSubjectRef="ItemDefinition_4" name="wsCompareMCRDataResponse"/>
+    <bpmn2:property id="wsCompareMCRPricesResponse" itemSubjectRef="ItemDefinition_6" name="wsCompareMCRPricesResponse"/>
+    <bpmn2:property id="wsParam" itemSubjectRef="ItemDefinition_1036" name="wsParam"/>
+    <bpmn2:property id="clwqExists" itemSubjectRef="ItemDefinition_454" name="clwqExists"/>
+    <bpmn2:property id="mcrChange" itemSubjectRef="ItemDefinition_454" name="mcrChange"/>
+    <bpmn2:property id="mcrIds" itemSubjectRef="ItemDefinition_918" name="mcrIds"/>
+    <bpmn2:property id="mcrStringNew" itemSubjectRef="ItemDefinition_664" name="mcrStringNew"/>
+    <bpmn2:property id="mcrStringOld" itemSubjectRef="ItemDefinition_664" name="mcrStringOld"/>
+    <bpmn2:property id="runtimeException" itemSubjectRef="ItemDefinition_138" name="runtimeException"/>
+    <bpmn2:property id="soapServiceUrl" itemSubjectRef="ItemDefinition_664" name="soapServiceUrl"/>
+    <bpmn2:property id="scriptlogger" itemSubjectRef="ItemDefinition_3" name="scriptlogger"/>
+    <bpmn2:property id="inv" itemSubjectRef="ItemDefinition_454" name="inv"/>
+    <bpmn2:property id="invokedBy" itemSubjectRef="ItemDefinition_454" name="invokedBy"/>
+    <bpmn2:startEvent id="StartEvent_1" name="Start">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Start]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>SequenceFlow_9</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:task id="Task_3" tns:taskName="WebService" tns:displayName="WS" tns:icon="defaultservicenodeicon.png" name="WS Call Get Latest Authorised MCR">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[WS Call Get Latest Authorised MCR]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>
+
+Logger log = LoggerFactory.getLogger(&quot;CompareMCRData&quot;);
+log.info(&quot;Calling Sub-Process CompareMCRData&quot;);
+log.info(&quot;Calling WS getLatestAuthorisedMCR&quot;);
+wsParam = new Object[]{ ParamUtil.toXMLGregorianCalendar(settlementParam.getSettlementDate()), settlementParam.getRunType(), false, &quot;[EMC]&quot;, settlementParam.getRunEveId()};
+kcontext.setVariable(&quot;wsParam&quot;, wsParam);
+
+log.info(&quot;invokedBy : &quot;+kcontext.getVariable(&quot;invokedBy&quot;));
+log.info(&quot;clwqExists : &quot;+kcontext.getVariable(&quot;clwqExists&quot;));
+
+
+
+</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>kcontext.setVariable(&quot;wsCompareMCRDataResponse&quot;, wsCompareMCRDataResponse);
+
+Logger log = LoggerFactory.getLogger(&quot;CompareMCRData&quot;);
+log.info(&quot;MCR String Old :&quot;+wsCompareMCRDataResponse.getMcrStringOld());
+log.info(&quot;MCR String New :&quot;+wsCompareMCRDataResponse.getMcrStringNew());
+log.info(&quot;Clwq Exists :&quot;+wsCompareMCRDataResponse.isClwqExists());
+log.info(&quot;Mcr Change :&quot;+wsCompareMCRDataResponse.isMcrChange());
+
+kcontext.setVariable(&quot;mcrStringOld&quot;, wsCompareMCRDataResponse.getMcrStringOld());
+kcontext.setVariable(&quot;mcrStringNew&quot;, wsCompareMCRDataResponse.getMcrStringNew());
+kcontext.setVariable(&quot;clwqExists&quot;, wsCompareMCRDataResponse.isClwqExists());
+kcontext.setVariable(&quot;mcrChange&quot;, wsCompareMCRDataResponse.isMcrChange());
+kcontext.setVariable(&quot;mcrIds&quot;, wsCompareMCRDataResponse.getMcrIds());
+
+log.info(&quot;Completed LatestAuthorisedMCR&quot;);
+            
+            
+            
+            </tns:script>
+        </tns:onExit-script>
+        <tns:metaData name="customAsync">
+          <tns:metaValue><![CDATA[true]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_9</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_11</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_3">
+        <bpmn2:dataInput id="DataInput_15" name="Url"/>
+        <bpmn2:dataInput id="DataInput_16" name="Namespace"/>
+        <bpmn2:dataInput id="DataInput_17" name="Interface"/>
+        <bpmn2:dataInput id="DataInput_18" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_19" itemSubjectRef="ItemDefinition_1036" name="Parameter"/>
+        <bpmn2:dataInput id="DataInput_20" name="Endpoint"/>
+        <bpmn2:dataInput id="DataInput_21" name="Mode"/>
+        <bpmn2:dataOutput id="DataOutput_3" itemSubjectRef="ItemDefinition_4" name="Result"/>
+        <bpmn2:inputSet id="_InputSet_42">
+          <bpmn2:dataInputRefs>DataInput_15</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_16</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_17</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_18</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_19</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_20</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_21</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="_OutputSet_17">
+          <bpmn2:dataOutputRefs>DataOutput_3</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_138">
+        <bpmn2:targetRef>DataInput_15</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_13">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_29">#{soapServiceUrl}/NEMSPrerequisiteService/WsCompareMCRData?WSDL</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_27">DataInput_15</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_139">
+        <bpmn2:targetRef>DataInput_16</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_14">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_32">http://nemsprerequisite.drcap.emc.com/</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_30">DataInput_16</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_140">
+        <bpmn2:targetRef>DataInput_17</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_15">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_35">CompareMCRDataWS</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_33">DataInput_17</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_141">
+        <bpmn2:targetRef>DataInput_18</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_16">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_38">getLatestAuthorisedMCR</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_36">DataInput_18</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_142">
+        <bpmn2:sourceRef>wsParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_19</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_143">
+        <bpmn2:targetRef>DataInput_20</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_17">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_41">#{soapServiceUrl}/NEMSPrerequisiteService/WsCompareMCRData</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_39">DataInput_20</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_144">
+        <bpmn2:targetRef>DataInput_21</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_18">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_44">SYNC</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_42">DataInput_21</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="_DataOutputAssociation_17">
+        <bpmn2:sourceRef>DataOutput_3</bpmn2:sourceRef>
+        <bpmn2:targetRef>wsCompareMCRDataResponse</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_9" tns:priority="1" sourceRef="StartEvent_1" targetRef="Task_3"/>
+    <bpmn2:task id="Task_4" tns:taskName="WebService" tns:displayName="WS" tns:icon="defaultservicenodeicon.png" name="WS Call MC Prices and Quantities Data Validation">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[WS Call MC Prices and Quantities Data Validation]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;CompareMCRData&quot;);
+log.info(&quot;Calling MCR Prices and Quantities&quot;);
+log.info(&quot; isMcrChange : &quot;+wsCompareMCRDataResponse.isMcrChange()+&quot; isClwqExists : &quot;+wsCompareMCRDataResponse.isClwqExists()+&quot; RunEveId : &quot;+settlementParam.getRunEveId());
+wsParam = new Object[]{ ParamUtil.toXMLGregorianCalendar(settlementParam.getSettlementDate()), wsCompareMCRDataResponse.isMcrChange(), wsCompareMCRDataResponse.isClwqExists(),  &quot;[EMC]&quot;, settlementParam.getRunEveId()};
+kcontext.setVariable(&quot;wsParam&quot;, wsParam);</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>kcontext.setVariable(&quot;wsCompareMCRPricesResponse&quot;, wsCompareMCRPricesResponse);
+Logger log = LoggerFactory.getLogger(&quot;CompareMCRData&quot;);
+log.info(&quot;mcrChange :&quot;+wsCompareMCRPricesResponse.isMcrChange());
+kcontext.setVariable(&quot;mcrChange&quot;, wsCompareMCRPricesResponse.isMcrChange());
+log.info(&quot;invokedBy : &quot;+kcontext.getVariable(&quot;invokedBy&quot;));
+log.info(&quot;clwqExists : &quot;+kcontext.getVariable(&quot;clwqExists&quot;));
+log.info(&quot;Completed MCR Prices and Quantities&quot;);
+</tns:script>
+        </tns:onExit-script>
+        <tns:metaData name="customAsync">
+          <tns:metaValue><![CDATA[true]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_13</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_12</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_4">
+        <bpmn2:dataInput id="DataInput_22" name="Url"/>
+        <bpmn2:dataInput id="DataInput_23" name="Namespace"/>
+        <bpmn2:dataInput id="DataInput_24" name="Interface"/>
+        <bpmn2:dataInput id="DataInput_25" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_26" itemSubjectRef="ItemDefinition_1036" name="Parameter"/>
+        <bpmn2:dataInput id="DataInput_27" name="Endpoint"/>
+        <bpmn2:dataInput id="DataInput_28" name="Mode"/>
+        <bpmn2:dataOutput id="DataOutput_4" itemSubjectRef="ItemDefinition_6" name="Result"/>
+        <bpmn2:inputSet id="_InputSet_43">
+          <bpmn2:dataInputRefs>DataInput_22</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_23</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_24</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_25</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_26</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_27</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_28</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="_OutputSet_18">
+          <bpmn2:dataOutputRefs>DataOutput_4</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_145">
+        <bpmn2:targetRef>DataInput_22</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_19">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_47">#{soapServiceUrl}/NEMSPrerequisiteService/WsCompareMCRData?WSDL</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_45">DataInput_22</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_146">
+        <bpmn2:targetRef>DataInput_23</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_20">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_50">http://nemsprerequisite.drcap.emc.com/</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_48">DataInput_23</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_147">
+        <bpmn2:targetRef>DataInput_24</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_21">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_53">CompareMCRDataWS</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_51">DataInput_24</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_148">
+        <bpmn2:targetRef>DataInput_25</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_22">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_56">getMCEPricesAndQuantities</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_54">DataInput_25</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_149">
+        <bpmn2:sourceRef>wsParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_26</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_150">
+        <bpmn2:targetRef>DataInput_27</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_23">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_59">#{soapServiceUrl}/NEMSPrerequisiteService/WsCompareMCRData</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_57">DataInput_27</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_151">
+        <bpmn2:targetRef>DataInput_28</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_24">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_62">SYNC</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_60">DataInput_28</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="_DataOutputAssociation_18">
+        <bpmn2:sourceRef>DataOutput_4</bpmn2:sourceRef>
+        <bpmn2:targetRef>wsCompareMCRPricesResponse</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_11" tns:priority="1" sourceRef="Task_3" targetRef="ExclusiveGateway_2"/>
+    <bpmn2:endEvent id="EndEvent_4" name="End">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[End]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_12</bpmn2:incoming>
+      <bpmn2:terminateEventDefinition id="TerminateEventDefinition_4"/>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_12" tns:priority="1" sourceRef="Task_4" targetRef="EndEvent_4"/>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_2" gatewayDirection="Diverging">
+      <bpmn2:incoming>SequenceFlow_11</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_13</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_14</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_13" tns:priority="1" name="MCR String is Same" sourceRef="ExclusiveGateway_2" targetRef="Task_4">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_63" language="http://www.java.com/java">return (wsCompareMCRDataResponse.getMcrStringNew().equalsIgnoreCase(wsCompareMCRDataResponse.getMcrStringOld()));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:endEvent id="EndEvent_5" name="End">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[End]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_14</bpmn2:incoming>
+      <bpmn2:terminateEventDefinition id="TerminateEventDefinition_5"/>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_14" tns:priority="1" sourceRef="ExclusiveGateway_2" targetRef="EndEvent_5">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_64" language="http://www.java.com/java">return !(wsCompareMCRDataResponse.getMcrStringNew().equalsIgnoreCase(wsCompareMCRDataResponse.getMcrStringOld()));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:boundaryEvent id="BoundaryEvent_1" name="" attachedToRef="Task_3">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
+      <bpmn2:dataOutput id="DataOutput_1" itemSubjectRef="ItemDefinition_138" name="Error_1_Output"/>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_1">
+        <bpmn2:sourceRef>DataOutput_1</bpmn2:sourceRef>
+        <bpmn2:targetRef>runtimeException</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:outputSet id="OutputSet_1" name="Output Set 1">
+        <bpmn2:dataOutputRefs>DataOutput_1</bpmn2:dataOutputRefs>
+      </bpmn2:outputSet>
+      <bpmn2:errorEventDefinition id="ErrorEventDefinition_1" errorRef="Error_1"/>
+    </bpmn2:boundaryEvent>
+    <bpmn2:boundaryEvent id="BoundaryEvent_2" name="" attachedToRef="Task_4">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
+      <bpmn2:dataOutput id="DataOutput_2" itemSubjectRef="ItemDefinition_138" name="Error_2_Output"/>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_2">
+        <bpmn2:sourceRef>DataOutput_2</bpmn2:sourceRef>
+        <bpmn2:targetRef>runtimeException</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:outputSet id="OutputSet_2" name="Output Set 2">
+        <bpmn2:dataOutputRefs>DataOutput_2</bpmn2:dataOutputRefs>
+      </bpmn2:outputSet>
+      <bpmn2:errorEventDefinition id="ErrorEventDefinition_2" errorRef="Error_1"/>
+    </bpmn2:boundaryEvent>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_1" gatewayDirection="Converging">
+      <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_1" tns:priority="1" sourceRef="BoundaryEvent_2" targetRef="ExclusiveGateway_1"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_3" tns:priority="1" sourceRef="BoundaryEvent_1" targetRef="ExclusiveGateway_1"/>
+    <bpmn2:callActivity id="CallActivity_1" tns:waitForCompletion="true" tns:independent="true" name="Call Activity 1" calledElement="ErrorHandlingProcess">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Call Activity 1]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_5</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_2">
+        <bpmn2:dataInput id="DataInput_1" itemSubjectRef="ItemDefinition_138" name="exception"/>
+        <bpmn2:inputSet id="InputSet_2" name="Input Set 2">
+          <bpmn2:dataInputRefs>DataInput_1</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_4" name="Output Set 4"/>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_1">
+        <bpmn2:sourceRef>runtimeException</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_1</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_4" tns:priority="1" sourceRef="ExclusiveGateway_1" targetRef="CallActivity_1"/>
+    <bpmn2:endEvent id="EndEvent_1" name="End Event 1">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[End Event 1]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_5</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_5" tns:priority="1" sourceRef="CallActivity_1" targetRef="EndEvent_1"/>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_Process_1" bpmnElement="CompareMCRData">
+      <bpmndi:BPMNShape id="BPMNShape_StartEvent_1" bpmnElement="StartEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="60.0" y="55.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_1">
+          <dc:Bounds height="17.0" width="31.0" x="62.0" y="91.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_3" bpmnElement="Task_3" isExpanded="true">
+        <dc:Bounds height="73.0" width="110.0" x="170.0" y="36.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_2">
+          <dc:Bounds height="51.0" width="106.0" x="172.0" y="47.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_4" bpmnElement="Task_4" isExpanded="true">
+        <dc:Bounds height="76.0" width="110.0" x="430.0" y="35.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_3">
+          <dc:Bounds height="68.0" width="109.0" x="430.0" y="39.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_4" bpmnElement="EndEvent_4">
+        <dc:Bounds height="36.0" width="36.0" x="608.0" y="55.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_4">
+          <dc:Bounds height="17.0" width="26.0" x="613.0" y="91.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_2" bpmnElement="ExclusiveGateway_2" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="320.0" y="48.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_5"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_5" bpmnElement="EndEvent_5">
+        <dc:Bounds height="36.0" width="36.0" x="438.0" y="155.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_6">
+          <dc:Bounds height="17.0" width="26.0" x="443.0" y="191.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_BoundaryEvent_1" bpmnElement="BoundaryEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="202.0" y="91.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_7"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_BoundaryEvent_2" bpmnElement="BoundaryEvent_2">
+        <dc:Bounds height="36.0" width="36.0" x="482.0" y="93.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_8"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_1" bpmnElement="ExclusiveGateway_1" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="320.0" y="310.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_9"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CallActivity_1" bpmnElement="CallActivity_1" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="290.0" y="420.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_10">
+          <dc:Bounds height="17.0" width="86.0" x="302.0" y="436.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_1" bpmnElement="EndEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="468.0" y="427.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_11">
+          <dc:Bounds height="17.0" width="79.0" x="447.0" y="463.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_9" bpmnElement="SequenceFlow_9" sourceElement="BPMNShape_StartEvent_1" targetElement="BPMNShape_Task_3">
+        <di:waypoint xsi:type="dc:Point" x="96.0" y="73.0"/>
+        <di:waypoint xsi:type="dc:Point" x="133.0" y="73.0"/>
+        <di:waypoint xsi:type="dc:Point" x="170.0" y="72.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_12"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_11" bpmnElement="SequenceFlow_11" sourceElement="BPMNShape_Task_3" targetElement="BPMNShape_ExclusiveGateway_2">
+        <di:waypoint xsi:type="dc:Point" x="280.0" y="72.0"/>
+        <di:waypoint xsi:type="dc:Point" x="300.0" y="72.0"/>
+        <di:waypoint xsi:type="dc:Point" x="320.0" y="73.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_13"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_12" bpmnElement="SequenceFlow_12" sourceElement="BPMNShape_Task_4" targetElement="BPMNShape_EndEvent_4">
+        <di:waypoint xsi:type="dc:Point" x="540.0" y="73.0"/>
+        <di:waypoint xsi:type="dc:Point" x="574.0" y="73.0"/>
+        <di:waypoint xsi:type="dc:Point" x="608.0" y="73.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_14"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_13" bpmnElement="SequenceFlow_13" sourceElement="BPMNShape_ExclusiveGateway_2" targetElement="BPMNShape_Task_4">
+        <di:waypoint xsi:type="dc:Point" x="370.0" y="73.0"/>
+        <di:waypoint xsi:type="dc:Point" x="400.0" y="73.0"/>
+        <di:waypoint xsi:type="dc:Point" x="430.0" y="73.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_15">
+          <dc:Bounds height="51.0" width="61.0" x="370.0" y="74.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_14" bpmnElement="SequenceFlow_14" sourceElement="BPMNShape_ExclusiveGateway_2" targetElement="BPMNShape_EndEvent_5">
+        <di:waypoint xsi:type="dc:Point" x="345.0" y="98.0"/>
+        <di:waypoint xsi:type="dc:Point" x="345.0" y="173.0"/>
+        <di:waypoint xsi:type="dc:Point" x="438.0" y="173.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_16"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="SequenceFlow_1" sourceElement="BPMNShape_BoundaryEvent_2" targetElement="BPMNShape_ExclusiveGateway_1">
+        <di:waypoint xsi:type="dc:Point" x="500.0" y="129.0"/>
+        <di:waypoint xsi:type="dc:Point" x="500.0" y="335.0"/>
+        <di:waypoint xsi:type="dc:Point" x="370.0" y="335.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_17"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="SequenceFlow_3" sourceElement="BPMNShape_BoundaryEvent_1" targetElement="BPMNShape_ExclusiveGateway_1">
+        <di:waypoint xsi:type="dc:Point" x="220.0" y="127.0"/>
+        <di:waypoint xsi:type="dc:Point" x="220.0" y="335.0"/>
+        <di:waypoint xsi:type="dc:Point" x="320.0" y="335.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_18"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_4" bpmnElement="SequenceFlow_4" sourceElement="BPMNShape_ExclusiveGateway_1" targetElement="BPMNShape_CallActivity_1">
+        <di:waypoint xsi:type="dc:Point" x="345.0" y="360.0"/>
+        <di:waypoint xsi:type="dc:Point" x="345.0" y="390.0"/>
+        <di:waypoint xsi:type="dc:Point" x="345.0" y="420.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_19"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_5" bpmnElement="SequenceFlow_5" sourceElement="BPMNShape_CallActivity_1" targetElement="BPMNShape_EndEvent_1">
+        <di:waypoint xsi:type="dc:Point" x="400.0" y="445.0"/>
+        <di:waypoint xsi:type="dc:Point" x="434.0" y="445.0"/>
+        <di:waypoint xsi:type="dc:Point" x="468.0" y="445.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_20"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

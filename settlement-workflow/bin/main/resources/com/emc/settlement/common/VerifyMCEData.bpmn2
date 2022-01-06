@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- origin at X=0.0 Y=0.0 -->
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:java="http://www.java.com/javaTypes" xmlns:tns="http://www.jboss.org/drools" xmlns="http://www.jboss.org/drools" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd" id="Definition" exporter="org.eclipse.bpmn2.modeler.core" exporterVersion="1.4.2.Final-v20171109-1930-B1" expressionLanguage="http://www.mvel.org/2.0" targetNamespace="http://www.jboss.org/drools" typeLanguage="http://www.java.com/javaTypes">
+  <bpmn2:itemDefinition id="ItemDefinition_212" isCollection="false" structureRef="com.emc.drcap.nemsprerequisite.VerifyMCEDataDO"/>
+  <bpmn2:itemDefinition id="ItemDefinition_561" isCollection="false" structureRef="java.lang.String"/>
+  <bpmn2:itemDefinition id="ItemDefinition_1166" isCollection="false" structureRef="com.emc.settlement.model.backend.pojo.SettlementRunParams"/>
+  <bpmn2:itemDefinition id="ItemDefinition_1168" isCollection="false" structureRef="com.emc.settlement.model.backend.pojo.PeriodNumber"/>
+  <bpmn2:itemDefinition id="ItemDefinition_1692" isCollection="false" structureRef="com.emc.settlement.model.backend.pojo.SettRunPkg"/>
+  <bpmn2:itemDefinition id="ItemDefinition_1" isCollection="false" structureRef="java.lang.Boolean"/>
+  <bpmn2:itemDefinition id="ItemDefinition_232" isCollection="false" structureRef="java.lang.Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_8" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_9" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_10" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_11" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_12" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_13" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_121" isCollection="false" structureRef="java.lang.Exception"/>
+  <bpmn2:itemDefinition id="ItemDefinition_938" isCollection="false" structureRef="java.lang.RuntimeException"/>
+  <bpmn2:itemDefinition id="ItemDefinition_1077" isCollection="false" structureRef="java.lang.Short"/>
+  <bpmn2:itemDefinition id="ItemDefinition_14" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_15" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_16" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_65" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_3" isCollection="false" structureRef="org.slf4j.Logger"/>
+  <bpmn2:itemDefinition id="ItemDefinition_5" isCollection="false" structureRef="org.slf4j.LoggerFactory"/>
+  <bpmn2:error id="Error_1" name="runtimeException" structureRef="ItemDefinition_938"/>
+  <bpmn2:process id="VerifyMCEData" tns:packageName="com.emc.settlement.common" name="VerifyMCEData" isExecutable="true" processType="Private">
+    <bpmn2:extensionElements>
+      <tns:import name="com.emc.drcap.nemsprerequisite.VerifyMCEDataDO"/>
+      <tns:import name="com.emc.settlement.model.backend.pojo.SettlementRunParams"/>
+      <tns:import name="com.emc.settlement.model.backend.pojo.PeriodNumber"/>
+      <tns:import name="com.emc.settlement.model.backend.pojo.SettRunPkg"/>
+      <tns:import name="java.lang.Exception"/>
+      <tns:import name="java.lang.RuntimeException"/>
+      <tns:import name="org.slf4j.Logger"/>
+      <tns:import name="org.slf4j.LoggerFactory"/>
+    </bpmn2:extensionElements>
+    <bpmn2:property id="wsVerifyMCEDataResponse" itemSubjectRef="ItemDefinition_212" name="wsVerifyMCEDataResponse"/>
+    <bpmn2:property id="settlementParam" itemSubjectRef="ItemDefinition_1166" name="settlementParam"/>
+    <bpmn2:property id="pd" itemSubjectRef="ItemDefinition_1168" name="pd"/>
+    <bpmn2:property id="settRunPackage" itemSubjectRef="ItemDefinition_1692" name="settRunPackage"/>
+    <bpmn2:property id="valid" itemSubjectRef="ItemDefinition_1" name="valid"/>
+    <bpmn2:property id="wsParam" itemSubjectRef="ItemDefinition_232" name="wsParam"/>
+    <bpmn2:property id="runtimeException" itemSubjectRef="ItemDefinition_938" name="runtimeException"/>
+    <bpmn2:property id="soapServiceUrl" itemSubjectRef="ItemDefinition_561" name="soapServiceUrl"/>
+    <bpmn2:property id="scriptlogger" itemSubjectRef="ItemDefinition_3" name="scriptlogger"/>
+    <bpmn2:startEvent id="StartEvent_1" name="Start">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Start]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:task id="Task_1" tns:taskName="WebService" tns:displayName="WS" tns:icon="defaultservicenodeicon.png" name="WS Call Verify MC Prices">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[WS Call Verify MC Prices]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;VerifyMCEData&quot;);
+log.info(&quot;Calling WS Verify MCE Prices&quot;);
+log.info(&quot;Eve Id   :  &quot;+settlementParam.getRunEveId());
+log.info(&quot;Standing Version   :  &quot;+settRunPackage.getStandingVersion());
+log.info(&quot;Total   :  &quot;+pd.getTotal());
+log.info(&quot;Sum   :  &quot;+pd.getSum());
+log.info(&quot;Sum2   :  &quot;+pd.getSum2());
+log.info(&quot;Avg3  :  &quot;+pd.getAvg3());
+log.info(&quot;Sett Date   :  &quot;+settlementParam.getSettlementDate());
+log.info(&quot;Price Pkg Version   :  &quot;+settRunPackage.getMcPricePkgVer());
+log.info(&quot;valid   :  &quot;+valid);
+wsParam = new Object[]{ &quot;[EMC]&quot;, settlementParam.getRunEveId(),  settRunPackage.getStandingVersion(), pd.getTotal(), pd.getSum(), pd.getSum2(), pd.getAvg3(), ParamUtil.toXMLGregorianCalendar(settlementParam.getSettlementDate()), settRunPackage.getMcPricePkgVer(), valid};
+kcontext.setVariable(&quot;wsParam&quot;, wsParam);</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>kcontext.setVariable(&quot;wsVerifyMCEDataResponse&quot;, wsVerifyMCEDataResponse);
+Logger log = LoggerFactory.getLogger(&quot;VerifyMCEData&quot;);
+log.info(&quot;Verify MCE Prices Result : &quot;+wsVerifyMCEDataResponse);
+log.info(&quot;Completed WS Verify MCE Prices&quot;);
+
+</tns:script>
+        </tns:onExit-script>
+        <tns:metaData name="customAsync">
+          <tns:metaValue><![CDATA[true]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_1">
+        <bpmn2:dataInput id="DataInput_5" itemSubjectRef="ItemDefinition_232" name="Parameter"/>
+        <bpmn2:dataInput id="DataInput_15" itemSubjectRef="ItemDefinition_8" name="Url"/>
+        <bpmn2:dataInput id="DataInput_16" itemSubjectRef="ItemDefinition_9" name="Namespace"/>
+        <bpmn2:dataInput id="DataInput_17" itemSubjectRef="ItemDefinition_10" name="Interface"/>
+        <bpmn2:dataInput id="DataInput_18" itemSubjectRef="ItemDefinition_11" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_19" itemSubjectRef="ItemDefinition_12" name="Endpoint"/>
+        <bpmn2:dataInput id="DataInput_20" itemSubjectRef="ItemDefinition_13" name="Mode"/>
+        <bpmn2:dataOutput id="DataOutput_9" itemSubjectRef="ItemDefinition_212" name="Result"/>
+        <bpmn2:inputSet id="InputSet_1">
+          <bpmn2:dataInputRefs>DataInput_5</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_15</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_16</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_17</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_18</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_19</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_20</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_1">
+          <bpmn2:dataOutputRefs>DataOutput_9</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_1">
+        <bpmn2:assignment id="Assignment_1">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_1">http://10.1.152.160:7413/NEMSPrerequisiteService/VerifyMCEData?WSDL</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_2">DataInput_8</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_2">
+        <bpmn2:assignment id="Assignment_2">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_3">http://nemsprerequisite.drcap.emc.com/</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_4">DataInput_9</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_3">
+        <bpmn2:assignment id="Assignment_3">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_5">VerifyMCEDataWS</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_6">DataInput_10</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_4">
+        <bpmn2:assignment id="Assignment_4">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_7">verifyPrices</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_8">DataInput_11</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_5">
+        <bpmn2:sourceRef>wsParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_5</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_6">
+        <bpmn2:assignment id="Assignment_5">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_9">http://10.1.152.160:7413/NEMSPrerequisiteService/VerifyMCEData</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_10">DataInput_13</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_7">
+        <bpmn2:assignment id="Assignment_6">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_11">SYNC</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_12">DataInput_14</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_15">
+        <bpmn2:targetRef>DataInput_15</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_13">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_29">#{soapServiceUrl}/NEMSPrerequisiteService/VerifyMCEData?WSDL</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_27">DataInput_15</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_16">
+        <bpmn2:targetRef>DataInput_16</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_14">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_32">http://nemsprerequisite.drcap.emc.com/</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_30">DataInput_16</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_17">
+        <bpmn2:targetRef>DataInput_17</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_15">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_35">VerifyMCEDataWS</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_33">DataInput_17</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_18">
+        <bpmn2:targetRef>DataInput_18</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_16">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_38">verifyPrices</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_36">DataInput_18</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_19">
+        <bpmn2:targetRef>DataInput_19</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_17">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_41">#{soapServiceUrl}/NEMSPrerequisiteService/VerifyMCEData</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_39">DataInput_19</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_20">
+        <bpmn2:targetRef>DataInput_20</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_18">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_44">SYNC</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_42">DataInput_20</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_7">
+        <bpmn2:sourceRef>DataOutput_9</bpmn2:sourceRef>
+        <bpmn2:targetRef>wsVerifyMCEDataResponse</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:task id="Task_2" tns:taskName="WebService" tns:displayName="WS" tns:icon="defaultservicenodeicon.png" name="WS Call Verify MC Quantities">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[WS Call Verify MC Quantities]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;VerifyMCEData&quot;);
+log.info(&quot;Calling WS Verify MCE Quantities&quot;);
+wsParam = new Object[]{ &quot;[EMC]&quot;, settlementParam.getRunEveId(),  settRunPackage.getStandingVersion(), pd.getTotal(), pd.getSum(), pd.getSum2(), pd.getAvg3(), ParamUtil.toXMLGregorianCalendar(settlementParam.getSettlementDate()), settRunPackage.getMcQtyPkgVer(), valid};
+kcontext.setVariable(&quot;wsParam&quot;, wsParam);</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>kcontext.setVariable(&quot;wsVerifyMCEDataResponse&quot;, wsVerifyMCEDataResponse);
+Logger log = LoggerFactory.getLogger(&quot;VerifyMCEData&quot;);
+log.info(&quot;Completed WS Verify MCE Quantities&quot;);
+</tns:script>
+        </tns:onExit-script>
+        <tns:metaData name="customAsync">
+          <tns:metaValue><![CDATA[true]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_5</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_2">
+        <bpmn2:dataInput id="DataInput_8" name="Url"/>
+        <bpmn2:dataInput id="DataInput_9" name="Namespace"/>
+        <bpmn2:dataInput id="DataInput_10" name="Interface"/>
+        <bpmn2:dataInput id="DataInput_11" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_12" itemSubjectRef="ItemDefinition_232" name="Parameter"/>
+        <bpmn2:dataInput id="DataInput_13" name="Endpoint"/>
+        <bpmn2:dataInput id="DataInput_14" name="Mode"/>
+        <bpmn2:dataOutput id="DataOutput_10" itemSubjectRef="ItemDefinition_212" name="Result"/>
+        <bpmn2:inputSet id="InputSet_2">
+          <bpmn2:dataInputRefs>DataInput_8</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_9</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_10</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_11</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_12</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_13</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_14</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_2">
+          <bpmn2:dataOutputRefs>DataOutput_10</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_8">
+        <bpmn2:targetRef>DataInput_8</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_7">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_13">#{soapServiceUrl}/NEMSPrerequisiteService/VerifyMCEData?WSDL</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_14">DataInput_8</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_9">
+        <bpmn2:targetRef>DataInput_9</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_8">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_15">http://nemsprerequisite.drcap.emc.com/</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_16">DataInput_9</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_10">
+        <bpmn2:targetRef>DataInput_10</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_9">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_17">VerifyMCEDataWS</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_18">DataInput_10</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_11">
+        <bpmn2:targetRef>DataInput_11</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_10">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_19">verifyMCQData</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_20">DataInput_11</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_12">
+        <bpmn2:sourceRef>wsParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_12</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_13">
+        <bpmn2:targetRef>DataInput_13</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_11">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_21">#{soapServiceUrl}/NEMSPrerequisiteService/VerifyMCEData</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_22">DataInput_13</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_14">
+        <bpmn2:targetRef>DataInput_14</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_12">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_23">SYNC</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_24">DataInput_14</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_8">
+        <bpmn2:sourceRef>DataOutput_10</bpmn2:sourceRef>
+        <bpmn2:targetRef>wsVerifyMCEDataResponse</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_1" tns:priority="1" sourceRef="StartEvent_1" targetRef="Task_1"/>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_1" gatewayDirection="Diverging">
+      <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_2" tns:priority="1" sourceRef="Task_1" targetRef="ExclusiveGateway_1"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_3" tns:priority="1" name="Price Valid" sourceRef="ExclusiveGateway_1" targetRef="Task_2">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_25" language="http://www.java.com/java">return  wsVerifyMCEDataResponse.getResult().equalsIgnoreCase(&quot;NA&quot;);</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:endEvent id="EndEvent_1" name="End">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[End]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
+      <bpmn2:terminateEventDefinition id="TerminateEventDefinition_1"/>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_4" tns:priority="1" sourceRef="ExclusiveGateway_1" targetRef="EndEvent_1">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_26" language="http://www.java.com/java">return  !wsVerifyMCEDataResponse.getResult().equalsIgnoreCase(&quot;NA&quot;);</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:endEvent id="EndEvent_2" name="End">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[End]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_5</bpmn2:incoming>
+      <bpmn2:terminateEventDefinition id="TerminateEventDefinition_2"/>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_5" tns:priority="1" sourceRef="Task_2" targetRef="EndEvent_2"/>
+    <bpmn2:subProcess id="SubProcess_1" name="Event Handler" triggeredByEvent="true">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Event Handler]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:startEvent id="StartEvent_2" name="Start Error Event">
+        <bpmn2:extensionElements>
+          <tns:metaData name="elementname">
+            <tns:metaValue><![CDATA[Start Error Event]]></tns:metaValue>
+          </tns:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:outgoing>SequenceFlow_7</bpmn2:outgoing>
+        <bpmn2:dataOutput id="DataOutput_1" itemSubjectRef="ItemDefinition_938" name="Error_3_Output"/>
+        <bpmn2:dataOutputAssociation id="DataOutputAssociation_1">
+          <bpmn2:sourceRef>DataOutput_1</bpmn2:sourceRef>
+          <bpmn2:targetRef>runtimeException</bpmn2:targetRef>
+        </bpmn2:dataOutputAssociation>
+        <bpmn2:outputSet id="OutputSet_5" name="Output Set 5">
+          <bpmn2:dataOutputRefs>DataOutput_1</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+        <bpmn2:errorEventDefinition id="ErrorEventDefinition_3" errorRef="Error_1"/>
+      </bpmn2:startEvent>
+      <bpmn2:endEvent id="EndEvent_3" name="End Event 3">
+        <bpmn2:extensionElements>
+          <tns:metaData name="elementname">
+            <tns:metaValue><![CDATA[End Event 3]]></tns:metaValue>
+          </tns:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SequenceFlow_8</bpmn2:incoming>
+      </bpmn2:endEvent>
+      <bpmn2:task id="Task_3" tns:taskName="VerifyMCEDataWIH" tns:displayName="VerifyMCEDataWIH" tns:icon="icon-info.gif" name="Log JAM Message">
+        <bpmn2:extensionElements>
+          <tns:metaData name="elementname">
+            <tns:metaValue><![CDATA[Log JAM Message]]></tns:metaValue>
+          </tns:metaData>
+          <tns:metaData name="customAsync">
+            <tns:metaValue><![CDATA[true]]></tns:metaValue>
+          </tns:metaData>
+          <tns:onEntry-script scriptFormat="http://www.java.com/java">
+            <tns:script>
+Logger log = LoggerFactory.getLogger(&quot;VerifyMCEData&quot;);
+log.info(&quot;Verify MCE Data Exception: &quot;+runtimeException.getMessage());</tns:script>
+          </tns:onEntry-script>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_8</bpmn2:outgoing>
+        <bpmn2:ioSpecification id="InputOutputSpecification_3">
+          <bpmn2:dataInput id="DataInput_1" name="className"/>
+          <bpmn2:dataInput id="DataInput_7" itemSubjectRef="ItemDefinition_561" name="TaskName"/>
+          <bpmn2:dataInput id="DataInput_22" itemSubjectRef="ItemDefinition_561" name="Operation"/>
+          <bpmn2:dataInput id="DataInput_25" itemSubjectRef="ItemDefinition_561" name="execStep"/>
+          <bpmn2:dataInput id="DataInput_24" itemSubjectRef="ItemDefinition_561" name="severity"/>
+          <bpmn2:dataInput id="DataInput_27" itemSubjectRef="ItemDefinition_1166" name="settlementParam"/>
+          <bpmn2:dataInput id="DataInput_28" itemSubjectRef="ItemDefinition_561" name="processName"/>
+          <bpmn2:inputSet id="_InputSet_93">
+            <bpmn2:dataInputRefs>DataInput_1</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_7</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_22</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_24</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_25</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_27</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_28</bpmn2:dataInputRefs>
+          </bpmn2:inputSet>
+          <bpmn2:outputSet id="OutputSet_3" name="Output Set 3"/>
+        </bpmn2:ioSpecification>
+        <bpmn2:dataInputAssociation id="_DataInputAssociation_315">
+          <bpmn2:targetRef>DataInput_1</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_25">
+          <bpmn2:targetRef>DataInput_7</bpmn2:targetRef>
+          <bpmn2:assignment id="Assignment_22">
+            <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_50">VerifyMCEDataWIH</bpmn2:from>
+            <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_48">DataInput_7</bpmn2:to>
+          </bpmn2:assignment>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_27">
+          <bpmn2:targetRef>DataInput_22</bpmn2:targetRef>
+          <bpmn2:assignment id="Assignment_24">
+            <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_56">logJAMMessage</bpmn2:from>
+            <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_54">DataInput_22</bpmn2:to>
+          </bpmn2:assignment>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_29">
+          <bpmn2:targetRef>DataInput_24</bpmn2:targetRef>
+          <bpmn2:assignment id="Assignment_25">
+            <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_59">E</bpmn2:from>
+            <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_57">DataInput_24</bpmn2:to>
+          </bpmn2:assignment>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_30">
+          <bpmn2:targetRef>DataInput_25</bpmn2:targetRef>
+          <bpmn2:assignment id="Assignment_26">
+            <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_62">&quot;Verify MCE Data&quot;</bpmn2:from>
+            <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_60">DataInput_25</bpmn2:to>
+          </bpmn2:assignment>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_32">
+          <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+          <bpmn2:targetRef>DataInput_27</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_33">
+          <bpmn2:targetRef>DataInput_28</bpmn2:targetRef>
+          <bpmn2:assignment id="Assignment_27">
+            <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_65">VerifyMCEData</bpmn2:from>
+            <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_63">DataInput_28</bpmn2:to>
+          </bpmn2:assignment>
+        </bpmn2:dataInputAssociation>
+      </bpmn2:task>
+      <bpmn2:sequenceFlow id="SequenceFlow_7" tns:priority="1" sourceRef="StartEvent_2" targetRef="Task_3"/>
+      <bpmn2:sequenceFlow id="SequenceFlow_8" tns:priority="1" sourceRef="Task_3" targetRef="EndEvent_3"/>
+    </bpmn2:subProcess>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_Process_1" bpmnElement="VerifyMCEData">
+      <bpmndi:BPMNShape id="BPMNShape_SubProcess_1" bpmnElement="SubProcess_1" isExpanded="true">
+        <dc:Bounds height="150.0" width="621.0" x="230.0" y="485.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_1">
+          <dc:Bounds height="17.0" width="91.0" x="236.0" y="488.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_StartEvent_1" bpmnElement="StartEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="140.0" y="245.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_2">
+          <dc:Bounds height="17.0" width="31.0" x="142.0" y="281.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_1" bpmnElement="Task_1" isExpanded="true">
+        <dc:Bounds height="72.0" width="110.0" x="280.0" y="227.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_3">
+          <dc:Bounds height="34.0" width="110.0" x="280.0" y="246.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_2" bpmnElement="Task_2" isExpanded="true">
+        <dc:Bounds height="72.0" width="110.0" x="660.0" y="227.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_4">
+          <dc:Bounds height="34.0" width="110.0" x="660.0" y="246.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_1" bpmnElement="ExclusiveGateway_1" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="460.0" y="238.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_5"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_1" bpmnElement="EndEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="467.0" y="345.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_6">
+          <dc:Bounds height="17.0" width="26.0" x="472.0" y="381.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_2" bpmnElement="EndEvent_2">
+        <dc:Bounds height="36.0" width="36.0" x="890.0" y="245.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_7">
+          <dc:Bounds height="17.0" width="26.0" x="895.0" y="281.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_StartEvent_2" bpmnElement="StartEvent_2">
+        <dc:Bounds height="36.0" width="36.0" x="342.0" y="540.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_8">
+          <dc:Bounds height="34.0" width="80.0" x="320.0" y="576.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_3" bpmnElement="EndEvent_3">
+        <dc:Bounds height="36.0" width="36.0" x="627.0" y="540.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_10">
+          <dc:Bounds height="17.0" width="79.0" x="606.0" y="576.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_3" bpmnElement="Task_3" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="450.0" y="533.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="34.0" width="67.0" x="471.0" y="541.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="SequenceFlow_1" sourceElement="BPMNShape_StartEvent_1" targetElement="BPMNShape_Task_1">
+        <di:waypoint xsi:type="dc:Point" x="176.0" y="263.0"/>
+        <di:waypoint xsi:type="dc:Point" x="228.0" y="263.0"/>
+        <di:waypoint xsi:type="dc:Point" x="280.0" y="263.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_11"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_2" bpmnElement="SequenceFlow_2" sourceElement="BPMNShape_Task_1" targetElement="BPMNShape_ExclusiveGateway_1">
+        <di:waypoint xsi:type="dc:Point" x="390.0" y="263.0"/>
+        <di:waypoint xsi:type="dc:Point" x="425.0" y="263.0"/>
+        <di:waypoint xsi:type="dc:Point" x="460.0" y="263.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_12"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="SequenceFlow_3" sourceElement="BPMNShape_ExclusiveGateway_1" targetElement="BPMNShape_Task_2">
+        <di:waypoint xsi:type="dc:Point" x="510.0" y="263.0"/>
+        <di:waypoint xsi:type="dc:Point" x="585.0" y="263.0"/>
+        <di:waypoint xsi:type="dc:Point" x="660.0" y="263.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_13">
+          <dc:Bounds height="17.0" width="69.0" x="551.0" y="264.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_4" bpmnElement="SequenceFlow_4" sourceElement="BPMNShape_ExclusiveGateway_1" targetElement="BPMNShape_EndEvent_1">
+        <di:waypoint xsi:type="dc:Point" x="485.0" y="288.0"/>
+        <di:waypoint xsi:type="dc:Point" x="485.0" y="316.0"/>
+        <di:waypoint xsi:type="dc:Point" x="485.0" y="345.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_14"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_5" bpmnElement="SequenceFlow_5" sourceElement="BPMNShape_Task_2" targetElement="BPMNShape_EndEvent_2">
+        <di:waypoint xsi:type="dc:Point" x="770.0" y="263.0"/>
+        <di:waypoint xsi:type="dc:Point" x="830.0" y="263.0"/>
+        <di:waypoint xsi:type="dc:Point" x="890.0" y="263.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_15"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_7" bpmnElement="SequenceFlow_7" sourceElement="BPMNShape_StartEvent_2" targetElement="BPMNShape_Task_3">
+        <di:waypoint xsi:type="dc:Point" x="378.0" y="558.0"/>
+        <di:waypoint xsi:type="dc:Point" x="414.0" y="558.0"/>
+        <di:waypoint xsi:type="dc:Point" x="450.0" y="558.0"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_8" bpmnElement="SequenceFlow_8" sourceElement="BPMNShape_Task_3" targetElement="BPMNShape_EndEvent_3">
+        <di:waypoint xsi:type="dc:Point" x="560.0" y="558.0"/>
+        <di:waypoint xsi:type="dc:Point" x="593.0" y="558.0"/>
+        <di:waypoint xsi:type="dc:Point" x="627.0" y="558.0"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

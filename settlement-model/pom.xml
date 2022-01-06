@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.emc</groupId>
+  <artifactId>settlement-model</artifactId>
+  <version>${project.version}</version>
+  <name>settlement-model</name>
+  <url>http://maven.apache.org</url>
+  
+  <build>
+	<finalName>settlement-model</finalName>
+	
+	<plugins>
+		<plugin>
+			<artifactId>maven-antrun-plugin</artifactId>
+			<executions>
+			  <execution>
+				<phase>install</phase>
+				<configuration>
+				  <tasks>
+				  <mkdir dir="${user.home}\.m2\repository\com\emc\settlement-model\${project.version}"/>
+				  <zip destfile="${basedir}/target/${project.artifactId}_${project.version}.zip">  
+				  <zipfileset dir="${user.home}\.m2\repository\com\emc\settlement-model\${project.version}" includes="**/*" />
+					</zip>
+				  </tasks>
+				</configuration>
+				<goals>
+				  <goal>run</goal>
+				</goals>
+			  </execution>
+			</executions>
+		   </plugin>
+		   
+		   <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<finalName>settlement-model-${v}</finalName>
+				</configuration>
+			</plugin>
+		   
+	   </plugins>
+	
+</build>
+  
+  <properties>
+    <version.war.plugin>3.2.0</version.war.plugin>
+    <version.surefire.plugin>2.10</version.surefire.plugin>
+    <!-- <version.jboss.bom.eap>6.4.0.GA</version.jboss.bom.eap> -->
+	<project.version>1.24</project.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <version.jboss.maven.plugin>7.9.Final</version.jboss.maven.plugin>
+    <!-- <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> -->
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+  <dependencyManagement />
+  <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.2</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>3.2-FINAL</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.jaxrs</groupId>
+      <artifactId>jackson-jaxrs-json-provider</artifactId>
+      <version>2.9.4</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.6.3</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+	<groupId>org.projectlombok</groupId>
+	<artifactId>lombok</artifactId>
+	<version>1.16.20</version>
+    </dependency>
+  </dependencies>
+</project>

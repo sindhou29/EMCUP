@@ -1,0 +1,41 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import java.util.List;
+import com.emc.sett.impl.*;
+
+/*
+* the interval’s energy uplift amount = the interval’s HEUSA + the interval’s MEUSA
+*
+* the interval’s accounting energy uplift amount = the interval’s energy uplift amount * -1
+*/
+rule "4.1 THE MONTHLY ENERGY UPLIFT CHARGE - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( accountingEua == null, heusa != null && meusa != null, $heusa : heusa,  $meusa : meusa )
+    then
+        $i.setEua( $heusa.add( $meusa ) );
+        $i.setAccountingEua( $i.getEua().negate() );
+        update( $i );
+end
+
+/*
+* the account's energy uplift amount = InstanceSum(the account's intervals, the interval’s accounting energy uplift amount)
+*/
+rule "4.1 THE MONTHLY ENERGY UPLIFT CHARGE - account level"
+ruleflow-group "acct_stmt"
+salience -2
+    when
+    	$a : Account( eua == null, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId, accountingEua != null ) )
+        $eua : BigDecimal() from accumulate(
+        							Period( accountingEua != null, amt : accountingEua ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setEua( $eua );
+        update( $a );
+end
+

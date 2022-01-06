@@ -1,0 +1,69 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import java.util.List;
+import com.emc.sett.impl.*;
+
+/*
+* the node’s NTSC = Round(For(the node's FTR contract, the FTR contract’s FTQ) * (For(the node’s interval, the interval’s USEP) – the node’s MEP), 2)
+*
+* the node’s accounting NTSC = the node’s NTSC * 1
+*/
+rule "3.4 NET TRANSMISSION RIGHTS SETTLEMENT CREDITS (NTSC) - node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( ntsc == null, mep != null, $pd : periodId, $id : facilityId, $mep : mep )
+    	Ftr( ftq != null, periodId == $pd && nodeId == $id, $ftq : ftq )
+        Market( periodId == $pd && usep >= 0, $usep : usep )
+    then
+        $n.setNtsc( $usep.subtract($mep).multiply($ftq).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $n.setAccountingNtsc( $n.getNtsc() );
+        update( $n );
+end
+
+/*
+* the interval’s NTSC = InstanceSum(the interval’s nodes, the node’s NTSC)
+*/
+rule "3.4 NET TRANSMISSION RIGHTS SETTLEMENT CREDITS (NTSC) - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( ntsc == null, $pd : periodId, $sa : accountId )
+    	$ns : List() from collect( Facility( $pd == periodId && $sa == accountId ) )
+        $ntsc : BigDecimal() from accumulate(
+        							Facility( ntsc != null, amt : ntsc ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setNtsc( $ntsc );
+        update( $i );
+end
+
+/*
+* the account’s NTSC = InstanceSum(the account's intervals, the interval’s NTSC)
+*
+* the account’s input GST for NTSC = 0
+*
+* the account’s output GST for NTSC = 0
+*
+* the account’s total NTSC = the account’s NTSC
+*/
+rule "3.4 NET TRANSMISSION RIGHTS SETTLEMENT CREDITS (NTSC) - account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( ntsc == null, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $ntsc : BigDecimal() from accumulate(
+        							Period( ntsc != null, amt : ntsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setNtsc( $ntsc );
+        $a.setIpGstNtsc( BigDecimal.ZERO );
+        $a.setOpGstNtsc( BigDecimal.ZERO );
+        $a.setTotalNtsc( $a.getNtsc() );
+        update( $a );
+end

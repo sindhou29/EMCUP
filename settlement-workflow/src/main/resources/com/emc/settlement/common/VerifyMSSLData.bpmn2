@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- origin at X=0.0 Y=0.0 -->
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:java="http://www.java.com/javaTypes" xmlns:tns="http://www.jboss.org/drools" xmlns="http://www.jboss.org/drools" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd" id="Definition" exporter="org.eclipse.bpmn2.modeler.core" exporterVersion="1.4.3.Final-v20180418-1358-B1" expressionLanguage="http://www.mvel.org/2.0" targetNamespace="http://www.jboss.org/drools" typeLanguage="http://www.java.com/javaTypes">
+  <bpmn2:itemDefinition id="ItemDefinition_10" isCollection="false" structureRef="java.lang.Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_254" isCollection="false" structureRef="com.emc.drcap.nemsprerequisite.VerifyMSSLData"/>
+  <bpmn2:itemDefinition id="ItemDefinition_292" isCollection="false" structureRef="com.emc.drcap.nemsprerequisite.VerifyMCEDataDO"/>
+  <bpmn2:itemDefinition id="ItemDefinition_519" isCollection="false" structureRef="com.emc.settlement.model.backend.pojo.SettlementRunParams"/>
+  <bpmn2:itemDefinition id="ItemDefinition_539" isCollection="false" structureRef="com.emc.settlement.model.backend.pojo.SettRunPkg"/>
+  <bpmn2:itemDefinition id="ItemDefinition_559" isCollection="false" structureRef="com.emc.settlement.model.backend.pojo.PeriodNumber"/>
+  <bpmn2:itemDefinition id="ItemDefinition_28" isCollection="false" structureRef="java.lang.String"/>
+  <bpmn2:itemDefinition id="ItemDefinition_2" isCollection="false" structureRef="org.slf4j.Logger"/>
+  <bpmn2:itemDefinition id="ItemDefinition_4" isCollection="false" structureRef="org.slf4j.LoggerFactory"/>
+  <bpmn2:itemDefinition id="ItemDefinition_3" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_892" isCollection="false" structureRef="java.lang.RuntimeException"/>
+  <bpmn2:itemDefinition id="ItemDefinition_1214" isCollection="false" structureRef="com.emc.settlement.model.backend.exceptions.SettlementRunException"/>
+  <bpmn2:error id="Error_1" name="Error 1" structureRef="ItemDefinition_892"/>
+  <bpmn2:process id="VerifyMSSLData" tns:packageName="com.emc.settlement.common" name="VerifyMSSLData" isExecutable="true" processType="Private">
+    <bpmn2:extensionElements>
+      <tns:import name="com.emc.drcap.nemsprerequisite.VerifyMSSLData"/>
+      <tns:import name="com.emc.drcap.nemsprerequisite.VerifyMCEDataDO"/>
+      <tns:import name="com.emc.settlement.model.backend.pojo.SettlementRunParams"/>
+      <tns:import name="com.emc.settlement.model.backend.pojo.SettRunPkg"/>
+      <tns:import name="com.emc.settlement.model.backend.pojo.PeriodNumber"/>
+      <tns:import name="org.slf4j.Logger"/>
+      <tns:import name="org.slf4j.LoggerFactory"/>
+      <tns:import name="java.lang.RuntimeException"/>
+      <tns:import name="com.emc.settlement.model.backend.exceptions.SettlementRunException"/>
+    </bpmn2:extensionElements>
+    <bpmn2:property id="wsParam" itemSubjectRef="ItemDefinition_10" name="wsParam"/>
+    <bpmn2:property id="wsVerifyMSSLDataResponse" itemSubjectRef="ItemDefinition_292" name="wsVerifyMSSLDataResponse"/>
+    <bpmn2:property id="pd" itemSubjectRef="ItemDefinition_559" name="pd"/>
+    <bpmn2:property id="settlementParam" itemSubjectRef="ItemDefinition_519" name="settlementParam"/>
+    <bpmn2:property id="settRunPackage" itemSubjectRef="ItemDefinition_539" name="settRunPackage"/>
+    <bpmn2:property id="soapServiceUrl" itemSubjectRef="ItemDefinition_28" name="soapServiceUrl"/>
+    <bpmn2:property id="scriptlogger" itemSubjectRef="ItemDefinition_2" name="scriptlogger"/>
+    <bpmn2:property id="valid" itemSubjectRef="ItemDefinition_28" name="valid"/>
+    <bpmn2:property id="runtimeException" itemSubjectRef="ItemDefinition_892" name="runtimeException"/>
+    <bpmn2:property id="exception" itemSubjectRef="ItemDefinition_1214" name="exception"/>
+    <bpmn2:startEvent id="StartEvent_1" name="StartProcess">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[StartProcess]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:task id="Task_1" tns:taskName="WebService" tns:displayName="WS" tns:icon="defaultservicenodeicon.png" name="Call WS Verify MSSL Data">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Call WS Verify MSSL Data]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;VerifyMSSLData&quot;);
+log.info(&quot;Calling WS Verify MCE Prices&quot;);
+log.info(&quot;Eve Id   :  &quot;+settlementParam.getRunEveId());
+log.info(&quot;Standing Version   :  &quot;+settRunPackage.getStandingVersion());
+log.info(&quot;Total   :  &quot;+pd.getTotal());
+log.info(&quot;Sum   :  &quot;+pd.getSum());
+log.info(&quot;Sum2   :  &quot;+pd.getSum2());
+log.info(&quot;Avg3  :  &quot;+pd.getAvg3());
+log.info(&quot;Sett Date   :  &quot;+settlementParam.getSettlementDate());
+log.info(&quot;MSSL Qty Version   :  &quot;+settRunPackage.getMsslQtyPkgVer());
+log.info(&quot;valid   :    false&quot;);
+wsParam = new Object[]{ &quot;[EMC]&quot;, settlementParam.getRunEveId(),  settRunPackage.getStandingVersion(), pd.getTotal(), pd.getSum(), pd.getSum2(), pd.getAvg3(), ParamUtil.toXMLGregorianCalendar(settlementParam.getSettlementDate()), settRunPackage.getMsslQtyPkgVer(), false};
+kcontext.setVariable(&quot;wsParam&quot;, wsParam);</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;VerifyMSSLData&quot;);
+kcontext.setVariable(&quot;wsVerifyMSSLDataResponse&quot;, wsVerifyMSSLDataResponse);
+log.info(&quot;Sett Date   :  &quot;+settlementParam.getSettlementDate());
+log.info(&quot;wsVerifyMSSLDataResponse : &quot;+wsVerifyMSSLDataResponse);
+kcontext.setVariable(&quot;valid&quot;, wsVerifyMSSLDataResponse.getResult());
+log.info(&quot;Result : &quot;+wsVerifyMSSLDataResponse.getResult());
+log.info(&quot;Completed WS Verify MSSL Data&quot;);</tns:script>
+        </tns:onExit-script>
+        <tns:metaData name="customAsync">
+          <tns:metaValue><![CDATA[true]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_1">
+        <bpmn2:dataInput id="DataInput_1" name="Url"/>
+        <bpmn2:dataInput id="DataInput_2" name="Namespace"/>
+        <bpmn2:dataInput id="DataInput_3" name="Interface"/>
+        <bpmn2:dataInput id="DataInput_4" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_5" itemSubjectRef="ItemDefinition_10" name="Parameter"/>
+        <bpmn2:dataInput id="DataInput_6" name="Endpoint"/>
+        <bpmn2:dataInput id="DataInput_7" name="Mode"/>
+        <bpmn2:dataOutput id="DataOutput_2" itemSubjectRef="ItemDefinition_292" name="Result"/>
+        <bpmn2:inputSet id="_InputSet_74">
+          <bpmn2:dataInputRefs>DataInput_1</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_2</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_3</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_4</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_5</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_6</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_7</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="_OutputSet_25">
+          <bpmn2:dataOutputRefs>DataOutput_2</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_270">
+        <bpmn2:targetRef>DataInput_1</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_1">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_3">#{soapServiceUrl}/NEMSPrerequisiteService/VerifyMSSLData?WSDL</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_1">DataInput_1</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_271">
+        <bpmn2:targetRef>DataInput_2</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_2">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_6">http://nemsprerequisite.drcap.emc.com/</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_4">DataInput_2</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_272">
+        <bpmn2:targetRef>DataInput_3</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_3">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_9">VerifyMSSLDataWS</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_7">DataInput_3</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_273">
+        <bpmn2:targetRef>DataInput_4</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_4">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_12">verifyMSSLData</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_10">DataInput_4</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_274">
+        <bpmn2:sourceRef>wsParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_5</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_275">
+        <bpmn2:targetRef>DataInput_6</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_6">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_18">#{soapServiceUrl}/NEMSPrerequisiteService/VerifyMSSLData</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_16">DataInput_6</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_276">
+        <bpmn2:targetRef>DataInput_7</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_7">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_21">SYNC</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_19">DataInput_7</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_1">
+        <bpmn2:sourceRef>DataOutput_2</bpmn2:sourceRef>
+        <bpmn2:targetRef>wsVerifyMSSLDataResponse</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_1" tns:priority="1" sourceRef="StartEvent_1" targetRef="Task_1"/>
+    <bpmn2:endEvent id="EndEvent_1" name="End">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[End]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_2" tns:priority="1" sourceRef="Task_1" targetRef="EndEvent_1"/>
+    <bpmn2:subProcess id="SubProcess_1" name="Event Handler" triggeredByEvent="true">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Event Handler]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:startEvent id="StartEvent_2" name="Start Event 2">
+        <bpmn2:extensionElements>
+          <tns:metaData name="elementname">
+            <tns:metaValue><![CDATA[Start Event 2]]></tns:metaValue>
+          </tns:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
+        <bpmn2:dataOutput id="DataOutput_1" itemSubjectRef="ItemDefinition_892" name="Error_1_Output"/>
+        <bpmn2:dataOutputAssociation id="DataOutputAssociation_2">
+          <bpmn2:sourceRef>DataOutput_1</bpmn2:sourceRef>
+          <bpmn2:targetRef>runtimeException</bpmn2:targetRef>
+        </bpmn2:dataOutputAssociation>
+        <bpmn2:outputSet id="OutputSet_1" name="Output Set 1">
+          <bpmn2:dataOutputRefs>DataOutput_1</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+        <bpmn2:errorEventDefinition id="ErrorEventDefinition_1" errorRef="Error_1"/>
+      </bpmn2:startEvent>
+      <bpmn2:scriptTask id="ScriptTask_1" name="Script Task 1" scriptFormat="http://www.java.com/java">
+        <bpmn2:extensionElements>
+          <tns:metaData name="elementname">
+            <tns:metaValue><![CDATA[Script Task 1]]></tns:metaValue>
+          </tns:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
+        <bpmn2:script>Logger log = LoggerFactory.getLogger(&quot;VerifyMSSLData&quot;);
+log.info(&quot;VerifyMSSLData Process Stacktrace - Runtime Exception : &quot;+runtimeException.toString());
+if(exception == null){
+log.info(&quot;Run Process - Calling Exception : &quot;+exception);
+exception = (runtimeException instanceof SettlementRunException) ? (SettlementRunException) runtimeException : exception;
+}
+log.info(&quot;VerifyMSSLData Process - Inside Handle Exception: &quot;+exception);
+
+kcontext.setVariable(&quot;exception&quot;, exception);</bpmn2:script>
+      </bpmn2:scriptTask>
+      <bpmn2:endEvent id="EndEvent_2" name="End Event 2">
+        <bpmn2:extensionElements>
+          <tns:metaData name="elementname">
+            <tns:metaValue><![CDATA[End Event 2]]></tns:metaValue>
+          </tns:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
+      </bpmn2:endEvent>
+      <bpmn2:sequenceFlow id="SequenceFlow_3" tns:priority="1" sourceRef="StartEvent_2" targetRef="ScriptTask_1"/>
+      <bpmn2:sequenceFlow id="SequenceFlow_4" tns:priority="1" sourceRef="ScriptTask_1" targetRef="EndEvent_2"/>
+    </bpmn2:subProcess>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_Process_1" bpmnElement="VerifyMSSLData">
+      <bpmndi:BPMNShape id="BPMNShape_SubProcess_1" bpmnElement="SubProcess_1" isExpanded="true">
+        <dc:Bounds height="150.0" width="621.0" x="100.0" y="255.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="17.0" width="91.0" x="106.0" y="258.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_StartEvent_1" bpmnElement="StartEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="140.0" y="90.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_1">
+          <dc:Bounds height="34.0" width="55.0" x="131.0" y="126.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_1" bpmnElement="Task_1" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="245.0" y="83.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_2">
+          <dc:Bounds height="34.0" width="106.0" x="247.0" y="91.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_1" bpmnElement="EndEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="445.0" y="90.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_3">
+          <dc:Bounds height="17.0" width="26.0" x="450.0" y="126.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_StartEvent_2" bpmnElement="StartEvent_2">
+        <dc:Bounds height="36.0" width="36.0" x="182.0" y="297.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="34.0" width="80.0" x="160.0" y="333.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ScriptTask_1" bpmnElement="ScriptTask_1" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="335.0" y="290.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="17.0" width="86.0" x="347.0" y="306.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_2" bpmnElement="EndEvent_2">
+        <dc:Bounds height="36.0" width="36.0" x="620.0" y="297.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="17.0" width="79.0" x="599.0" y="333.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="SequenceFlow_1" sourceElement="BPMNShape_StartEvent_1" targetElement="BPMNShape_Task_1">
+        <di:waypoint xsi:type="dc:Point" x="176.0" y="108.0"/>
+        <di:waypoint xsi:type="dc:Point" x="210.0" y="108.0"/>
+        <di:waypoint xsi:type="dc:Point" x="245.0" y="108.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_4"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_2" bpmnElement="SequenceFlow_2" sourceElement="BPMNShape_Task_1" targetElement="BPMNShape_EndEvent_1">
+        <di:waypoint xsi:type="dc:Point" x="355.0" y="108.0"/>
+        <di:waypoint xsi:type="dc:Point" x="400.0" y="108.0"/>
+        <di:waypoint xsi:type="dc:Point" x="445.0" y="108.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_5"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="SequenceFlow_3" sourceElement="BPMNShape_StartEvent_2" targetElement="BPMNShape_ScriptTask_1">
+        <di:waypoint xsi:type="dc:Point" x="218.0" y="315.0"/>
+        <di:waypoint xsi:type="dc:Point" x="276.0" y="315.0"/>
+        <di:waypoint xsi:type="dc:Point" x="335.0" y="315.0"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_4" bpmnElement="SequenceFlow_4" sourceElement="BPMNShape_ScriptTask_1" targetElement="BPMNShape_EndEvent_2">
+        <di:waypoint xsi:type="dc:Point" x="445.0" y="315.0"/>
+        <di:waypoint xsi:type="dc:Point" x="532.0" y="315.0"/>
+        <di:waypoint xsi:type="dc:Point" x="620.0" y="315.0"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

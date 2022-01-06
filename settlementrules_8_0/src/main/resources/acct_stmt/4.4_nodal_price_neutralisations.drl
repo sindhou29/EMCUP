@@ -1,0 +1,649 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import java.util.List;
+import com.emc.sett.impl.*;
+
+global java.math.BigDecimal inGstRate;
+global java.math.BigDecimal outGstRate;
+
+/*
+* the interval’s rounded HEUC = Round(For(the interval’s market, the market’s HEUC), 2)
+*/
+rule "Initialisation - copy HEUC from market to period"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( roundedHeuc == null, $pd : periodId )
+    	Market( periodId == $pd, heuc != null, $heuc : heuc )
+    then
+        //$i.setRoundedHeuc( $heuc.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        //update( $i );
+        modify ($i) { setRoundedHeuc( $heuc.setScale(2, BigDecimal.ROUND_HALF_UP)) }
+end
+
+/*
+* the node has positive injection if
+* the node’s IEQ >= 0 and
+* For(the node’s account, the account is eligible for price neutralization)
+*/
+rule "4.4.6 Net Energy Load Credit (NELC) - positive flag at node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( positiveInj == false, ieq != null, ieq >= 0, $id : accountId )
+    	Account( accountId == $id, priceNeutralization == true )
+    then
+        $n.setPositiveInj( true );
+        update( $n );
+end
+
+/*
+* the interval’s IEQP = InstanceSumIf(the interval’s nodes, the node’s IEQ, the node has positive injection) if
+* For(the interval’s account, the account is eligible for price neutralization)
+*/
+rule "4.4.6 Net Energy Load Credit (NELC) - IEQP at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( ieqp == null, $pd : periodId, $sa : accountId )
+    	//Account( accountId == $sa, priceNeutralization == true )
+    	$ns : List() from collect( Facility( $pd == periodId && $sa == accountId ) )
+        $ieq : BigDecimal() from accumulate(
+        							Facility( ieq != null, positiveInj == true, amt : ieq ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setIeqp( $ieq );
+        update( $i );
+end
+
+/*
+* the node’s NELC = Round(the node’s IEQ * (For(the node’s interval, the interval's USEP) + For(the node's interval, the interval’s rounded HEUC) – the node’s MEP), 2) if
+* For(the node's interval, the interval’s IEQP <= the interval’s WPQ) and
+* For(the node’s account, the account is eligible for price neutralization) and
+* the node’s IEQ > 0
+*
+* the node’s accounting NELC = the node’s NELC
+*/
+rule "4.4.6 Net Energy Load Credit (NELC) - NELC at node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( nelc == null, ieq != null && mep != null, ieq > 0, $id : accountId, $pd : periodId, $ieq : ieq, $mep : mep )
+        Period( accountId == $id && periodId == $pd, ieqp <= wpq, usep != null && roundedHeuc != null, $usep : usep, $roundedHeuc : roundedHeuc )
+    	Account( accountId == $id, priceNeutralization == true )
+    then
+        $n.setNelc( $ieq.multiply( $usep.add( $roundedHeuc ).subtract( $mep ) ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $n.setAccountingNelc( $n.getNelc() );
+        update( $n );
+end
+
+/*
+* the node’s NELC = Round(the node’s IEQ * (For(the node’s interval, the interval's USEP) + For(the node's interval, the interval’s rounded HEUC) – the node’s MEP), 2) if
+* For(the node's interval, the interval’s IEQP <= the interval’s WPQ) and
+* For(the node’s account, the account is eligible for price neutralization) and
+* the node’s IEQ > 0
+*
+* the node’s accounting NELC = the node’s NELC
+*/
+rule "4.4.6 Net Energy Load Credit (NELC) - NELC at node level case zero IEQ"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( nelc == null, ieq == null || ieq <= 0 )
+    then
+        $n.setNelc( BigDecimal.ZERO );
+        $n.setAccountingNelc( $n.getNelc() );
+        update( $n );
+end
+
+/*
+* the node’s NELC = Round(the node’s IEQ * (For(the node’s interval, the interval's USEP) + For(the node's interval, the interval’s rounded HEUC) – the node’s MEP), 2) if
+* For(the node's interval, the interval’s IEQP <= the interval’s WPQ) and
+* For(the node’s account, the account is eligible for price neutralization) and
+* the node’s IEQ > 0
+*
+* the node’s accounting NELC = the node’s NELC
+*/
+rule "4.4.6 Net Energy Load Credit (NELC) - NELC at node level case no np"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( nelc == null, $id : accountId, $pd : periodId )
+        ( or Period( accountId == $id && periodId == $pd, ieqp > wpq )
+    	Account( accountId == $id, priceNeutralization == false ) )
+    then
+        $n.setNelc( BigDecimal.ZERO );
+        $n.setAccountingNelc( $n.getNelc() );
+        update( $n );
+end
+
+/*
+* the interval’s NELC = InstanceSum(the interval’s nodes, the node’s NELC)
+*/
+rule "4.4.6 Net Energy Load Credit (NELC) - period level"
+ruleflow-group "acct_stmt"
+salience -2
+    when
+    	$i : Period( nelc == null, $pd : periodId, $id : accountId )
+    	$ns : List() from collect( Facility( accountId == $id && periodId == $pd ) )
+        $nelc : BigDecimal() from accumulate(
+        							Facility( nelc != null, amt : nelc ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setNelc( $nelc );
+        update( $i );
+end
+
+/*
+* the node’s NEGC size index = 1 if
+* the node’s IEQ >= 0 and
+* For(the node's interval, the interval’s IEQP > the interval’s WPQ)
+*/
+rule "4.4.7.1 Net Energy Generation Credit (NEGC) - size index at node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( negcSzIdx == null, ieq != null, ieq >= 0, $id : accountId, $pd : periodId )
+        Period( accountId == $id && periodId == $pd, ieqp > wpq )
+    then
+        $n.setNegcSzIdx( BigDecimal.ONE );
+        update( $n );
+end
+
+/*
+* the node has NEGC size index if
+* the node’s NEGC size index > 0
+*/
+rule "4.4.7.3 Net Energy Generation Credit (NEGC) - size index flag at node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( hasSzIdx == false, negcSzIdx != null, negcSzIdx > 0 )
+    then
+        $n.setHasSzIdx( true );
+        update( $n );
+end
+
+/*
+* the interval’s NEGC total IEQ = InstanceSumIf(the interval’s nodes, the node’s IEQ, the node has NEGC size index)
+*/
+rule "4.4.7.3 Net Energy Generation Credit (NEGC) - IEQ for NEGC at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( negcIeq == null, $pd : periodId, $sa : accountId )
+    	$ns : List() from collect( Facility( $pd == periodId && $sa == accountId ) )
+        $ieq : BigDecimal() from accumulate(
+        							Facility( ieq != null, hasSzIdx == true, amt : ieq ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setNegcIeq( $ieq );
+        update( $i );
+end
+
+/*
+* the node’s T factor = the node’s IEQ / For(the node’s interval, the interval’s NEGC total IEQ) if
+* the node has NEGC size index
+*/
+rule "4.4.7.3 Net Energy Generation Credit (NEGC) - T factor at node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( tFactor == null, hasSzIdx == true, $id : accountId, $pd : periodId, $ieq : ieq )
+        Period( accountId == $id && periodId == $pd, negcIeq != null, $negcIeq : negcIeq )
+    then
+        $n.setTFactor( new BigDecimal( $ieq.doubleValue() / $negcIeq.doubleValue() ) );
+        update( $n );
+end
+
+/*
+* the node’s T factor = the node’s IEQ / For(the node’s interval, the interval’s NEGC total IEQ) if
+* the node has NEGC size index
+*/
+rule "4.4.7.3 Net Energy Generation Credit (NEGC) - zero T factor at node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( tFactor == null, hasSzIdx == false, $id : accountId, $pd : periodId, $ieq : ieq )
+    then
+        $n.setTFactor( BigDecimal.ZERO );
+        update( $n );
+end
+
+/*
+* the node’s NEGC = Round(the node’s T factor * (For(the node's interval, the interval’s USEP) + For(the node's interval, the interval’s rounded HEUC) – the node’s MEP) * For(the node's interval, the interval’s WPQ), 2)
+*
+* the node’s accounting NEGC = the node’s NEGC
+*/
+rule "4.4.7.4 Net Energy Generation Credit (NEGC) - node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( negc == null, tFactor != null, $id : accountId, $pd : periodId, $tFactor : tFactor, $mep : mep )
+        Period( accountId == $id && periodId == $pd, usep != null && roundedHeuc != null, $usep : usep, $roundedHeuc : roundedHeuc, $wpq : wpq )
+    then
+        $n.setNegc( $tFactor.multiply( $usep.add( $roundedHeuc ).subtract( $mep ) ).multiply( $wpq ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $n.setAccountingNegc( $n.getNegc() );
+        update( $n );
+end
+
+/*
+* the interval’s NEGC = InstanceSum(the interval’s nodes, the node’s NEGC)
+*/
+rule "4.4.7.4 Net Energy Generation Credit (NEGC) - period level"
+ruleflow-group "acct_stmt"
+salience -2
+    when
+    	$i : Period( negc == null, $pd : periodId, $id : accountId )
+    	$ns : List() from collect( Facility( accountId == $id && periodId == $pd ) )
+        $negc : BigDecimal() from accumulate(
+        							Facility( negc != null, amt : negc ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setNegc( $negc );
+        update( $i );
+end
+
+/*
+* the node’s NEAA = the node’s NELC + the node’s NEGC
+*/
+rule "4.4.9 Net Energy Adjustment Amount (NEAA) - node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( neaa == null, nelc != null && negc != null, $nelc : nelc, $negc : negc )
+    then
+        $n.setNeaa( $nelc.add( $negc ) );
+        update( $n );
+end
+
+/*
+* the interval’s NEAA = InstanceSum(the interval’s nodes, the node’s NEAA)
+*/
+rule "4.4.9 Net Energy Adjustment Amount (NEAA) - period level"
+ruleflow-group "acct_stmt"
+salience -2
+    when
+    	$i : Period( neaa == null, $pd : periodId, $id : accountId )
+    	$ns : List() from collect( Facility( accountId == $id && periodId == $pd ) )
+        $neaa : BigDecimal() from accumulate(
+        							Facility( neaa != null, amt : neaa ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setNeaa( $neaa );
+        update( $i );
+end
+
+/*
+* the market’s NEAA = InstanceSum(the market’s nodes, the node’s NEAA)
+*
+* the market’s accounting NEAA = the market’s NEAA * -1
+*/
+rule "4.4.9 Net Energy Adjustment Amount (NEAA) - market level"
+ruleflow-group "acct_stmt"
+salience -2
+    when
+    	$m : Market( neaa == null, $pd : periodId )
+    	$ns : List() from collect( Period( $pd == periodId ) )
+        $neaa : BigDecimal() from accumulate(
+        							Period( neaa != null, amt : neaa ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $m.setNeaa( $neaa );
+        $m.setAccountingNeaa( $m.getNeaa().negate() );
+        update( $m );
+end
+
+/*
+* the account’s NEAA = InstanceSum(the account's intervals, the interval’s NEAA)
+*
+* the account’s input GST for NEAA = 0
+*
+* the account’s output GST for NEAA = 0
+*
+* the account’s total NEAA = the account’s NEAA
+*/
+rule "4.4.9 Net Energy Adjustment Amount (NEAA) - account level"
+ruleflow-group "acct_stmt"
+salience -2
+    when
+    	$a : Account( neaa == null, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $neaa : BigDecimal() from accumulate(
+        							Period( neaa != null, amt : neaa ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setNeaa( $neaa );
+        $a.setIpGstNeaa( BigDecimal.ZERO );
+        $a.setOpGstNeaa( BigDecimal.ZERO );
+        $a.setTotalNeaa( $neaa );
+        update( $a );
+end
+
+/*
+* the interval’s EGA WEQ = the interval’s WEQ if
+* For(the interval's account, the account is eligible for price neutralization) or
+* For(the interval's account, the account is under a retailer)
+*/
+rule "4.4.10 Net Energy Adjustment Debit (NEAD) - EGA WEQ at period level"
+ruleflow-group "acct_stmt"
+    when
+        $i : Period( egaWeq == null, weq != null, $id : accountId, $weq : weq )
+    	Account( accountId == $id, underRetailer == true || priceNeutralization == true )
+    then
+        $i.setEgaWeq( $weq );
+        update( $i );
+end
+
+/*
+* the interval’s EGA WEQ = the interval’s WEQ if
+* For(the interval's account, the account is eligible for price neutralization) or
+* For(the interval's account, the account is under a retailer)
+*/
+rule "4.4.10 Net Energy Adjustment Debit (NEAD) - zero EGA WEQ at period level"
+ruleflow-group "acct_stmt"
+    when
+        $i : Period( egaWeq == null, weq != null, $id : accountId, $weq : weq )
+    	Account( accountId == $id, underRetailer == false && priceNeutralization == false )
+    then
+        $i.setEgaWeq( BigDecimal.ZERO );
+        update( $i );
+end
+
+/*
+* the interval’s EGA WPQ = Number(CallCustomFunction("EmbbedGenerationSum", "intervalsmarket,market_number,marketsintervals,interval_number,interval_account,interval_ega_id,interval_wpq")) if
+* For(the interval's account, the account is tagged with embedded generator)
+*/
+rule "4.4.10 Net Energy Adjustment Debit (NEAD) - EGA WPQ at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( egaWpq == null, $sa : accountId, $pd : periodId )
+     	Account( accountId == $sa, egaRetailer == true )
+   	    $is : List() from collect( Period( periodId == $pd, egaId == $sa ) )
+        $wpq : BigDecimal() from accumulate(
+        							Period( wpq != null, amt : wpq ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setEgaWpq( $wpq );
+        update( $i );
+end
+
+/*
+* the interval’s EGA IEQ = Number(CallCustomFunction("EGAMinimumSum", "intervalsmarket,market_number,marketsintervals,interval_number,interval_account,interval_ega_id,interval_wpq,interval_ieqp")) if
+* For(the interval's account, the account is tagged with embedded generator)
+*/
+rule "4.4.10 Net Energy Adjustment Debit (NEAD) - EGA IEQ at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( egaIeq == null, $sa : accountId, $pd : periodId )
+     	Account( accountId == $sa, egaRetailer == true )
+   	    $is : List() from collect( Period( periodId == $pd, egaId == $sa ) )
+        $ieq : BigDecimal() from accumulate(
+        							Period( wpq != null && ieqp != null, wpq : wpq, ieqp : ieqp ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(wpq.min(ieqp)); ),
+									reverse( tt = tt.subtract(wpq.min(ieqp)); ),
+									result( tt ) )
+    then
+        $i.setEgaIeq( $ieq );
+        update( $i );
+end
+
+/*
+* the interval’s EGA WPQ = Number(CallCustomFunction("EmbbedGenerationSum", "intervalsmarket,market_number,marketsintervals,interval_number,interval_account,interval_ega_id,interval_wpq")) if
+* For(the interval's account, the account is tagged with embedded generator)
+*
+* the interval’s EGA IEQ = Number(CallCustomFunction("EGAMinimumSum", "intervalsmarket,market_number,marketsintervals,interval_number,interval_account,interval_ega_id,interval_wpq,interval_ieqp")) if
+* For(the interval's account, the account is tagged with embedded generator)
+*/
+rule "4.4.10 Net Energy Adjustment Debit (NEAD) - zero EGA WPQ and IEQ at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( egaWpq == null, $id : accountId, $pd : periodId )
+     	Account( accountId == $id, egaRetailer == false )
+    then
+        $i.setEgaWpq( BigDecimal.ZERO );
+        $i.setEgaIeq( BigDecimal.ZERO );
+        update( $i );
+end
+
+/*
+* the interval’s RSA = Minimum(the interval’s WPQ, the interval’s IEQP) if
+* For(the interval's account, the account is eligible for price neutralization) and
+* the interval’s WPQ is not equal to 0
+*/
+rule "4.4.10 Net Energy Adjustment Debit (NEAD) - RSA at period level for price neutralization and with wpq"
+ruleflow-group "acct_stmt"
+    when
+        $i : Period( rsa == null, wpq != null && wpq != 0 && ieqp != null, $id : accountId, $wpq : wpq, $ieqp : ieqp )
+    	Account( accountId == $id, priceNeutralization == true )
+    then
+        $i.setRsa( $wpq.min( $ieqp ) );
+        update( $i );
+end
+
+/*
+* the interval’s RSA = 0 if
+* For(the interval's account, the account is eligible for price neutralization) and
+* the interval’s WPQ is equal to 0
+*/
+rule "4.4.10 Net Energy Adjustment Debit (NEAD) - RSA at period level for price neutralization and with zero wpq"
+ruleflow-group "acct_stmt"
+    when
+        $i : Period( rsa == null, wpq == 0, $id : accountId, $wpq : wpq, $ieqp : ieqp )
+    	Account( accountId == $id, priceNeutralization == true )
+    then
+        $i.setRsa( BigDecimal.ZERO );
+        update( $i );
+end
+
+/*
+* the interval’s RSA = 0 if
+* For(the interval’s account, the account is not eligible for price neutralization) and
+* the interval’s EGA WPQ is equal to 0
+*/
+rule "4.4.10 Net Energy Adjustment Debit (NEAD) - RSA at period level for not price neutralization and with zero wpq"
+ruleflow-group "acct_stmt"
+    when
+        $i : Period( rsa == null, egaWpq == null || egaWpq == 0, $id : accountId, $wpq : wpq, $ieqp : ieqp )
+    	Account( accountId == $id, priceNeutralization == false )
+    then
+        $i.setRsa( BigDecimal.ZERO );
+        update( $i );
+end
+
+/*
+* the interval’s RSA = Minimum(the interval’s EGA WPQ, the interval's EGA IEQ) if
+* For(the interval’s account, the account is not eligible for price neutralization) and
+* the interval’s EGA WPQ is not equal to 0
+*/
+rule "4.4.10 Net Energy Adjustment Debit (NEAD) - RSA at period level for not price neutralization and with wpq"
+ruleflow-group "acct_stmt"
+    when
+        $i : Period( rsa == null, egaIeq != null && egaWpq != null && egaWpq != 0, $id : accountId, $egaWpq : egaWpq, $egaIeq : egaIeq )
+    	Account( accountId == $id, priceNeutralization == false )
+    then
+        $i.setRsa( $egaWpq.min( $egaIeq ) );
+        update( $i );
+end
+
+/*
+* the interval is required by the total R calculation if
+* For(the interval’s account, the account is eligible for price neutralization) and
+* For(the interval’s account, the account is not under a retailer) and
+* The interval’s WPQ is not equal to 0
+*/
+rule "4.4.10 Net Energy Adjustment Debit (NEAD) - R flag at period level for price neutralization and not under retailer"
+ruleflow-group "acct_stmt"
+    when
+        $i : Period( totalR == false, wpq != 0, $id : accountId )
+    	Account( accountId == $id, priceNeutralization == true && underRetailer == false )
+    then
+        $i.setTotalR( true );
+        update( $i );
+end
+
+/*
+* the interval is required by the total R calculation if
+* For(the interval’s account, the account is not eligible for price neutralization) and
+* the interval’s EGA WPQ is not equal to 0
+*/
+rule "4.4.10 Net Energy Adjustment Debit (NEAD) - R flag at period level for no price neutralization"
+ruleflow-group "acct_stmt"
+    when
+        $i : Period( totalR == false, egaWpq != null && egaWpq != 0, $id : accountId )
+    	Account( accountId == $id, priceNeutralization == false )
+    then
+        $i.setTotalR( true );
+        update( $i );
+end
+
+/*
+* the market’s EGA WEQ = InstanceSum(the market's intervals, the interval’s EGA WEQ)
+*
+* the market’s RSA = InstanceSumIf(the market's intervals, the interval’s RSA, the interval is required by the total R calculation)
+*/
+rule "4.4.10 Net Energy Adjustment Debit (NEAD) - EGA WEQ at market level"
+ruleflow-group "acct_stmt"
+    when
+    	$m : Market( egaWeq == null, $pd : periodId )
+   	    $is : List() from collect( Period( periodId == $pd ) )
+        $weq : BigDecimal() from accumulate(
+        							Period( egaWeq != null, amt : egaWeq ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $rsa : BigDecimal() from accumulate(
+        							Period( rsa != null, totalR == true, amt : rsa ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $m.setEgaWeq( $weq );
+        $m.setRsa( $rsa );
+        update( $m );
+end
+
+/*
+* the interval’s NEAD = Round(For(the interval’s market, the market’s NEAA) * ((the interval’s WEQ – the interval’s RSA) / For(the interval's market, the market’s WEQ – the market’s RSA)), 2) if
+* For(the interval’s account, the account is not eligible for price neutralization) or
+* all
+* For(the interval’s account, the account is eligible for price neutralization) and
+* For(the interval’s account, the account is not under a retailer)
+*
+* the interval’s accounting NEAD = the interval’s NEAD * -1
+*/
+rule "4.4.10 Net Energy Adjustment Debit (NEAD) - period level for no price neutralization or price neutralization but not under retailer"
+ruleflow-group "acct_stmt"
+    when
+        $i : Period( nead == null, weq != null && rsa != null, $id : accountId, $pd : periodId, $pweq : weq, $prsa : rsa )
+    	Account( accountId == $id, priceNeutralization == false || (priceNeutralization == true && underRetailer == false) )
+    	Market( periodId == $pd, neaa != null && weq != null && rsa != null, $neaa : neaa, $mweq : weq, $mrsa : rsa )
+    then
+    	if (($mweq.signum() == 0 && $mrsa.signum() == 0) || $mweq.subtract($mrsa).signum() == 0)  {
+         	$i.setNead( $neaa.multiply( $pweq.subtract( $prsa ) ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+   	    } else {
+        	$i.setNead( $neaa.multiply( new BigDecimal($pweq.subtract( $prsa ).doubleValue() / $mweq.subtract( $mrsa ).doubleValue()) ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        }
+        $i.setAccountingNead( $i.getNead().negate() );
+        update( $i );
+end
+
+/*
+* the interval’s NEAD = 0 if
+* For(the interval’s account, the account is eligible for price neutralization) and
+* For(the interval’s account, the account is under a retailer)
+*
+* the interval’s accounting NEAD = the interval’s NEAD * -1
+*/
+rule "4.4.10 Net Energy Adjustment Debit (NEAD) - period level for price neutralization and under retailer"
+ruleflow-group "acct_stmt"
+    when
+        $i : Period( nead == null, $id : accountId, $pd : periodId, $pweq : weq, $prsa : rsa )
+    	Account( accountId == $id, priceNeutralization == true && underRetailer == true )
+    then
+        $i.setNead( BigDecimal.ZERO );
+        $i.setAccountingNead( $i.getNead().negate() );
+        update( $i );
+end
+
+/*
+* the account’s NEAD = InstanceSum(the account's intervals, the interval’s accounting NEAD)
+*
+* the account’s input GST for NEAD = 0
+*
+* the account’s output GST for NEAD = 0
+*
+* the account’s total NEAD = the account’s NEAD
+*
+* the account's NELC = InstanceSum(the account's intervals, the interval's NELC)
+*
+* the account’s input GST for NELC = 0
+*
+* the account’s output GST for NELC = 0
+*
+* the account’s total NELC = the account’s NELC
+*
+* the account's NEGC = InstanceSum(the account's intervals, the interval's NEGC)
+*
+* the account’s input GST for NEGC = 0
+*
+* the account’s output GST for NEGC = 0
+*
+* the account’s total NEGC = the account’s NEGC
+*/
+rule "4.4.10 Net Energy Adjustment Debit (NEAD) - account level"
+ruleflow-group "acct_stmt"
+salience -2
+    when
+    	$a : Account( nead == null, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $nead : BigDecimal() from accumulate(
+        							Period( accountingNead != null, amt : accountingNead ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $nelc : BigDecimal() from accumulate(
+        							Period( nelc != null, amt : nelc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $negc : BigDecimal() from accumulate(
+        							Period( negc != null, amt : negc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setNead( $nead );
+        $a.setIpGstNead( BigDecimal.ZERO );
+        $a.setOpGstNead( BigDecimal.ZERO );
+        $a.setTotalNead( $nead );
+        
+        $a.setNelc( $nelc );
+        $a.setIpGstNelc( BigDecimal.ZERO );
+        $a.setOpGstNelc( BigDecimal.ZERO );
+        $a.setTotalNelc( $nelc );
+        
+        $a.setNegc( $negc );
+        $a.setIpGstNegc( BigDecimal.ZERO );
+        $a.setOpGstNegc( BigDecimal.ZERO );
+        $a.setTotalNegc( $negc );
+        update( $a );
+end

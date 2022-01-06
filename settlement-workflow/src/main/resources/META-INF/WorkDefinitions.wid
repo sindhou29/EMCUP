@@ -1,0 +1,454 @@
+import org.drools.core.process.core.datatype.impl.type.StringDataType;
+import org.drools.core.process.core.datatype.impl.type.ObjectDataType;
+
+[
+  [
+    "name" : "Email",
+    "parameters" : [
+      "From" : new StringDataType(),
+      "To" : new StringDataType(),
+      "Subject" : new StringDataType(),
+      "Body" : new StringDataType()
+    ],
+    "displayName" : "Email",
+    "icon" : "defaultemailicon.gif"
+  ],
+
+  [
+    "name" : "Log",
+    "parameters" : [
+      "Message" : new StringDataType()
+    ],
+    "displayName" : "Log",
+    "icon" : "defaultlogicon.gif"
+  ],
+
+  [
+    "name" : "WebService",
+    "parameters" : [
+        "Url" : new StringDataType(),
+         "Namespace" : new StringDataType(),
+         "Interface" : new StringDataType(),
+         "Operation" : new StringDataType(),
+         "Parameter" : new StringDataType(),
+         "Endpoint" : new StringDataType(),
+         "Mode" : new StringDataType()
+    ],
+    "results" : [
+        "Result" : new ObjectDataType(),
+    ],
+    "displayName" : "WS",
+    "icon" : "defaultservicenodeicon.png"
+  ],
+  [
+    "name" : "Rest",
+    "parameters" : [
+        "Url" : new StringDataType(),
+        "Method" : new StringDataType(),
+        "ConnectTimeout" : new StringDataType(),
+        "ReadTimeout" : new StringDataType(),
+        "Username" : new StringDataType(),
+        "Password" : new StringDataType()
+    ],
+    "results" : [
+        "Result" : new ObjectDataType(),
+    ],
+    "displayName" : "REST",
+    "icon" : "defaultservicenodeicon.png"
+  ],
+  [
+  	"name" : "BilateralContractUploadMainWIH",
+  	"parameters" : [
+  	  	"className" : new ObjectDataType(),
+  	],
+  	"displayName" : "BilateralContractUploadMainWIH",
+  	"icon" : "icon-info.gif"
+  ],
+  [
+  	"name" : "BilateralContractValidateAndUploadDataWIH",
+  	"parameters" : [
+  		"className" : new ObjectDataType(),
+  	],
+  	"displayName" : "BilateralContractValidateAndUploadDataWIH",
+  	"icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "CMFEmailNotificationWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "CMFEmailNotificationWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "CMFProcessPollerWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+  ],
+    "displayName" : "CMFProcessPollerWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "EMCPSOBudgetUploadWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "EMCPSOBudgetUploadWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ForwardSalesContractUploadMainWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ForwardSalesContractUploadMainWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "JMSListenerMainWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "JMSListenerMainWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "MMVolumeFileUploadWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "MMVolumeFileUploadWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ReceiveMSSLMeteringDataWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ReceiveMSSLMeteringDataWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "SaveClawbackQuantitiesFileWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "SaveClawbackQuantitiesFileWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "SaveMSSLMeteringFileWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "SaveMSSLMeteringFileWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "VerifyAndLoadClawbackQuantitiesDataWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "VerifyAndLoadClawbackQuantitiesDataWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "VerifyAndLoadMSSLMeteringDataWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "VerifyAndLoadMSSLMeteringDataWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "VestingContractUploadMainWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "VestingContractUploadMainWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ScheduledBilateralDataVerificationWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ScheduledBilateralDataVerificationWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ScheduledClawbackFileReceivingVerificationWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ScheduledClawbackFileReceivingVerificationWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ScheduledCMWHDataVerificationWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ScheduledCMWHDataVerificationWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ScheduledEMCPSOBudgetDataVerificationWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ScheduledEMCPSOBudgetDataVerificationWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ScheduledFSCFileReceivingVerificationWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ScheduledFSCFileReceivingVerificationWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ScheduledFSCDataVerificationWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ScheduledFSCDataVerificationWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ScheduledMEUCDataVerificationWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ScheduledMEUCDataVerificationWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ScheduledMSSLDataVerificationWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ScheduledMSSLDataVerificationWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ScheduledMSSLFileReceivingVerificationWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ScheduledMSSLFileReceivingVerificationWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ScheduledPendingForAuthorizationEMCPSOFeesDataExistenceWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ScheduledPendingForAuthorizationEMCPSOFeesDataExistenceWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ScheduledRegenerationOfMCRDataWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ScheduledRegenerationOfMCRDataWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ScheduledRerunAccountsVerificationWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ScheduledRerunAccountsVerificationWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ScheduledRiskExposureVerificationWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ScheduledRiskExposureVerificationWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ScheduledDailyRunSummaryWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ScheduledDailyRunSummaryWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ScheduledVestingContractDataVerificationWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ScheduledVestingContractDataVerificationWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+    "name" : "ScheduledVestingContractFileReceivingVerificationWIH",
+    "parameters" : [
+    "className" : new ObjectDataType(),
+
+  ],
+    "displayName" : "ScheduledVestingContractFileReceivingVerificationWIH",
+    "icon" : "icon-info.gif"
+  ],
+  [
+	 "name" : "AccountingInterfaceWIH",
+	 "parameters" : [
+	 "className" : new ObjectDataType(),
+	 ],
+	 "displayName" : "AccountingInterfaceWIH",
+	 "icon" : "icon-info.gif"
+  ],
+  [
+	 "name" : "ApproveSettlementRunWIH",
+	 "parameters" : [
+	 "className" : new ObjectDataType(),
+	 ],
+	 "displayName" : "ApproveSettlementRunWIH",
+	 "icon" : "icon-info.gif"
+  ],
+  [
+	 "name" : "CaptureFSCPenaltyQuantityWIH",
+	 "parameters" : [
+	 "className" : new ObjectDataType(),
+	 ],
+	 "displayName" : "CaptureFSCPenaltyQuantityWIH",
+	 "icon" : "icon-info.gif"
+  ],
+  [
+	 "name" : "CashFlowReconciliationWIH",
+	 "parameters" : [
+	 "className" : new ObjectDataType(),
+	 ],
+	 "displayName" : "CashFlowReconciliationWIH",
+	 "icon" : "icon-info.gif"
+  ],
+  [
+	 "name" : "FinalAuthoriseSettlementRunWIH",
+	 "parameters" : [
+	 "className" : new ObjectDataType(),
+	 ],
+	 "displayName" : "FinalAuthoriseSettlementRunWIH",
+	 "icon" : "icon-info.gif"
+  ],
+  [
+	 "name" : "LoadPendingCMFFilesWIH",
+	 "parameters" : [
+	 "className" : new ObjectDataType(),
+	 ],
+	 "displayName" : "LoadPendingCMFFilesWIH",
+	 "icon" : "icon-info.gif"
+  ],
+  [
+	 "name" : "ForceDenySettlementRunWIH",
+	 "parameters" : [
+	 "className" : new ObjectDataType(),
+	 ],
+	 "displayName" : "ForceDenySettlementRunWIH",
+	 "icon" : "icon-info.gif"
+  ],
+  [
+	 "name" : "RerunInclusionsWIH",
+	 "parameters" : [
+	 "className" : new ObjectDataType(),
+	 ],
+	 "displayName" : "RerunInclusionsWIH",
+	 "icon" : "icon-info.gif"
+  ],
+  [
+	 "name" : "SettlementRunProcessWIH",
+	 "parameters" : [
+	 "className" : new ObjectDataType(),
+	 ],
+	 "displayName" : "SettlementRunProcessWIH",
+	 "icon" : "icon-info.gif"
+  ],
+  [
+	 "name" : "RunValidationsWIH",
+	 "parameters" : [
+	 "className" : new ObjectDataType(),
+	 ],
+	 "displayName" : "RunValidationsWIH",
+	 "icon" : "icon-info.gif"
+  ],
+  [
+	 "name" : "SettlementMainProcessWIH",
+	 "parameters" : [
+	 "className" : new ObjectDataType(),
+	 ],
+	 "displayName" : "SettlementMainProcessWIH",
+	 "icon" : "icon-info.gif"
+  ],
+  [
+	 "name" : "ExecuteRunWIH",
+	 "parameters" : [
+	 "className" : new ObjectDataType(),
+	 ],
+	 "displayName" : "ExecuteRunWIH",
+	 "icon" : "icon-info.gif"
+  ],
+  [
+	 "name" : "SetPackageAuthorizationWIH",
+	 "parameters" : [
+	 "className" : new ObjectDataType(),
+	 ],
+	 "displayName" : "SetPackageAuthorizationWIH",
+	 "icon" : "icon-info.gif"
+  ],
+  [
+	 "name" : "VerifyMCEDataWIH",
+	 "parameters" : [
+	 "className" : new ObjectDataType(),
+	 ],
+	 "displayName" : "VerifyMCEDataWIH",
+	 "icon" : "icon-info.gif"
+  ],
+  [
+  	 "name" : "IPDataVerificationsValidationsWIH",
+  	 "parameters" : [
+  	 "className" : new ObjectDataType(),
+	 ],
+	 "displayName" : "IPDataVerificationsValidationsWIH",
+	 "icon" : "icon-info.gif"
+  ],
+  [
+    	 "name" : "PerformTestRunWIH",
+    	 "parameters" : [
+    	 "className" : new ObjectDataType(),
+  	 ],
+  	 "displayName" : "PerformTestRunWIH",
+  	 "icon" : "icon-info.gif"
+    ]
+]

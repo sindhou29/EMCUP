@@ -1,0 +1,12 @@
+properties([parameters([string(defaultValue: '', description: '', name: 'labelname')])])
+def label = params.labelname
+@Library("delivery-pipeline") _
+standardPipeline {
+		projectName = "settlement-model"
+		serverDomain = "settlement-model"
+		labelName = label
+		QRatorParam1 = ""
+		QRatorParam2 = ""
+		notif_list = "gwohaur.fun@emcsg.com, logeswaran.r@emcsg.com, vanhoang.nguyen@emcsg.com, rahul.oza@emcsg.com, JiaHua.Tan@emcsg.com, gautam.shangari@emcsg.com, Andreyanto.N@emcsg.com"
+		deploymentTargetMachineName = "dvlxbp01,dvlxbp02"
+}

@@ -1,0 +1,146 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import java.util.List;
+import com.emc.sett.impl.*;
+
+global java.math.BigDecimal inGstRate;
+global java.math.BigDecimal outGstRate;
+
+/*
+* the interval’s NASC = the interval’s NESC + the interval’s NFSC + the interval’s NRSC + the interval’s NTSC + the interval’s VCSC + the interval’s FSSC – the interval’s HEUSA – the interval’s MEUSA + the interval’s LCSC
+*
+* the interval’s input GST for NASC = the interval’s input GST for NESC + the interval’s input GST for FSC + the interval’s input GST for LCSC
+*
+* the interval’s output GST for NASC = the interval’s output GST for NESC - the interval’s output GST for FSD – the interval’s output GST for HEUSA – the interval’s output GST for MEUSA + the interval’s output GST for LCSC
+*
+* the interval’s total NASC = the interval’s total NESC + the interval’s total NFSC + the interval’s NTSC + the interval’s VCSC + the interval’s FSSC – the interval’s total HEUSA – the interval’s total MEUSA + the interval’s total LCSC
+*/
+rule "3.7.1 – Net Account Settlement Credit (NASC) - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( nasc == null, totalNesc != null && totalNfsc != null && totalNrsc != null && ntsc != null && vcsc != null && fssc != null && totalHeusa != null && totalMeusa != null && totalLcsc != null )
+    then
+        $i.setNasc( $i.getNesc().add( $i.getNfsc() ).add( $i.getNrsc() ).add( $i.getNtsc() ).add( $i.getVcsc() ).add( $i.getFssc() ).subtract( $i.getHeusa() ).subtract( $i.getMeusa() ).add( $i.getLcsc() ) );
+        $i.setIpGstNasc( $i.getIpGstNesc().add( $i.getIpGstFsc() ).add( $i.getIpGstLcsc() ) );
+        $i.setOpGstNasc( $i.getOpGstNesc().subtract( $i.getOpGstFsd() ).subtract( $i.getOpGstHeusa() ).subtract( $i.getOpGstMeusa() ).add( $i.getOpGstLcsc() ) );
+        // Bug here ????
+        //$i.setTotalNasc( $i.getTotalNesc().add( $i.getTotalNfsc() ).add( $i.getTotalNrsc() ).add( $i.getNtsc() ).add( $i.getVcsc() ).add( $i.getFssc() ).subtract( $i.getTotalHeusa() ).subtract( $i.getTotalMeusa() ).add( $i.getTotalLcsc() ) );
+        $i.setTotalNasc( $i.getTotalNesc().add( $i.getTotalNfsc() ).add( $i.getNtsc() ).add( $i.getVcsc() ).add( $i.getFssc() ).subtract( $i.getTotalHeusa() ).subtract( $i.getTotalMeusa() ).add( $i.getTotalLcsc() ) );
+        update( $i );
+end
+
+/*
+* the account’s NASC = the account’s NESC + the account’s NFSC + the account’s NRSC + the account’s NTSC + the account’s VCSC + the account's FSSC + the account’s HEUSA + the account’s MEUSA + the account’s LCSC
+*
+* the account’s input GST for NASC = the account’s input GST for NESC + the account’s input GST for NFSC + the account’s input GST for NRSC + the account’s input GST for LCSC
+*
+* the account’s output GST for NASC = the account’s output GST for NESC + the account’s output GST for NFSC + the account’s output GST for NRSC + the account's output GST for HEUSA + the account's output GST for MEUSA + the account’s output GST for LCSC
+*
+* the account’s total NASC = the account’s total NESC + the account’s total NFSC + the account’s total NRSC + the account's total NTSC + the account's total VCSC + the account's total FSSC + the account's total HEUSA + the account's total MEUSA + the account’s total LCSC
+*
+* the account’s accounting output GST for NASC = the account’s output GST for NASC * -1
+*/
+rule "3.7.1 – Net Account Settlement Credit (NASC) - account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( nasc == null, totalNesc != null && totalNfsc != null && totalNrsc != null && totalNtsc != null && totalVcsc != null && totalFssc != null && totalHeusa != null && totalMeusa != null && totalLcsc != null )
+    then
+        $a.setNasc( $a.getNesc().add( $a.getNfsc() ).add( $a.getNrsc() ).add( $a.getNtsc() ).add( $a.getVcsc() ).add( $a.getFssc() ).add( $a.getHeusa() ).add( $a.getMeusa() ).add( $a.getLcsc() ) );
+        $a.setIpGstNasc( $a.getIpGstNesc().add( $a.getIpGstNfsc() ).add( $a.getIpGstNrsc() ).add( $a.getIpGstLcsc() ) );
+        $a.setOpGstNasc( $a.getOpGstNesc().add( $a.getOpGstNfsc() ).add( $a.getOpGstNrsc() ).add( $a.getOpGstHeusa() ).add( $a.getOpGstMeusa() ).add( $a.getOpGstLcsc() ) );
+        $a.setTotalNasc( $a.getTotalNesc().add( $a.getTotalNfsc() ).add( $a.getTotalNrsc() ).add( $a.getTotalNtsc() ).add( $a.getTotalVcsc() ).add( $a.getTotalFssc() ).add( $a.getTotalHeusa() ).add( $a.getTotalMeusa() ).add( $a.getTotalLcsc() ) );
+        $a.setAccountingOpGstNasc( $a.getOpGstNasc().negate() );
+        update( $a );
+end
+
+/*
+* the interval’s NPSC = the interval’s NESC + the interval’s NFSC + the interval’s NTSC + the interval’s VCSCK – the interval’s HEUSA – the interval’s MEUSA if
+* For(the interval’s account, the account is a MSSL)
+*
+* the interval’s input GST for NPSC = the interval’s input GST for NESC + the interval’s input GST for FSC
+*
+* the interval’s output GST for NPSC = the interval’s output GST for NESC + the interval’s output GST for FSD – the interval’s output GST for HEUSA – the interval’s output GST for MEUSA
+*
+* the interval’s total NPSC = the interval’s total NESC + the interval’s total NFSC + the interval’s NTSC + the interval’s VCSCK – the interval’s total HEUSA – the interval’s total MEUSA if
+* For(the interval’s account, the account is a MSSL)
+*/
+rule "3.7.2 Net Participant Settlement Credit (NPSC) - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( npsc == null, $sa : accountId, totalNesc != null && totalNfsc != null && ntsc != null && vcsck != null && totalHeusa != null && totalMeusa != null )
+    	Account( accountId == $sa, msslAccount == true )
+    then
+        $i.setNpsc( $i.getNesc().add( $i.getNfsc() ).add( $i.getNtsc() ).add( $i.getVcsck() ).subtract( $i.getHeusa() ).subtract( $i.getMeusa() ) );
+        $i.setIpGstNpsc( $i.getIpGstNesc().add( $i.getIpGstFsc() ) );
+        $i.setOpGstNpsc( $i.getOpGstNesc().add( $i.getOpGstFsd() ).subtract( $i.getOpGstHeusa() ).subtract( $i.getOpGstMeusa() ) );
+        $i.setTotalNpsc( $i.getTotalNesc().add( $i.getTotalNfsc() ).add( $i.getNtsc() ).add( $i.getVcsck() ).subtract( $i.getTotalHeusa() ).subtract( $i.getTotalMeusa() ) );
+        update( $i );
+end
+
+/*
+* the account’s NPSC = InstanceSum(the account's intervals, the interval’s NPSC)
+*
+* the account’s input GST for NPSC = Round(InstanceSum(the account's intervals, the interval’s input GST for NPSC), 2)
+*
+* the account’s output GST for NPSC = Round(InstanceSum(the account's intervals, the interval’s output GST for NPSC), 2)
+*
+* the account’s total NPSC = Round(InstanceSum(the account's intervals, the interval’s total NPSC), 2)
+*/
+rule "3.7.2 Net Participant Settlement Credit (NPSC) - account level"
+ruleflow-group "acct_stmt"
+//salience -1
+salience -2
+    when
+    	$a : Account( totalNpsc == null, msslAccount == true, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $npsc : BigDecimal() from accumulate(
+        							Period( npsc != null, amt : npsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vnpsc : BigDecimal() from accumulate(
+        							Period( ipGstNpsc != null, amt : ipGstNpsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $anpsc : BigDecimal() from accumulate(
+        							Period( opGstNpsc != null, amt : opGstNpsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tnpsc : BigDecimal() from accumulate(
+        							Period( totalNpsc != null, amt : totalNpsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setNpsc( $npsc );
+        $a.setIpGstNpsc( $vnpsc.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setOpGstNpsc( $anpsc.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setTotalNpsc( $tnpsc.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $a );
+end
+
+/*
+* the market’s WMQ = InstanceSum(the market’s intervals, the interval’s WMQ)
+*/
+rule "3.7.1 – Net Account Settlement Credit (NASC) - wmq at market level"
+ruleflow-group "acct_stmt"
+    when
+    	$m : Market( wmq == null, $pd : periodId )
+    	$is : List() from collect( Period( periodId == $pd ) )
+        $wmq : BigDecimal() from accumulate(
+        							Period( wmq != null, amt : wmq ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $m.setWmq( $wmq );
+        update( $m );
+end

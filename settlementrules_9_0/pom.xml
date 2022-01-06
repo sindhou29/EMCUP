@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.emc.sett</groupId>
+  <artifactId>settlement-rules-9-0</artifactId>
+  <version>0.9</version>
+  <packaging>kjar</packaging>
+
+  <name>SettlementRules_9_0</name>
+  <description>A market rules module for project SHARP</description>
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <runtime.version>7.52.0.Final-redhat-00008</runtime.version>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>jboss-public-repository-group</id>
+      <name>JBoss Public Repository Group</name>
+      <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>daily</updatePolicy>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-api</artifactId>
+      <version>${runtime.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jbpm</groupId>
+      <artifactId>jbpm-flow-builder</artifactId>
+      <version>${runtime.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.emc</groupId>
+    	<artifactId>settlement-model</artifactId>
+    	<version>1.24</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.emc.sett</groupId>
+    	<artifactId>settlement-rules-common-api</artifactId>
+    	<version>1.45</version>
+    </dependency>
+  </dependencies>
+	
+  <build>
+	<finalName>settlement-rules-9-0</finalName>
+  	<plugins>
+      <plugin>
+        <groupId>org.kie</groupId>
+        <artifactId>kie-maven-plugin</artifactId>
+        <version>7.52.0.Final-redhat-00008</version>
+        <extensions>true</extensions>
+	    <dependencies>
+	       <dependency>
+	         <groupId>org.jbpm</groupId>
+	         <artifactId>jbpm-bpmn2</artifactId>
+	         <version>7.52.0.Final-redhat-00008</version>
+	       </dependency>
+	    </dependencies>
+      </plugin>
+      
+	   <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>install</phase>
+            <configuration>
+              <tasks>
+			  <mkdir dir="${user.home}\.m2\repository\com\emc\sett\settlement-rules-9-0\${project.version}"/>
+			  <zip destfile="${basedir}/target/${project.artifactId}_${project.version}.zip">  
+              <zipfileset dir="${user.home}\.m2\repository\com\emc\sett\settlement-rules-9-0\${project.version}" includes="**/*" />
+				</zip>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+	   </plugin>
+	   
+	   <plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-jar-plugin</artifactId>
+			<version>2.3.2</version>
+			<configuration>
+			<finalName>settlementrules_9_0-${v}</finalName>
+			</configuration>
+		</plugin>
+
+    </plugins>
+    <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <filtering>false</filtering>
+        </resource>
+        <resource>
+            <directory>src/main/java</directory>
+            <filtering>false</filtering>
+        </resource>
+        <resource>
+            <directory>xsd</directory>
+            <filtering>false</filtering>
+        </resource>
+    </resources>
+  </build>
+</project>

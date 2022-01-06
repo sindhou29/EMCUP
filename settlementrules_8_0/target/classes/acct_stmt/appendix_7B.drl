@@ -1,0 +1,898 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import java.util.List;
+import com.emc.sett.impl.*;
+
+global java.math.BigDecimal inGstRate;
+global java.math.BigDecimal outGstRate;
+
+/*
+* the node’s GMEE = Round(the node’s MEP * the node’s change in IEQ, 2)
+*/
+rule "B.4.2.1 Generation Metering Error Adjustment for Energy (GMEE) - node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( gmee == null, mep != null && deltaIeq != null, $mep : mep, $deltaIeq : deltaIeq )
+    then
+        $n.setGmee( $mep.multiply($deltaIeq).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $n );
+end
+
+/*
+* the node’s GMEE = Round(the node’s MEP * the node’s change in IEQ, 2)
+*/
+rule "B.4.2.1 Generation Metering Error Adjustment for Energy (GMEE) - node level default case"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( gmee == null, (mep != null && deltaIeq != null) == false, $mep : mep, $deltaIeq : deltaIeq )
+    then
+        $n.setGmee( BigDecimal.ZERO );
+        update( $n );
+end
+
+/*
+* the node’s GMEF = Round(For(the node's interval, the interval’s imported PSOA + the interval’s imported EMCA) * the node’s change in IEQ, 2) if
+* For(the node’s interval, For(the interval’s account, the account is not eligible for net settlement))
+*
+* the node’s accounting GMEF = the node’s GMEF * -1
+*/
+rule "B.4.2.2 Generation Metering Error Adjustment for Fees (GMEF) - node level net sett case"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( gmef == null, mep != null && deltaIeq != null, $sa : accountId, $pd : periodId, $mep : mep, $deltaIeq : deltaIeq )
+    	Period( accountId == $sa && periodId == $pd, impPsoa != null && impEmca != null, $impPsoa : impPsoa, $impEmca : impEmca )
+    	Account( accountId == $sa, netSett == false )
+    then
+        $n.setGmef( $impPsoa.add($impEmca).multiply($deltaIeq).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $n.setAccountingGmef( $n.getGmef().negate() );
+        update( $n );
+end
+
+/*
+* the node’s GMEF = Round(For(the node's interval, the interval’s imported PSOA + the interval’s imported EMCA) * the node’s change in IEQ, 2) if
+* For(the node’s interval, For(the interval’s account, the account is not eligible for net settlement))
+*
+* the node’s accounting GMEF = the node’s GMEF * -1
+*/
+rule "B.4.2.2 Generation Metering Error Adjustment for Fees (GMEF) - node level not R/S cases"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( gmef == null, (mep != null && deltaIeq != null) == false, $sa : accountId )
+    	Account( accountId == $sa, netSett == false )
+    then
+        $n.setGmef( BigDecimal.ZERO );
+        $n.setAccountingGmef( $n.getGmef().negate() );
+        update( $n );
+end
+
+/*
+* the node’s GMEF = Round(For(the node's interval, the interval’s imported PSOA + the interval’s imported EMCA) * the node’s change in IEQ, 2) if
+* For(the node’s interval, For(the interval’s account, the account is not eligible for net settlement))
+*
+* the node’s accounting GMEF = the node’s GMEF * -1
+*/
+rule "B.4.2.2 Generation Metering Error Adjustment for Fees (GMEF) - node level default case"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( gmef == null, $sa : accountId )
+    	Account( accountId == $sa, netSett == true )
+    then
+        $n.setGmef( BigDecimal.ZERO );
+        $n.setAccountingGmef( $n.getGmef().negate() );
+        update( $n );
+end
+
+/*
+* the node’s GMEA = the node’s GMEE – the node’s GMEF
+*/
+rule "B.4.2 Generation Metering Error Adjustment (GMEA) - node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( gmea == null, gmee != null && gmef != null, $gmee : gmee, $gmef : gmef )
+    then
+        $n.setGmea( $gmee.subtract($gmef) );
+        update( $n );
+end
+
+/*
+* the interval’s GMEE = InstanceSum(the interval's nodes, the node’s GMEE)
+*
+* the interval’s GMEF = InstanceSum(the interval's nodes, the node’s GMEF)
+*
+* the interval’s accounting GMEF = the interval’s GMEF * -1
+*
+* the interval’s output GST for GMEF = Round(the interval’s GMEF * the output GST, 4) 
+*
+* the interval’s total GMEF = the interval’s GMEF + the interval’s output GST for GMEF
+*
+* the interval’s GMEA = the interval’s GMEE – the interval’s GMEF
+*
+* the interval’s output GST for GMEA = the interval’s GMEA * the output GST
+*/
+rule "B.4.2.2 Generation Metering Error Adjustment for Energy and Fees (GMEE) (GMEF) - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( gmee == null, $pd : periodId, $sa : accountId )
+    	$ns : List() from collect( Facility( accountId == $sa && periodId == $pd, gmee != null && gmef != null ) )
+        $gmee : BigDecimal() from accumulate(
+        							Facility( gmee != null, amt : gmee ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $gmef : BigDecimal() from accumulate(
+        							Facility( gmef != null, amt : gmef ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setGmee( $gmee );
+        $i.setGmef( $gmef );
+        $i.setAccountingGmef( $gmef.negate() );
+        $i.setOpGstGmef( $gmef.multiply( outGstRate ).setScale(4, BigDecimal.ROUND_HALF_UP) );
+        $i.setTotalGmef( $gmef.add( $i.getOpGstGmef() ) );
+        $i.setGmea( $gmee.subtract($gmef) );
+        $i.setOpGstGmea( $i.getGmea().multiply( outGstRate ) );
+        update( $i );
+end
+
+/*
+* the interval’s input GST for GMEE = Round(the interval’s GMEE * the input GST, 4) if
+* For(the interval’s account, the account is GST taxable)
+*
+* the interval’s total GMEE = the interval’s GMEE + the interval’s input GST for GMEE
+*/
+rule "B.4.2.2 Generation Metering Error Adjustment for Energy (GMEE) - GST at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( totalGmee == null, gmee != null, $pd : periodId, $sa : accountId )
+    	Account( accountId == $sa, taxable == true )
+    then
+        $i.setIpGstGmee( $i.getGmee().multiply( inGstRate ).setScale(4, BigDecimal.ROUND_HALF_UP) );
+        $i.setTotalGmee( $i.getGmee().add( $i.getIpGstGmee() ) );
+        update( $i );
+end
+
+/*
+* the interval’s input GST for GMEE = Round(the interval’s GMEE * the input GST, 4) if
+* For(the interval’s account, the account is GST taxable)
+*
+* the interval’s total GMEE = the interval’s GMEE + the interval’s input GST for GMEE
+*/
+rule "B.4.2.2 Generation Metering Error Adjustment for Energy (GMEE) - non-GST at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( totalGmee == null, gmee != null, $pd : periodId, $sa : accountId )
+    	Account( accountId == $sa, taxable == false )
+    then
+        $i.setIpGstGmee( BigDecimal.ZERO );
+        $i.setTotalGmee( $i.getGmee().add( $i.getIpGstGmee() ) );
+        update( $i );
+end
+
+/*
+* the interval’s LMEE = Round((the interval’s imported USEP + the interval’s imported AFP + the interval’s imported HEUR) * the interval’s change in WEQ + the interval’s imported HLCU * the interval’s change in WDQ + the interval’s imported MEUC * the interval’s change in WMQ, 2)
+*
+* the interval’s accounting LMEE = the interval’s LMEE * -1
+*
+* the interval’s output GST for LMEE = Round(the interval’s LMEE * the output GST, 4) 
+*
+* the interval’s total LMEE = the interval’s LMEE + the interval’s output GST for LMEE
+*/
+rule "B.4.2.3 Load Metering Error Adjustment (LMEE) - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( lmee == null, impUsep != null && impAfp != null && impHeur != null && impHlcu != null && impMeuc != null && deltaWeq != null && deltaWdq != null && deltaWmq != null )
+    then
+        $i.setLmee( $i.getImpUsep().add($i.getImpAfp()).add($i.getImpHeur()).multiply($i.getDeltaWeq()).add($i.getImpHlcu().multiply($i.getDeltaWdq())).add($i.getImpMeuc().multiply($i.getDeltaWmq())).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $i.setAccountingLmee( $i.getLmee().negate() );
+        $i.setOpGstLmee( $i.getLmee().multiply(outGstRate).setScale(4, BigDecimal.ROUND_HALF_UP) );
+        $i.setTotalLmee( $i.getLmee().add($i.getOpGstLmee()) );
+        update( $i );
+end
+/*
+rule "B.4.2.3 Load Metering Error Adjustment (LMEE) - period level default case"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( lmee == null, (impUsep != null && impAfp != null && impHeur != null && impHlcu != null && impMeuc != null && deltaWeq != null && deltaWdq != null && deltaWmq != null) == false )
+    then
+        //System.out.println( "LMEE @ node" );
+        $i.setLmee( BigDecimal.ZERO );
+        $i.setAccountingLmee( $i.getLmee().negate() );
+        update( $i );
+end
+*/
+
+/*
+* the interval’s LMEF = Round((the interval’s imported PSOA + the interval’s imported EMCA) * the interval’s change in WFQ, 2)
+*
+* the interval’s accounting LMEF = the interval’s LMEF * -1
+*
+* the interval’s output GST for LMEF = Round(the interval’s LMEF * the output GST, 4) 
+*
+* the interval’s total LMEF = the interval’s LMEF + the interval’s output GST for LMEF
+*/
+rule "B.4.2.3 Load Metering Error Adjustment (LMEF) - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( lmef == null, impPsoa != null && impEmca != null && deltaWfq != null, $impPsoa : impPsoa, $impEmca : impEmca, $deltaWfq : deltaWfq )
+    then
+        $i.setLmef( $impPsoa.add($impEmca).multiply($deltaWfq).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $i.setAccountingLmef( $i.getLmef().negate() );
+        $i.setOpGstLmef( $i.getLmef().multiply(outGstRate).setScale(4, BigDecimal.ROUND_HALF_UP) );
+        $i.setTotalLmef( $i.getLmef().add($i.getOpGstLmef()) );
+        update( $i );
+end
+
+/*
+* the interval's LMEA = the interval's LMEE + the interval's LMEF
+*
+* the interval’s accounting LMEA = the interval’s LMEA * -1
+*
+* the interval’s output GST for LMEA = the interval’s LMEA * the output GST
+*
+* The interval’s total LMEA = the interval’s total LMEE + the interval’s total LMEF
+*/
+rule "B.4.2.3 Load Metering Error Adjustment (LMEA) - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( lmea == null, lmee != null && lmef != null, $lmee : lmee, $lmef : lmef )
+    then
+        $i.setLmea( $lmee.add($lmef) );
+        $i.setAccountingLmea( $i.getLmea().negate() );
+        $i.setOpGstLmea( $i.getLmea().multiply(outGstRate) );
+        $i.setTotalLmea( $i.getTotalLmee().add($i.getTotalLmef()) );
+        update( $i );
+end
+
+/*
+* the interval’s NMEA = the interval’s GMEE – the interval’s GMEF – the interval’s LMEE – the interval’s LMEF
+*
+* the interval’s input GST for NMEA = the interval’s input GST for GMEE + 0 + 0 + 0
+*
+* the interval’s output GST for NMEA = 0 - the interval’s output GST for GMEF – the interval’s output GST for LMEE – the interval’s output GST for LMEF
+*
+* the interval’s total NMEA = the interval’s NMEA + the interval’s input GST for NMEA + the interval’s output GST for NMEA
+*/
+rule "B.4.2.4 Net Metering Error Adjustment (NMEA) - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( nmea == null, gmee != null && gmef != null && lmee != null && lmef != null, $gmee : gmee, $gmef : gmef, $lmee : lmee, $lmef : lmef )
+    then
+        $i.setNmea( $gmee.subtract($gmef).subtract($lmee).subtract($lmef) );
+        $i.setIpGstNmea( $i.getIpGstGmee() );
+        $i.setOpGstNmea( BigDecimal.ZERO.subtract($i.getOpGstGmef()).subtract($i.getOpGstLmee()).subtract($i.getOpGstLmef()) );
+        $i.setTotalNmea( $i.getNmea().add($i.getIpGstNmea()).add($i.getOpGstNmea()) );
+        update( $i );
+end
+
+/*
+* the account’s GMEE = InstanceSum(the account’s intervals, the interval’s GMEE)
+*
+* the account’s output GST for GMEE = 0
+*
+* the account’s GMEF = InstanceSum(the account’s intervals, the interval’s accounting GMEF)
+*
+* the account’s input GST for GMEF = 0
+*
+* the account’s LMEE = InstanceSum(the account’s intervals, the interval’s accounting LMEE)
+*
+* the account’s input GST for LMEE = 0
+*
+* the account’s LMEF = InstanceSum(the account’s intervals, the interval’s accounting LMEF)
+*
+* the account’s input GST for LMEF = 0
+*
+* the account’s GMEA = InstanceSum(the account’s intervals, the interval’s GMEA)
+*
+* the account’s LMEA = InstanceSum(the account’s intervals, the interval’s accounting LMEA)
+*
+* the account’s NMEA = InstanceSum(the account’s intervals, the interval’s NMEA)
+*/
+rule "B.4.2 GMEA, LMEA and NMEA - account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( nmea == null, accountId != null, $id : accountId )
+    	$rs : List() from collect( Period( accountId == $id ) )
+        $gmee : BigDecimal() from accumulate(
+        							Period( gmee != null, amt : gmee ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $gmef : BigDecimal() from accumulate(
+        							Period( accountingGmef != null, amt : accountingGmef ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $lmee : BigDecimal() from accumulate(
+        							Period( accountingLmee != null, amt : accountingLmee ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $lmef : BigDecimal() from accumulate(
+        							Period( accountingLmef != null, amt : accountingLmef ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $gmea : BigDecimal() from accumulate(
+        							Period( gmea != null, amt : gmea ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $lmea : BigDecimal() from accumulate(
+        							Period( accountingLmea != null, amt : accountingLmea ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $nmea : BigDecimal() from accumulate(
+        							Period( nmea != null, amt : nmea ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setGmee( $gmee );
+        $a.setOpGstGmee( BigDecimal.ZERO );
+        $a.setGmef( $gmef );
+        $a.setIpGstGmef( BigDecimal.ZERO );
+        $a.setLmee( $lmee );
+        $a.setIpGstLmee( BigDecimal.ZERO );
+        $a.setLmef( $lmef );
+        $a.setIpGstLmef( BigDecimal.ZERO );
+        $a.setGmea( $gmea );
+        $a.setLmea( $lmea );
+        $a.setNmea( $nmea );
+        update( $a );
+end
+
+
+
+/*
+* the adjustment’s accounting GMEF = the adjustment’s GMEF * -1
+*
+* the adjustment’s accounting LMEE = the adjustment’s LMEE * -1
+*
+* the adjustment’s accounting LMEF = the adjustment’s LMEF * -1
+*
+* the adjustment’s total GMEE = the adjustment’s GMEE + the adjustment’s input GST for GMEE
+*
+* the adjustment’s total GMEF = the adjustment’s GMEF + the adjustment’s output GST for GMEF
+*
+* the adjustment’s total LMEE = the adjustment’s LMEE + the adjustment’s output GST for LMEE
+*
+* the adjustment’s total LMEF = the adjustment’s LMEF + the adjustment’s output GST for LMEF
+*
+* the adjustment’s input GST for NMEA = the adjustment’s input GST for GMEE – 0 – 0 – 0
+*
+* the adjustment’s output GST for NMEA = 0 - the adjustment’s output GST for GMEF - the adjustment’s output GST for LMEE – the adjustment’s output GST for LMEF
+*
+* the adjustment’s total NMEA = the adjustment’s NMEA + the adjustment’s input GST for NMEA + the adjustment’s output GST for NMEA
+*/
+rule "B.4.4 Allocation of NMEA in HEUA - adjustment level"
+ruleflow-group "acct_stmt"
+    when
+        $a : Adjustment( totalNmea == null )
+    then
+        $a.setAccountingGmef( $a.getGmef().negate() );
+        $a.setAccountingLmee( $a.getLmee().negate() );
+        $a.setAccountingLmef( $a.getLmef().negate() );
+        
+        $a.setTotalGmee( $a.getGmee().add( $a.getIpGstGmee() ) );
+        $a.setTotalGmef( $a.getGmef().add( $a.getOpGstGmef() ) );
+        $a.setTotalLmee( $a.getLmee().add( $a.getOpGstLmee() ) );
+        $a.setTotalLmef( $a.getLmef().add( $a.getOpGstLmef() ) );
+        //$a.setIpGstNmea( $a.getIpGstGmee() );		// use values from input directly
+        //$a.setOpGstNmea( $a.getOpGstGmef().negate().subtract( $a.getOpGstLmee() ).subtract( $a.getOpGstLmef() ) );		// use values from input directly
+        $a.setTotalNmea( $a.getNmea().add( $a.getIpGstNmea() ).add( $a.getOpGstNmea() ) );
+        update( $a );
+end
+
+/*
+* the rerun’s included GMEE = InstanceSum(the rerun’s adjustments, the adjustment’s GMEE)
+*
+* the rerun’s input GST for included GMEE = Round(InstanceSum(the rerun’s adjustments, the adjustment’s input GST for GMEE), 2)
+*
+* the rerun’s total of included GMEE = Round(InstanceSum(the rerun’s adjustments, the adjustment’s total GMEE), 2)
+*/
+rule "B.4.4 Allocation of NMEA in HEUA - gmee at rerun level"
+ruleflow-group "acct_stmt"
+    when
+    	$r : Rerun( incGmee == null )
+        $gmee : BigDecimal() from $r.sumIncludedGmee()
+        $vgmee : BigDecimal() from $r.sumIncludedIpGstGmee()
+        $tgmee : BigDecimal() from $r.sumIncludedTotalGmee()
+    then
+        $r.setIncGmee( $gmee );
+        $r.setIpGstIncGmee( $vgmee.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $r.setTotalIncGmee( $tgmee.setScale(2, BigDecimal.ROUND_HALF_UP) );
+end
+
+/*
+* the rerun’s included GMEF = InstanceSum(the rerun’s adjustments, the adjustment’s GMEF) * -1
+*
+* the rerun’s output GST for included GMEF = Round(InstanceSum(the rerun’s adjustments, the adjustment’s output GST for GMEF), 2) * -1
+*
+* the rerun’s total of included GMEF = Round(InstanceSum(the rerun’s adjustments, the adjustment’s total GMEF), 2) * -1
+*/
+rule "B.4.4 Allocation of NMEA in HEUA - gmef at rerun level"
+ruleflow-group "acct_stmt"
+    when
+    	$r : Rerun( incGmef == null )
+        $gmef : BigDecimal() from $r.sumIncludedGmef()
+        $agmef : BigDecimal() from $r.sumIncludedOpGstGmef()
+        $tgmef : BigDecimal() from $r.sumIncludedTotalGmef()
+    then
+        $r.setIncGmef( $gmef.negate() );
+        $r.setOpGstIncGmef( $agmef.setScale(2, BigDecimal.ROUND_HALF_UP).negate() );
+        $r.setTotalIncGmef( $tgmef.setScale(2, BigDecimal.ROUND_HALF_UP).negate() );
+end
+
+/*
+* the rerun’s included LMEE = InstanceSum(the rerun’s adjustments, the adjustment’s LMEE) * -1
+*
+* the rerun’s output GST for included LMEE = Round(InstanceSum(the rerun’s adjustments, the adjustment’s output GST for LMEE), 2) * -1
+*
+* the rerun’s total of included LMEE = Round(InstanceSum(the rerun’s adjustments, the adjustment’s total LMEE), 2) * -1
+*/
+rule "B.4.4 Allocation of NMEA in HEUA - lmee at rerun level"
+ruleflow-group "acct_stmt"
+    when
+    	$r : Rerun( incLmee == null )
+        $lmee : BigDecimal() from $r.sumIncludedLmee()
+        $almee : BigDecimal() from $r.sumIncludedOpGstLmee()
+        $tlmee : BigDecimal() from $r.sumIncludedTotalLmee()
+    then
+        $r.setIncLmee( $lmee.negate() );
+        $r.setOpGstIncLmee( $almee.setScale(2, BigDecimal.ROUND_HALF_UP).negate() );
+        $r.setTotalIncLmee( $tlmee.setScale(2, BigDecimal.ROUND_HALF_UP).negate() );
+end
+
+/*
+* the rerun’s included LMEF = InstanceSum(the rerun’s adjustments, the adjustment’s LMEF) * -1
+*
+* the rerun’s output GST for included LMEF = Round(InstanceSum(the rerun’s adjustments, the adjustment’s output GST for LMEF), 2) * -1
+*
+* the rerun’s total of included LMEF = Round(InstanceSum(the rerun’s adjustments, the adjustment’s total LMEF), 2) * -1
+*/
+rule "B.4.4 Allocation of NMEA in HEUA - lmef at rerun level"
+ruleflow-group "acct_stmt"
+    when
+    	$r : Rerun( incLmef == null )
+        $lmef : BigDecimal() from $r.sumIncludedLmef()
+        $almef : BigDecimal() from $r.sumIncludedOpGstLmef()
+        $tlmef : BigDecimal() from $r.sumIncludedTotalLmef()
+    then
+        $r.setIncLmef( $lmef.negate() );
+        $r.setOpGstIncLmef( $almef.setScale(2, BigDecimal.ROUND_HALF_UP).negate() );
+        $r.setTotalIncLmef( $tlmef.setScale(2, BigDecimal.ROUND_HALF_UP).negate() );
+end
+
+/*
+* the rerun’s included NMEA = InstanceSum(the rerun’s adjustments, the adjustment’s NMEA)
+*
+* the rerun’s input GST for included NMEA = Round(InstanceSum(the rerun’s adjustments, the adjustment’s input GST for NMEA), 2)
+*
+* the rerun’s output GST for included NMEA = Round(InstanceSum(the rerun’s adjustments, the adjustment’s output GST for NMEA), 2)
+*
+* the rerun’s total of included NMEA = Round(InstanceSum(the rerun’s adjustments, the adjustment’s total NMEA), 2)
+*/
+rule "B.4.4 Allocation of NMEA in HEUA - rerun level"
+ruleflow-group "acct_stmt"
+    when
+    	$r : Rerun( incNmea == null )
+        $nmea : BigDecimal() from $r.sumIncludedNmea()
+        $vnmea : BigDecimal() from $r.sumIncludedIpGstNmea()
+        $anmea : BigDecimal() from $r.sumIncludedOpGstNmea()
+        $tnmea : BigDecimal() from $r.sumIncludedTotalNmea()
+    then
+        $r.setIncNmea( $nmea );
+        $r.setIpGstIncNmea( $vnmea.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $r.setOpGstIncNmea( $anmea.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $r.setTotalIncNmea( $tnmea.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $r );
+end
+
+/*
+* the interval’s included NMEA = InstanceSum(the interval's adjustments, the adjustment’s NMEA)
+*
+* the interval’s input GST for included NMEA = InstanceSum(the interval's adjustments, the adjustment’s input GST for NMEA)
+*
+* the interval’s output GST for included NMEA = InstanceSum(the interval's adjustments, the adjustment’s output GST for NMEA)
+*
+* the interval’s total of included NMEA = InstanceSum(the interval's adjustments, the adjustment’s total NMEA)
+*/
+rule "B.4.4 Allocation of NMEA in HEUA - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( incNmea == null )
+        $nmea : BigDecimal() from $i.sumIncludedNmea()
+        $vnmea : BigDecimal() from $i.sumIncludedIpGstNmea()
+        $anmea : BigDecimal() from $i.sumIncludedOpGstNmea()
+        $tnmea : BigDecimal() from $i.sumIncludedTotalNmea()
+    then
+        $i.setIncNmea( $nmea );
+        $i.setIpGstIncNmea( $vnmea );
+        $i.setOpGstIncNmea( $anmea );
+        $i.setTotalIncNmea( $tnmea  );
+        update( $i );
+end
+
+/*
+* the account’s included GMEE = InstanceSum(the account's reruns, the rerun’s included GMEE)
+*
+* the account’s input GST for included GMEE = InstanceSum(the account's reruns, the rerun’s input GST for included GMEE)
+*
+* the account’s total of included GMEE = InstanceSum(the account's reruns, the rerun’s total of included GMEE)
+*
+* the account’s included GMEF = InstanceSum(the account's reruns, the rerun’s included GMEF)
+*
+* the account’s output GST for included GMEF = InstanceSum(the account's reruns, the rerun’s output GST for included GMEF)
+*
+* the account’s total of included GMEF = InstanceSum(the account's reruns, the rerun’s total of included GMEF)
+*
+* the account’s included LMEE = InstanceSum(the account's reruns, the rerun’s included LMEE)
+*
+* the account’s output GST for included LMEE = InstanceSum(the account's reruns, the rerun’s output GST for included LMEE)
+*
+* the account’s total of included LMEE = InstanceSum(the account's reruns, the rerun’s total of included LMEE)
+*
+* the account’s included LMEF = InstanceSum(the account's reruns, the rerun’s included LMEF)
+*
+* the account’s output GST for included LMEF = InstanceSum(the account's reruns, the rerun’s output GST for included LMEF)
+*
+* the account’s total of included LMEF = InstanceSum(the account's reruns, the rerun’s total of included LMEF)
+*
+* the account’s included NMEA = InstanceSum(the account's reruns, the rerun’s included NMEA)
+*
+* the account’s input GST for included NMEA = the account’s input GST for included GMEE
+*
+* the account’s output GST for included NMEA = the account’s output GST for included GMEF + the account’s output GST for included LMEE + the account’s output GST for included LMEF
+*
+* the account’s total of included NMEA = the account’s included NMEA + the account’s input GST for included NMEA + the account’s output GST for included NMEA
+*/
+rule "B.4.4 Allocation of NMEA in HEUA - account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( incGmee == null, accountId != null, $name : accountId )
+    	$rs : List() from collect( Rerun( name == $name ) )
+        $gmee : BigDecimal() from accumulate(
+        							Rerun( incGmee != null, amt : incGmee ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vgmee : BigDecimal() from accumulate(
+        							Rerun( ipGstIncGmee != null, amt : ipGstIncGmee ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tgmee : BigDecimal() from accumulate(
+        							Rerun( totalIncGmee != null, amt : totalIncGmee ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $gmef : BigDecimal() from accumulate(
+        							Rerun( incGmef != null, amt : incGmef ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $agmef : BigDecimal() from accumulate(
+        							Rerun( opGstIncGmef != null, amt : opGstIncGmef ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tgmef : BigDecimal() from accumulate(
+        							Rerun( totalIncGmef != null, amt : totalIncGmef ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $lmee : BigDecimal() from accumulate(
+        							Rerun( incLmee != null, amt : incLmee ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $almee : BigDecimal() from accumulate(
+        							Rerun( opGstIncLmee != null, amt : opGstIncLmee ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tlmee : BigDecimal() from accumulate(
+        							Rerun( totalIncLmee != null, amt : totalIncLmee ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $lmef : BigDecimal() from accumulate(
+        							Rerun( incLmef != null, amt : incLmef ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $almef : BigDecimal() from accumulate(
+        							Rerun( opGstIncLmef != null, amt : opGstIncLmef ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $tlmef : BigDecimal() from accumulate(
+        							Rerun( totalIncLmef != null, amt : totalIncLmef ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $nmea : BigDecimal() from accumulate(
+        							Rerun( incNmea != null, amt : incNmea ) from $rs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setIncGmee( $gmee );
+        $a.setIpGstIncGmee( $vgmee );
+        $a.setTotalIncGmee( $tgmee );
+        $a.setIncGmef( $gmef );
+        $a.setOpGstIncGmef( $agmef );
+        $a.setTotalIncGmef( $tgmef );
+        $a.setIncLmee( $lmee );
+        $a.setOpGstIncLmee( $almee );
+        $a.setTotalIncLmee( $tlmee );
+        $a.setIncLmef( $lmef );
+        $a.setOpGstIncLmef( $almef );
+        $a.setTotalIncLmef( $tlmef );
+        $a.setIncNmea( $nmea );
+        $a.setIpGstIncNmea( $a.getIpGstIncGmee() );
+        $a.setOpGstIncNmea( $a.getOpGstIncGmef().add( $a.getOpGstIncLmee() ).add( $a.getOpGstIncLmef() ) );
+        $a.setTotalIncNmea( $a.getIncNmea().add( $a.getIpGstIncNmea() ).add( $a.getOpGstIncNmea() )  );
+        update( $a );
+end
+
+/*
+* the nmeagrp’s GMEE = InstanceSum(the nmeagrp’s adjustments, the adjustment’s GMEE) * -1
+*
+* the nmeagrp’s input GST for GMEE = InstanceSum(the nmeagrp’s adjustments, the adjustment’s input GST for GMEE)
+*/
+rule "B.4 GMEA and LMEA - gmee at CnmeaSettRe level"
+ruleflow-group "acct_stmt"
+    when
+    	$r : CnmeaSettRe( gmee == null, $pd : periodId, $id : accountId, $ver : version )
+        $gmee : BigDecimal() from $r.sumIncludedGmee()
+        $vgmee : BigDecimal() from $r.sumIncludedIpGstGmee()
+    then
+        $r.setGmee( $gmee.negate() );
+        $r.setIpGstGmee( $vgmee );
+        update( $r );
+end
+
+/*
+* the nmeagrp’s GMEF = InstanceSum(the nmeagrp’s adjustments, the adjustment’s GMEF) * -1
+*
+* the nmeagrp’s output GST for GMEF = InstanceSum(the nmeagrp’s adjustments, the adjustment’s output GST for GMEF)
+*/
+rule "B.4 GMEA and LMEA - gmef at CnmeaSettRe level"
+ruleflow-group "acct_stmt"
+    when
+    	$r : CnmeaSettRe( gmef == null, $pd : periodId, $id : accountId, $ver : version )
+        $gmef : BigDecimal() from $r.sumIncludedGmef()
+        $agmef : BigDecimal() from $r.sumIncludedOpGstGmef()
+    then
+        $r.setGmef( $gmef.negate() );
+        $r.setOpGstGmef( $agmef );
+        update( $r );
+end
+
+/*
+* the nmeagrp’s LMEE = InstanceSum(the nmeagrp’s adjustments, the adjustment’s LMEE) * -1
+*
+* the nmeagrp’s output GST for LMEE = InstanceSum(the nmeagrp’s adjustments, the adjustment’s output GST for LMEE)
+*/
+rule "B.4 GMEA and LMEA - lmee at CnmeaSettRe level"
+ruleflow-group "acct_stmt"
+    when
+    	$r : CnmeaSettRe( lmee == null, $pd : periodId, $id : accountId, $ver : version )
+        $lmee : BigDecimal() from $r.sumIncludedLmee()
+        $almee : BigDecimal() from $r.sumIncludedOpGstLmee()
+    then
+        $r.setLmee( $lmee.negate() );
+        $r.setOpGstLmee( $almee );
+        update( $r );
+end
+
+/*
+* the nmeagrp’s LMEF = InstanceSum(the nmeagrp’s adjustments, the adjustment’s LMEF) * -1
+*
+* the nmeagrp’s output GST for LMEF = InstanceSum(the nmeagrp’s adjustments, the adjustment’s output GST for LMEF)
+*/
+rule "B.4 GMEA and LMEA - lmef at CnmeaSettRe level"
+ruleflow-group "acct_stmt"
+    when
+    	$r : CnmeaSettRe( lmef == null, $pd : periodId, $id : accountId, $ver : version )
+        $lmef : BigDecimal() from $r.sumIncludedLmef()
+        $almef : BigDecimal() from $r.sumIncludedOpGstLmef()
+    then
+        $r.setLmef( $lmef.negate() );
+        $r.setOpGstLmef( $almef );
+        update( $r );
+end
+
+/*
+* the nmeagrp’s NMEA = InstanceSum(the nmeagrp’s adjustments, the adjustment’s NMEA)
+*
+* the nmeagrp’s output GST for NMEA = InstanceSum(the nmeagrp’s adjustments, the adjustment’s input GST for NMEA – the adjustment’s output GST for NMEA)
+*/
+rule "B.4 GMEA and LMEA - nmea at CnmeaSettRe level"
+ruleflow-group "acct_stmt"
+    when
+    	$r : CnmeaSettRe( nmea == null, $pd : periodId, $id : accountId, $ver : version )
+        $nmea : BigDecimal() from $r.sumIncludedNmea()
+        $anmea : BigDecimal() from $r.sumIncludedOpGstNmea()
+    then
+        $r.setNmea( $nmea );
+        $r.setOpGstNmea( $anmea );
+        update( $r );
+end
+
+/*
+* the cnmea’s GMEE = InstanceSum(the cnmea’s adjustments, the adjustment’s GMEE)
+*
+* the cnmea’s GMEF = InstanceSum(the cnmea’s adjustments, the adjustment’s GMEF)
+*
+* the cnmea’s LMEE = InstanceSum(the cnmea’s adjustments, the adjustment’s LMEE)
+*
+* the cnmea’s LMEF = InstanceSum(the cnmea’s adjustments, the adjustment’s LMEF)
+*
+* the cnmea’s NMEA = InstanceSum(the cnmea’s adjustments, the adjustment’s NMEA)
+*
+* the cnmea’s accounting GMEF = the cnmea’s GMEF * -1
+*
+* the cnmea’s accounting LMEE = the cnmea’s LMEE * -1
+*
+* the cnmea’s accounting LMEF = the cnmea’s LMEF * -1
+*/
+rule "B.4 GMEA and LMEA report - cnmea level"
+ruleflow-group "acct_stmt"
+    when
+    	$r : Cnmea( gmee == null, $sett : settId, $id : accountId )
+        $gmee : BigDecimal() from $r.sumIncludedGmee()
+        $gmef : BigDecimal() from $r.sumIncludedGmef()
+        $lmee : BigDecimal() from $r.sumIncludedLmee()
+        $lmef : BigDecimal() from $r.sumIncludedLmef()
+        $nmea : BigDecimal() from $r.sumIncludedNmea()
+    then
+        $r.setGmee( $gmee );
+        $r.setGmef( $gmef );
+        $r.setLmee( $lmee );
+        $r.setLmef( $lmef );
+        $r.setNmea( $nmea );
+        $r.setAccountingGmef( $gmef.negate() );
+        $r.setAccountingLmee( $lmee.negate() );
+        $r.setAccountingLmef( $lmef.negate() );
+        update( $r );
+end
+
+/*
+* the mnmea’s GMEE = InstanceSum(the mnmea’s adjustments, the adjustment’s GMEE)
+*
+* the mnmea’s GMEF = InstanceSum(the mnmea’s adjustments, the adjustment’s GMEF) * -1
+*
+* the mnmea’s LMEE = InstanceSum(the mnmea’s adjustments, the adjustment’s LMEE) * -1
+*
+* the mnmea’s LMEF = InstanceSum(the mnmea’s adjustments, the adjustment’s LMEF) * -1
+*
+* the mnmea’s NMEA = InstanceSum(the mnmea’s adjustments, the adjustment’s NMEA)
+*/
+rule "B.4 GMEA and LMEA report - mnmea level"
+ruleflow-group "acct_stmt"
+    when
+    	$r : Mnmea( gmee == null, $sett : settId, $id : periodId )
+        $gmee : BigDecimal() from $r.sumIncludedGmee()
+        $gmef : BigDecimal() from $r.sumIncludedGmef()
+        $lmee : BigDecimal() from $r.sumIncludedLmee()
+        $lmef : BigDecimal() from $r.sumIncludedLmef()
+        $nmea : BigDecimal() from $r.sumIncludedNmea()
+    then
+        $r.setGmee( $gmee );
+        $r.setGmef( $gmef.negate() );
+        $r.setLmee( $lmee.negate() );
+        $r.setLmef( $lmef.negate() );
+        $r.setNmea( $nmea );
+        update( $r );
+end
+
+/*
+* the mnmeasub’s GMEE = InstanceSum(the mnmeasub’s adjustments, the adjustment’s GMEE)
+*
+* the mnmeasub’s GMEF = InstanceSum(the mnmeasub’s adjustments, the adjustment’s GMEF) * -1
+*
+* the mnmeasub’s LMEE = InstanceSum(the mnmeasub’s adjustments, the adjustment’s LMEE) * -1
+*
+* the mnmeasub’s LMEF = InstanceSum(the mnmeasub’s adjustments, the adjustment’s LMEF) * -1
+*
+* the mnmeasub’s NMEA = InstanceSum(the mnmeasub’s adjustments, the adjustment’s NMEA)
+*/
+rule "B.4 GMEA and LMEA report - mnmeasub level"
+ruleflow-group "acct_stmt"
+    when
+    	$r : MnmeaSub( nmea == null, $sett : rerunId )
+        $gmee : BigDecimal() from $r.sumIncludedGmee()
+        $gmef : BigDecimal() from $r.sumIncludedGmef()
+        $lmee : BigDecimal() from $r.sumIncludedLmee()
+        $lmef : BigDecimal() from $r.sumIncludedLmef()
+        $nmea : BigDecimal() from $r.sumIncludedNmea()
+    then
+        $r.setGmee( $gmee );
+        $r.setGmef( $gmef.negate() );
+        $r.setLmee( $lmee.negate() );
+        $r.setLmef( $lmef.negate() );
+        $r.setNmea( $nmea );
+        update( $r );
+end
+
+/*
+* the total GMEE = InstanceSum(the mnmea subtotal, the mnmeasub’s GMEE)
+*
+* the total GMEF = InstanceSum(the mnmea subtotal, the mnmeasub’s GMEF)
+*
+* the total LMEE = InstanceSum(the mnmea subtotal, the mnmeasub’s LMEE)
+*
+* the total LMEF = InstanceSum(the mnmea subtotal, the mnmeasub’s LMEF)
+*
+* the total NMEA = InstanceSum(the mnmea subtotal, the mnmeasub’s NMEA)
+*/
+rule "B.4 GMEA and LMEA report - global level"
+ruleflow-group "acct_stmt"
+    when
+    	$r : Global( totalNmea == null )
+    	$as : List() from collect( MnmeaSub( ) )
+        $gmee : BigDecimal() from accumulate(
+        							MnmeaSub( gmee != null, amt : gmee ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $gmef : BigDecimal() from accumulate(
+        							MnmeaSub( gmef != null, amt : gmef ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $lmee : BigDecimal() from accumulate(
+        							MnmeaSub( lmee != null, amt : lmee ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $lmef : BigDecimal() from accumulate(
+        							MnmeaSub( lmef != null, amt : lmef ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $nmea : BigDecimal() from accumulate(
+        							MnmeaSub( nmea != null, amt : nmea ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $r.setTotalGmee( $gmee );
+        $r.setTotalGmef( $gmef );
+        $r.setTotalLmee( $lmee );
+        $r.setTotalLmef( $lmef );
+        $r.setTotalNmea( $nmea );
+        update( $r );
+end

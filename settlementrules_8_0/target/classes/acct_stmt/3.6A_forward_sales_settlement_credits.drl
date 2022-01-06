@@ -1,0 +1,454 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import java.util.List;
+import com.emc.sett.impl.*;
+import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+global java.math.BigDecimal inGstRate;
+global java.math.BigDecimal outGstRate;
+
+/*
+* FSC Scheme Effective Date
+*/
+global java.lang.Boolean isWithinFSCSchemeEffectiveDateRange;
+global XMLGregorianCalendar currentTime;
+
+/*
+* the settlement date is within FSC Scheme effective date range 
+* FSC Scheme effective start date is known and
+* FSC Scheme effective end date is known and
+* the current date >= FSC Scheme effective start date and
+* the current date <= FSC Scheme effective end date
+*/
+rule "FSC Scheme Effective Date"
+ruleflow-group "acct_stmt"
+	when
+		$g :Global( fscStartDate != null && fscEndDate != null, 
+					(currentTime.compare(fscStartDate) == DatatypeConstants.GREATER ||
+					currentTime.compare(fscStartDate) == DatatypeConstants.EQUAL), 
+					(currentTime.compare(fscEndDate) == DatatypeConstants.LESSER ||
+					currentTime.compare(fscEndDate) == DatatypeConstants.EQUAL) )
+	then
+	isWithinFSCSchemeEffectiveDateRange = true;
+end
+
+/*
+* the interval’s FSP = InstanceSum(the interval’s FSC Schemes, the FSC Scheme's FSP)
+*
+* the interval’s FSQ = InstanceSum(the interval’s FSC Schemes, the FSC Scheme's FSQ)
+*/
+rule "3.6A.4 Forward Sales Contract Reference Price (FSRP) for MSSL Counterparty - FSP and FSQ at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( fsp == null, $pd : periodId, $sa : accountId )
+    	$fs : List() from collect( Fsc( $pd == periodId && $sa == accountId ) )
+        $fsp : BigDecimal() from accumulate(
+        							Fsc( fsp != null, amt : fsp ) from $fs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $fsq : BigDecimal() from accumulate(
+        							Fsc( fsq != null, amt : fsq ) from $fs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setFsp( $fsp );
+        $i.setFsq( $fsq );
+        update( $i );
+end
+
+/*
+* the interval’s FSRP = the interval’s VCRP  if 
+* the interval has generation node
+*/
+rule "3.6A.3 Forward Sales Contract Reference Price (FSRP) - fsrp at period level for generation node"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( fsrp == null, vcrp != null, genNode == true, $vcrp : vcrp )
+    then
+        $i.setFsrp( $vcrp );
+        update( $i );
+end
+
+/*
+* the interval’s FSRP = For(the interval’s market, the market’s VCRP)	if 
+* For(the interval’s account, the account is not a MSSL)
+*/
+rule "3.6A.3 Forward Sales Contract Reference Price (FSRP) - fsrp at period level for non-MSSL"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( fsrp == null, genNode == false, $sa : accountId, $pd : periodId )
+    	Account( accountId == $sa && msslAccount == false )
+    	Market( periodId == $pd, vcrp != null, $vcrp : vcrp )
+    then
+        $i.setFsrp( $vcrp );
+        update( $i );
+end
+
+/*
+* the interval’s FSRP = 0	if 
+* For(the interval’s account, the account is a MSSL)
+*/
+rule "3.6A.3 Forward Sales Contract Reference Price (FSRP) - fsrp at period level for MSSL"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( fsrp == null, genNode == false, $sa : accountId, $pd : periodId )
+    	Account( accountId == $sa && msslAccount == true )
+    	Market( periodId == $pd, vcrp != null, $vcrp : vcrp )
+    then
+        $i.setFsrp( BigDecimal.ZERO );
+        update( $i );
+end
+
+/*
+* the FSC Scheme's FSRP  = For(the FSC Scheme's interval, the interval’s FSRP)
+*/
+rule "3.6A.3 Forward Sales Contract Reference Price (FSRP) - fsrp at fsc level"
+ruleflow-group "acct_stmt"
+    when
+    	$f : Fsc( fsrp == null, $pd : periodId, $sa : accountId )
+    	Period( accountId == $sa && periodId == $pd, fsrp != null, $fsrp : fsrp )
+    then
+        $f.setFsrp( $fsrp );
+        update( $f );
+end
+
+/*
+* the FSC Scheme's credit = 0  if 
+* the FSC Scheme holder has breached
+*/
+rule "3.6A.3 Forward Sales Contract Reference Price (FSSC) - fssc at fsc level when breached"
+ruleflow-group "acct_stmt"
+    when
+    	$f : Fsc( fssc == null, fsrp != null, breached == true, $fsp : fsp, $fsrp : fsrp, $fsq : fsq  )
+    then
+        $f.setFssc( BigDecimal.ZERO );
+        update( $f );
+end
+
+/*
+* the FSC Scheme's credit = Round((the FSC Scheme's FSP – the FSC Scheme's FSRP) * the FSC Scheme's FSQ, 2)  if 
+* the FSC Scheme holder has not breached
+*/
+rule "3.6A.3 Forward Sales Contract Reference Price (FSSC) - fssc at fsc level"
+ruleflow-group "acct_stmt"
+    when
+    	$f : Fsc( fssc == null, fsrp != null, breached == false, $fsp : fsp, $fsrp : fsrp, $fsq : fsq  )
+    then
+        $f.setFssc( $fsp.subtract( $fsrp ).multiply( $fsq ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $f );
+end
+
+/*
+* the interval’s FSSC = 0 if 
+* For(the interval’s account, the account has breached)
+*/
+rule "3.6A.1 Forward Sales Settlement Credits (FSC) - fssc at period level when breached"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( fssc == null, $sa : accountId, $pd : periodId, $fsp : fsp, $fsrp : fsrp, $fsq : fsq  )
+    	Account( accountId == $sa && breached == true )
+    then
+        $i.setFssc( BigDecimal.ZERO );
+        update( $i );
+end
+
+/*
+* the interval’s FSSC = Round((the interval’s FSP - the interval’s FSRP) * the interval’s FSQ, 2) if 
+* For(the interval’s account, the account has not breached)
+*/
+rule "3.6A.1 Forward Sales Settlement Credits (FSC) - fssc at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( fssc == null, fsp != null && fsrp != null && fsq != null, $sa : accountId, $pd : periodId, $fsp : fsp, $fsrp : fsrp, $fsq : fsq  )
+    	Account( accountId == $sa && breached == false )
+    then
+        $i.setFssc( $fsp.subtract( $fsrp ).multiply( $fsq ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $i );
+end
+
+/*
+* the market’s FSSC = InstanceSumIf(the market’s intervals, the interval’s FSSC, For(the interval’s account, the account is not a MSSL))
+*
+* the market's FSSC for MSSL = -1 * the market’s FSSC
+*/
+rule "3.6A.1 Forward Sales Settlement Credits (FSC) - fssc at market level"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$m : Market( fssc == null, $pd : periodId )
+    	//Account( msslAccount == false, $sa : accountId )
+    	$ns : List() from collect( Period( fssc != null, periodId == $pd ) )
+        $fssc : BigDecimal() from accumulate(
+        							Period( fssc != null, amt : fssc ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $m.setFssc( $fssc );
+        $m.setFssck( $fssc.negate() );
+        update( $m );
+end
+
+/*
+* the interval's FSSCP = the interval’s FSSC  if 
+* the interval’s FSSC >= 0
+*
+* the interval's FSSCN = the interval’s FSSC   if 
+* the interval’s FSSC < 0
+*/
+rule "3.6A.1 Forward Sales Settlement Credits (FSC) - fsscp at period level"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$i : Period( fsscp == null, fssc != null && fssc >= 0, $fssc : fssc  )
+    then
+        $i.setFsscp( $fssc );
+        $i.setFsscn( BigDecimal.ZERO );
+        update( $i );
+end
+
+/*
+* the interval's FSSCP = the interval’s FSSC  if 
+* the interval’s FSSC >= 0
+*
+* the interval's FSSCN = the interval’s FSSC   if 
+* the interval’s FSSC < 0
+*/
+rule "3.6A.1 Forward Sales Settlement Credits (FSC) - fsscn at period level"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$i : Period( fsscp == null, fssc != null && fssc < 0, $fssc : fssc  )
+    then
+        $i.setFsscp( BigDecimal.ZERO );
+        $i.setFsscn( $fssc );
+        update( $i );
+end
+
+/*
+* the interval’s FSSC for MSSL = For(the interval’s market, the market’s FSSC) * -1
+* For(the interval’s account, the account is a MSSL)
+*/
+rule "3.6A.2_Forward Sales Contract Settlement Credit (FSSC) for MSSL Counterparty - fssck at period level for MSSL"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$i : Period( fssck == null, $sa : accountId, $pd : periodId )
+    	Account( accountId == $sa && msslAccount == true )
+    	Market( periodId == $pd, fssc != null, $fssc : fssc )
+    then
+        $i.setFssck( $fssc.negate() );
+        update( $i );
+end
+
+/*
+* the interval’s FSSC for MSSL = For(the interval’s market, the market’s FSSC) * -1
+* For(the interval’s account, the account is a MSSL)
+*/
+rule "3.6A.2_Forward Sales Contract Settlement Credit (FSSC) for MSSL Counterparty - fssck at period level for non-MSSL"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$i : Period( fssck == null, $sa : accountId, $pd : periodId )
+    	Account( accountId == $sa && msslAccount == false )
+    	Market( periodId == $pd, fssc != null, $fssc : fssc )
+    then
+        $i.setFssck( BigDecimal.ZERO );
+        update( $i );
+end
+
+/*
+* the interval's FSSCRP = the interval’s FSSC for MSSL	if 
+* the interval’s FSSC for MSSL >= 0
+*
+* the interval's FSSCRN = the interval’s FSSC for MSSL	if 
+* the interval’s FSSC for MSSL < 0
+*/
+rule "3.6A.2_Forward Sales Contract Settlement Credit (FSSC) for MSSL Counterparty - fsscrp at period level"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$i : Period( fsscrp == null, fssck != null && fssck >= 0, $fssck : fssck  )
+    then
+        $i.setFsscrp( $fssck );
+        $i.setFsscrn( BigDecimal.ZERO );
+        update( $i );
+end
+
+/*
+* the interval's FSSCRP = the interval’s FSSC for MSSL	if 
+* the interval’s FSSC for MSSL >= 0
+*
+* the interval's FSSCRN = the interval’s FSSC for MSSL	if 
+* the interval’s FSSC for MSSL < 0
+*/
+rule "3.6A.2_Forward Sales Contract Settlement Credit (FSSC) for MSSL Counterparty - fsscrn at period level"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$i : Period( fsscrp == null, fssck != null && fssck < 0, $fssck : fssck  )
+    then
+        $i.setFsscrp( BigDecimal.ZERO );
+        $i.setFsscrn( $fssck );
+        update( $i );
+end
+
+/*
+* the market’s FSQ = InstanceSumIf(the market’s intervals, the interval’s FSQ, For(the interval’s account, the account is not a MSSL))
+*
+* the market’s FSRPFSQ = InstanceSumIf(the market’s intervals, the interval’s FSRP * the interval’s FSQ, For(the interval’s account, the account is not a MSSL))
+*/
+rule "3.6A.4 Forward Sales Contract Reference Price (FSRP) for MSSL Counterparty - fsq at market level"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$m : Market( fsq == null, $pd : periodId )
+    	//Account( msslAccount == false, $sa : accountId )
+    	$ns : List() from collect( Period( $pd == periodId && fsq != null ) )
+        $fsq : BigDecimal() from accumulate(
+        							Period( fsq != null, amt : fsq ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $fsrpfsq : BigDecimal() from accumulate(
+        							Period( fsq != null && fsrp != null, amt : fsq, pri : fsrp ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(pri.multiply(amt)); ),
+									reverse( tt = tt.subtract(pri.multiply(amt)); ),
+									result( tt ) )
+    then
+        $m.setFsq( $fsq );
+        $m.setFsrpfsq( $fsrpfsq );
+        update( $m );
+end
+
+/*
+* the market’s FSRP = Round(the market’s FSRPFSQ / the market’s FSQ, 2) 
+*/
+rule "3.6A.4 Forward Sales Contract Reference Price (FSRP) for MSSL Counterparty - fsrp at market level"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$m : Market( fsrp == null, fsrpfsq != null && fsq != null && fsq != 0, $pd : periodId, $fsrpfsq : fsrpfsq, $fsq : fsq )
+    then
+        $m.setFsrp( $fsrpfsq.divide($fsq, 2, BigDecimal.ROUND_HALF_UP) );
+        update( $m );
+end
+
+/*
+* the market’s FSRP = Round(the market’s FSRPFSQ / the market’s FSQ, 2) 
+*/
+rule "3.6A.4 Forward Sales Contract Reference Price (FSRP) for MSSL Counterparty - fsrp at market level with zero fsq"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$m : Market( fsrp == null, fsrpfsq != null && fsq != null && fsq == 0, $pd : periodId, $fsrpfsq : fsrpfsq, $fsq : fsq )
+    then
+        $m.setFsrp( BigDecimal.ZERO );
+        update( $m );
+end
+
+/*
+* the interval’s FSRP for MSSL = For(the interval’s market, the market’s FSRP) if
+* For(the interval’s account, the account is a MSSL)
+*/
+rule "3.6A.4 Forward Sales Contract Reference Price (FSRP) for MSSL Counterparty - fsrpk at period level for MSSL"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$i : Period( fsrpk == null, $sa : accountId, $pd : periodId )
+    	Account( accountId == $sa && msslAccount == true )
+    	Market( periodId == $pd, fsrp != null, $fsrp : fsrp )
+    then
+        $i.setFsrpk( $fsrp );
+        update( $i );
+end
+
+/*
+* the interval’s FSRP for MSSL = For(the interval’s market, the market’s FSRP) if
+* For(the interval’s account, the account is a MSSL)
+*/
+rule "3.6A.4 Forward Sales Contract Reference Price (FSRP) for MSSL Counterparty - fsrpk at period level for non-MSSL"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$i : Period( fsrpk == null, $sa : accountId, $pd : periodId )
+    	Account( accountId == $sa && msslAccount == false )
+    	Market( periodId == $pd, fsrp != null, $fsrp : fsrp )
+    then
+        $i.setFsrpk( BigDecimal.ZERO );
+        update( $i );
+end
+
+/*
+* the account's FSSC = 0  if 
+* the account has breached
+*
+* the account's total FSSC = the account's FSSC
+*/
+rule "3.6A.1 Forward Sales Settlement Credits (FSC) - account level for rules breached"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$a : Account( fssc == null, breached == true, $sa : accountId )
+    then
+        $a.setFssc( BigDecimal.ZERO );
+        $a.setTotalFssc( BigDecimal.ZERO );
+        update( $a );
+end
+
+/*
+* the account's FSSC = InstanceSum(the account's intervals, the interval's FSSC)	if 
+* the account is not a MSSL 
+*
+* the account's total FSSC = the account's FSSC
+*/
+rule "3.6A.1 Forward Sales Settlement Credits (FSC) - account level for non-MSSL"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$a : Account( fssc == null, breached == false && msslAccount == false , $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $fssc : BigDecimal() from accumulate(
+        							Period( fssc != null, amt : fssc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setFssc( $fssc );
+        $a.setTotalFssc( $fssc );
+        update( $a );
+end
+
+/*
+* the account's FSSC = InstanceSum(the account's intervals, the interval's FSSC for MSSL)	if 
+* the account is a MSSL 
+*
+* the account's total FSSC = the account's FSSC
+*/
+rule "3.6A.1 Forward Sales Settlement Credits (FSC) - account level for MSSL"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$a : Account( fssc == null, breached == false && msslAccount == true , $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $fssc : BigDecimal() from accumulate(
+        							Period( fssck != null, amt : fssck ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setFssc( $fssc );
+        $a.setTotalFssc( $fssc );
+        update( $a );
+end

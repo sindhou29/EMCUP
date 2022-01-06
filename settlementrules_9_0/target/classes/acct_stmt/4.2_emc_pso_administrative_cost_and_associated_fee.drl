@@ -1,0 +1,882 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import java.util.List;
+import com.emc.sett.impl.*;
+
+global java.math.BigDecimal inGstRate;
+global java.math.BigDecimal outGstRate;
+
+/*
+* the interval’s absolute IEQ = InstanceSum(the interval’s nodes, Abs(the node’s IEQ))
+*/
+rule "2.7.2.1 Total Traded Energy (TTE) - calculate IEQ at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( absIeq == null, $pd : periodId, $sa : accountId )
+    	$ns : List() from collect( Facility( $pd == periodId && $sa == accountId ) )
+        $ieq : BigDecimal() from accumulate(
+        							Facility( ieq != null, amt : ieq ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt.abs()); ),
+									reverse( tt = tt.subtract(amt.abs()); ),
+									result( tt ) )
+    then
+        $i.setAbsIeq( $ieq );
+        update( $i );
+end
+
+/*
+* the interval’s TTE = the interval’s absolute IEQ if
+* For(the interval’s account, the account is under a retailer) and
+* For(the interval's account, the account is not eligible for price neutralization) and
+* For(the interval’s account, the account is not eligible for net settlement)
+*/
+rule "2.7.2.1 Total Traded Energy (TTE) - period level TTE for under retailer"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( tte == null, absIeq != null && wfq != null, $id : accountId, $absIeq : absIeq, $wfq : wfq )
+    	Account( accountId == $id, underRetailer == true && priceNeutralization == false && netSett == false )
+    then
+        $i.setTte( $absIeq );
+        update( $i );
+end
+
+/*
+* the interval’s TTE = Abs(the interval’s WFQ) if
+* For(the interval’s account, the account is under a retailer) and
+* For(the interval's account, the account is not eligible for price neutralization) and
+* For(the interval’s account, the account is eligible for net settlement)
+*/
+rule "2.7.2.1 Total Traded Energy (TTE) - period level TTE for under retailer and net settlement"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( tte == null, absIeq != null && wfq != null, $id : accountId, $absIeq : absIeq, $wfq : wfq )
+    	Account( accountId == $id, underRetailer == true && priceNeutralization == false && netSett == true )
+    then
+        $i.setTte( $wfq.abs() );
+        update( $i );
+end
+
+/*
+* the interval’s TTE = 0 if
+* For(the interval’s account, the account is under a retailer) and
+* For(the interval's account, the account is eligible for price neutralization) and
+* For(the interval’s account, the account is eligible for net settlement)
+*/
+rule "2.7.2.1 Total Traded Energy (TTE) - period level TTE for under retailer and net settlement and price neutralization"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( tte == null, absIeq != null && wfq != null, $id : accountId, $absIeq : absIeq, $wfq : wfq )
+    	Account( accountId == $id, underRetailer == true && priceNeutralization == true && netSett == true )
+    then
+        $i.setTte( BigDecimal.ZERO );
+        update( $i );
+end
+
+/*
+* the interval’s TTE = Abs(the interval’s WFQ) if
+* For(the interval’s account, the account is not under a retailer) and
+* For(the interval’s account, the account is eligible for price neutralization) and
+* For(the interval’s account, the account is eligible for net settlement)
+*/
+rule "2.7.2.1 Total Traded Energy (TTE) - period level TTE for net settlement and price neutralization"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( tte == null, absIeq != null && wfq != null, $id : accountId, $absIeq : absIeq, $wfq : wfq )
+    	Account( accountId == $id, underRetailer == false && priceNeutralization == true && netSett == true )
+    then
+        $i.setTte( $wfq.abs() );
+        update( $i );
+end
+
+/*
+* the interval’s TTE = Abs(the interval’s WFQ) + the interval’s absolute IEQ if
+* For(the interval’s account, the account is not under a retailer) and
+* For(the interval's account, the account is eligible for price neutralization) and
+* For(the interval’s account, the account is not eligible for net settlement)
+*/
+rule "2.7.2.1 Total Traded Energy (TTE) - period level TTE for price neutralization"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( tte == null, absIeq != null && wfq != null, $id : accountId, $absIeq : absIeq, $wfq : wfq )
+    	Account( accountId == $id, underRetailer == false && priceNeutralization == true && netSett == false )
+    then
+        $i.setTte( $wfq.abs().add( $absIeq ) );
+        update( $i );
+end
+
+/*
+* the interval’s TTE = Abs(the interval’s WFQ) + the interval’s absolute IEQ if
+* For(the interval’s account, the account is not under a retailer) and
+* For(the interval's account, the account is not eligible for price neutralization) and
+* For(the interval’s account, the account is not eligible for net settlement)
+*/
+rule "2.7.2.1 Total Traded Energy (TTE) - period level default TTE"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( tte == null, absIeq != null && wfq != null, $id : accountId, $absIeq : absIeq, $wfq : wfq )
+    	Account( accountId == $id, underRetailer == false && priceNeutralization == false && netSett == false )
+    then
+        $i.setTte( $wfq.abs().add( $absIeq ) );
+        update( $i );
+end
+
+/*
+* the interval’s TTE = the interval’s absolute IEQ if
+* For(the interval’s account, the account is under a retailer) and
+* For(the interval's account, the account is eligible for price neutralization) and
+* For(the interval’s account, the account is not eligible for net settlement)
+*/
+rule "2.7.2.1 Total Traded Energy (TTE) - period level TTE for under retailer and price neutralization"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( tte == null, absIeq != null && wfq != null, $id : accountId, $absIeq : absIeq, $wfq : wfq )
+    	Account( accountId == $id, underRetailer == true && priceNeutralization == true && netSett == false )
+    then
+        $i.setTte( $absIeq );
+        update( $i );
+end
+
+/*
+* the interval’s TTE = Abs(the interval’s WFQ) if
+* For(the interval’s account, the account is not under a retailer) and
+* For(the interval's account, the account is not eligible for price neutralization) and
+* For(the interval’s account, the account is eligible for net settlement)
+*/
+rule "2.7.2.1 Total Traded Energy (TTE) - period level TTE for net settlement"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( tte == null, absIeq != null && wfq != null, $id : accountId, $absIeq : absIeq, $wfq : wfq )
+    	Account( accountId == $id, underRetailer == false && priceNeutralization == false && netSett == true )
+    then
+        $i.setTte( $wfq.abs() );
+        update( $i );
+end
+
+/*
+* the market’s TTE = InstanceSum(the market's intervals, the interval’s TTE)
+*/
+rule "2.7.2.1 Total Traded Energy (TTE) - market level"
+ruleflow-group "acct_stmt"
+    when
+    	Global( runType == "P" || runType == "F" )
+    	$m : Market( tte == null, $pd : periodId )
+    	$is : List() from collect( Period( periodId == $pd ) )
+        $tte : BigDecimal() from accumulate(
+        							Period( tte != null, amt : tte ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $m.setTte( $tte );
+        update( $m );
+end
+
+/*
+* the total TTE = InstanceSum(the wholesale markets, the market’s TTE)
+*/
+rule "2.7.2.1 Total Traded Energy (TTE) - global level"
+ruleflow-group "acct_stmt"
+    when
+    	$g : Global( totalTteSet == false, runType == "P" || runType == "F", $run : runId )
+    	$ms : List() from collect( Market( runId == $run ) )
+        $tte : BigDecimal() from accumulate(
+        							Market( tte != null, amt : tte ) from $ms,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $g.setTotalTteSet( true );
+        $g.setTotalTte( $tte );
+        update( $g );
+end
+
+/*
+* the EMC admin adj rate = (the EMC budget / the DIM) / the total TTE
+*
+* the rounded EMC admin adj rate = Round(the EMC admin adj rate, 4)
+*/
+rule "2.7.2.2 EMC Admin Charge per MWh (CMWH) - global level (Adj Rate)"
+ruleflow-group "acct_stmt"
+    when
+    	$g : Global( emcAdmPriceAdjRate == null, totalTte != 0, $emcBudget : emcBudget, $dim : dim, $tte : totalTte )
+    then
+        $g.setEmcAdmPriceAdjRate( new BigDecimal($emcBudget.doubleValue() / $dim.doubleValue() / $tte.doubleValue()) );
+        $g.setEmcAdmPriceAdjRateRounded( $g.getEmcAdmPriceAdjRate().setScale(4, BigDecimal.ROUND_HALF_UP) );
+        update( $g );
+end
+
+/*
+* the CMWH for EMCADM = the EMC admin cap + the EMC admin adj rate	if 
+* the price cap rule is not in effect
+*
+* the rounded CMWH for EMCADM = Round(the CMWH for EMCADM, 2)	if 
+* the price cap rule is not in effect
+*/
+rule "2.7.2.2 EMC Admin Charge per MWh (CMWH) - CMWH for EMCADM at global level default case"
+ruleflow-group "acct_stmt"
+    when
+    	$g : Global( cmwhEmcAdm == null, priceCapEffective == false, emcAdmPriceAdjRate != null, $emcAdmPriceAdjRate : emcAdmPriceAdjRate, $emcAdmPriceCap : emcAdmPriceCap )
+    then
+        $g.setCmwhEmcAdm( $emcAdmPriceCap.add( $emcAdmPriceAdjRate ) );
+        $g.setCmwhEmcAdmRounded( $g.getCmwhEmcAdm().setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $g );
+end
+
+/*
+* the CMWH for EMCADM = the EMC admin cap + the rounded EMC admin adj rate	if 
+* the price cap rule is in effect and
+* the igs rule is not in effect
+*
+* the rounded CMWH for EMCADM = Round(the CMWH for EMCADM, 4)	if 
+* the price cap rule is in effect
+*/
+rule "2.7.2.2 EMC Admin Charge per MWh (CMWH) - CMWH for EMCADM at global level for price cap"
+ruleflow-group "acct_stmt"
+    when
+    	$g : Global( cmwhEmcAdm == null, priceCapEffective == true && igsEffective == false, emcAdmPriceAdjRateRounded != null, $emcAdmPriceAdjRateRounded : emcAdmPriceAdjRateRounded, $emcAdmPriceCap : emcAdmPriceCap )
+    then
+        $g.setCmwhEmcAdm( $emcAdmPriceCap.add( $emcAdmPriceAdjRateRounded ) );
+        $g.setCmwhEmcAdmRounded( $g.getCmwhEmcAdm().setScale(4, BigDecimal.ROUND_HALF_UP) );
+        update( $g );
+end
+
+/*
+* the CMWH for EMCADM = the EMC admin cap + the EMC admin adj rate	if 
+* the price cap rule is in effect and
+* the igs rule is in effect
+*
+* the rounded CMWH for EMCADM = Round(the CMWH for EMCADM, 4)	if 
+* the price cap rule is in effect
+*/
+rule "2.7.2.2 EMC Admin Charge per MWh (CMWH) - CMWH for EMCADM at global level for price cap and IGS"
+ruleflow-group "acct_stmt"
+    when
+    	$g : Global( cmwhEmcAdm == null, priceCapEffective == true && igsEffective == true, emcAdmPriceAdjRate != null, $emcAdmPriceAdjRate : emcAdmPriceAdjRate, $emcAdmPriceCap : emcAdmPriceCap )
+    then
+        $g.setCmwhEmcAdm( $emcAdmPriceCap.add( $emcAdmPriceAdjRate ) );
+        $g.setCmwhEmcAdmRounded( $g.getCmwhEmcAdm().setScale(4, BigDecimal.ROUND_HALF_UP) );
+        update( $g );
+end
+
+/*
+* the interval’s computed EMCADM Adj = Round(the rounded EMC admin adj rate * the interval’s TTE, 5)	if 
+* the igs rule is not in effect
+*/
+rule "2.7.2.3 EMC Admin Fee (FEE) - adj value at period level for non-IGS"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( compEmcAdmAdj == null, tte != null, $tte : tte )
+    	Global( igsEffective == false, emcAdmPriceAdjRateRounded != null, $emcAdmPriceAdjRateRounded : emcAdmPriceAdjRateRounded )
+    then
+        $i.setCompEmcAdmAdj( $emcAdmPriceAdjRateRounded.multiply( $tte ).setScale(5, BigDecimal.ROUND_HALF_UP) );
+        update( $i );
+end
+
+/*
+* the interval’s computed EMCADM Adj = Round(the EMC admin adj rate * the interval’s TTE, 5)	if 
+* the igs rule is in effect
+*/
+rule "2.7.2.3 EMC Admin Fee (FEE) - adj value at period level for IGS"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( compEmcAdmAdj == null, tte != null, $tte : tte )
+    	Global( igsEffective == true, emcAdmPriceAdjRateRounded != null, $emcAdmPriceAdjRate : emcAdmPriceAdjRate )
+    then
+        $i.setCompEmcAdmAdj( $emcAdmPriceAdjRate.multiply( $tte ).setScale(5, BigDecimal.ROUND_HALF_UP) );
+        update( $i );
+end
+
+/*
+* the interval’s computed EMCADM Cap = Round(the EMC admin cap * the interval’s TTE, 5)
+*/
+rule "2.7.2.3 EMC Admin Fee (FEE) - cap value at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( compEmcAdmCap == null, tte != null, $tte : tte )
+    	Global( emcAdmPriceCap != null, $emcAdmPriceCap : emcAdmPriceCap )
+    then
+        $i.setCompEmcAdmCap( $emcAdmPriceCap.multiply( $tte ).setScale(5, BigDecimal.ROUND_HALF_UP) );
+        update( $i );
+end
+
+/*
+* the interval’s computed EMCA = the interval’s computed EMCADM Adj + the interval’s computed EMCADM Cap
+*/
+rule "2.7.2.3 EMC Admin Fee (FEE) - emca value at period level"
+ruleflow-group "acct_stmt"
+    when
+//    	$i : Period( compEmca == null, tte != null, $compEmcAdmAdj : compEmcAdmAdj, $compEmcAdmCap : compEmcAdmCap )
+    	$i : Period( compEmca == null, compEmcAdmAdj != null && compEmcAdmCap != null, $compEmcAdmAdj : compEmcAdmAdj, $compEmcAdmCap : compEmcAdmCap )
+    then
+        $i.setCompEmca( $compEmcAdmAdj.add( $compEmcAdmCap ) );
+        update( $i );
+end
+
+/*
+* the account’s EMCADM Adj = InstanceSum(the account's intervals, the interval’s computed EMCADM Adj) * -1 if
+* the account is not EMC fee account
+*
+* the account’s EMCADM Cap = InstanceSum(the account's intervals, the interval’s computed EMCADM Cap) * -1 if
+* the account is not EMC fee account
+*
+* the account’s output GST for EMCADM Adj = Round(the account’s EMCADM Adj * the output GST, 2)
+*
+* the account’s output GST for EMCADM Cap = Round(the account’s EMCADM Cap * the output GST, 2)
+*/
+rule "2.7.2.3 EMC Admin Fee (FEE) - adj and cap values at account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( emcAdmAdj == null, emcAccount == false, $id : accountId )
+    	$is : List() from collect( Period( accountId == $id ) )
+        $adj : BigDecimal() from accumulate(
+        							Period( compEmcAdmAdj != null, amt : compEmcAdmAdj ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $cap : BigDecimal() from accumulate(
+        							Period( compEmcAdmCap != null, amt : compEmcAdmCap ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setEmcAdmAdj( $adj.negate() );
+        $a.setEmcAdmCap( $cap.negate() );
+        
+        $a.setOpGstEmcAdmAdj( $a.getEmcAdmAdj().multiply( outGstRate ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setOpGstEmcAdmCap( $a.getEmcAdmCap().multiply( outGstRate ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $a );
+end
+
+/*
+* the account’s input GST for EMCADM = 0
+*
+* the account’s output GST for EMCADM = (the account’s output GST for EMCADM Cap + the account’s output GST for EMCADM Adj) * -1	if 
+* the price cap rule is in effect
+*
+* the account’s accounting output GST for EMCADM = the account’s output GST for EMCADM * -1
+*/
+rule "2.7.2.3 EMC Admin Fee (FEE) - GST at account level case with price cap"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( opGstEmcAdm == null, opGstEmcAdmCap != null && opGstEmcAdmAdj != null, $opGstEmcAdmCap : opGstEmcAdmCap, $opGstEmcAdmAdj : opGstEmcAdmAdj )
+    	Global( priceCapEffective == true )
+    then
+        $a.setIpGstEmcAdm( BigDecimal.ZERO );
+        $a.setOpGstEmcAdm( $opGstEmcAdmCap.add( $opGstEmcAdmAdj ).negate() );
+        $a.setAccountingOpGstEmcAdm( $a.getOpGstEmcAdm().negate() );
+        update( $a );
+end
+
+/*
+* the account’s input GST for EMCADM = 0
+*
+* the account’s output GST for EMCADM = Round(the account’s EMCADM * the output GST, 2)	  if 
+* the price cap rule is not in effect
+*
+* the account’s accounting output GST for EMCADM = the account’s output GST for EMCADM * -1
+*/
+rule "2.7.2.3 EMC Admin Fee (FEE) - GST at account level case no price cap"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( opGstEmcAdm == null, emcAdm != null, $emcAdm : emcAdm )
+    	Global( priceCapEffective == false )
+    then
+        $a.setIpGstEmcAdm( BigDecimal.ZERO );
+        $a.setOpGstEmcAdm( $emcAdm.multiply( outGstRate ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setAccountingOpGstEmcAdm( $a.getOpGstEmcAdm().negate() );
+        update( $a );
+end
+
+/*
+* the account’s EMCADM Adj = 0 if
+* the account is EMC fee account
+*
+* the account’s EMCADM Cap = 0 if
+* the account is EMC fee account
+*
+* the account’s output GST for EMCADM Adj = Round(the account’s EMCADM Adj * the output GST, 2)
+*
+* the account’s output GST for EMCADM Cap = Round(the account’s EMCADM Cap * the output GST, 2)
+*
+* the account’s output GST for EMCADM = (the account’s output GST for EMCADM Cap + the account’s output GST for EMCADM Adj) * -1	if 
+* the price cap rule is in effect
+*
+* the account’s EMCADM =  0
+*
+* the account’s total EMCADM = 0
+*
+* the account’s accounting EMCADM = 0
+*
+* the account’s accounting output GST for EMCADM = 0
+* the account’s accounting total EMCADM = 0
+*/
+rule "2.7.2.3 EMC Admin Fee (FEE) - adj and cap values at account level for EMC fee account"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( emcAdmAdj == null, emcAccount == true, $id : accountId )
+    then
+        $a.setEmcAdmAdj( BigDecimal.ZERO );
+        $a.setEmcAdmCap( BigDecimal.ZERO );
+        
+        $a.setOpGstEmcAdmAdj( BigDecimal.ZERO );
+        $a.setOpGstEmcAdmCap( BigDecimal.ZERO );
+        
+        $a.setEmcAdm( BigDecimal.ZERO );
+        $a.setIpGstEmcAdm( BigDecimal.ZERO );
+        $a.setOpGstEmcAdm( BigDecimal.ZERO );
+        $a.setTotalEmcAdm( BigDecimal.ZERO );
+        
+        $a.setAccountingEmcAdm( BigDecimal.ZERO );
+        $a.setAccountingOpGstEmcAdm( BigDecimal.ZERO );
+        $a.setAccountingTotalEmcAdm( BigDecimal.ZERO );
+        update( $a );
+end
+
+/*
+* the account’s EMCADM =  Round(the CMWH for EMCADM * InstanceSum(the account’s intervals, the interval’s TTE), 2)	if 
+* the price cap rule is not in effect and
+* the account is not EMC fee account
+*
+* the account’s accounting EMCADM = the account’s EMCADM * -1
+*/
+rule "2.7.2.3 EMC Admin Fee (FEE) - account level case no price cap"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( emcAdm == null, emcAccount == false, $id : accountId )
+    	Global( priceCapEffective == false, cmwhEmcAdm != null, $cmwhEmcAdm : cmwhEmcAdm )
+    	$is : List() from collect( Period( accountId == $id ) )
+        $tte : BigDecimal() from accumulate(
+        							Period( tte != null, amt : tte ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setEmcAdm( $cmwhEmcAdm.multiply( $tte ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setAccountingEmcAdm( $a.getEmcAdm().negate() );
+        update( $a );
+end
+
+/*
+* the account’s EMCADM =  Round(the account’s EMCADM Adj * -1, 2) + Round(the account’s EMCADM Cap * -1, 2)	if 
+* the price cap rule is in effect and
+* the account is not EMC fee account
+*
+* the account’s accounting EMCADM = the account’s EMCADM * -1
+*/
+rule "2.7.2.3 EMC Admin Fee (FEE) - account level case with price cap"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( emcAdm == null, emcAccount == false, emcAdmAdj!= null && emcAdmCap != null, $id : accountId, $emcAdmAdj : emcAdmAdj, $emcAdmCap : emcAdmCap )
+    	Global( priceCapEffective == true, cmwhEmcAdm != null, $cmwhEmcAdm : cmwhEmcAdm )
+    then
+        $a.setEmcAdm( $emcAdmAdj.negate().setScale(2, BigDecimal.ROUND_HALF_UP).add( $emcAdmCap.negate().setScale(2, BigDecimal.ROUND_HALF_UP) ) );
+        $a.setAccountingEmcAdm( $a.getEmcAdm().negate() );
+        update( $a );
+end
+
+/*
+* the account’s total EMCADM = the account’s EMCADM + the account’s output GST for EMCADM if
+* the account is not EMC fee account
+*
+* the account’s accounting total EMCADM = the account’s total EMCADM * -1
+*/
+rule "2.7.2.3 EMC Admin Fee (FEE) - total value at account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( totalEmcAdm == null, emcAccount == false, emcAdm != null && opGstEmcAdm != null, $emcAdm : emcAdm, $opGstEmcAdm : opGstEmcAdm )
+    then
+        $a.setTotalEmcAdm( $emcAdm.add( $opGstEmcAdm ) );
+        $a.setAccountingTotalEmcAdm( $a.getTotalEmcAdm().negate() );
+        update( $a );
+end
+
+/*
+* the total collected EMCADM = InstanceSumIf(the settlement accounts, the account’s total EMCADM, the account is not EMC fee account)
+*/
+rule "2.7.2.3 EMC Admin Fee (FEE) - global level"
+ruleflow-group "acct_stmt"
+    when
+    	$g : Global( totalEmcAdmSet == false, runType == "P" || runType == "F", $run : runId )
+    	$as : List() from collect( Account( runId == $run, emcAccount == false ) )
+        $emca : BigDecimal() from accumulate(
+        							Account( totalEmcAdm != null, amt : totalEmcAdm ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $g.setTotalEmcAdmSet(true);
+        $g.setTotalEmcAdm( $emca );
+        update( $g );
+end
+
+/*
+* the account’s ADMFEE = the total collected EMCADM if
+* the account is EMC fee account
+*
+* the account’s total ADMFEE = the total collected EMCADM if
+* the account is EMC fee account
+*/
+rule "2.7.2.3 EMC Admin Fee (FEE) - account level for EMC account"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( admFee == null, emcAccount == true )
+    	Global( totalEmcAdm != null, $totalEmcAdm : totalEmcAdm )
+    then
+        $a.setAdmFee( $totalEmcAdm );
+        $a.setTotalAdmFee( $totalEmcAdm );
+        update( $a );
+end
+
+/*
+* the CMWH for PSOADM = (the PSO budget / the DIM) / the total TTE
+*
+* the rounded CMWH for PSOADM = Round(the CMWH for PSOADM, 2)	if 
+* the price cap rule is not in effect
+*/
+rule "2.7.2.4 PSO Admin Charge per MWh (CMWH) - global level case no price cap"
+ruleflow-group "acct_stmt"
+    when
+    	$g : Global( cmwhPsoAdm == null, priceCapEffective == false, totalTte != 0, $psoBudget : psoBudget, $dim : dim, $tte : totalTte )
+    then
+        $g.setCmwhPsoAdm( new BigDecimal($psoBudget.doubleValue() / $dim.doubleValue() / $tte.doubleValue()) );
+        $g.setCmwhPsoAdmRounded( $g.getCmwhPsoAdm().setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $g );
+end
+
+/*
+* the CMWH for PSOADM = (the PSO budget / the DIM) / the total TTE
+*
+* the rounded CMWH for PSOADM = Round(the CMWH for PSOADM, 4)	if 
+* the price cap rule is in effect
+*/
+rule "2.7.2.4 PSO Admin Charge per MWh (CMWH) - global level case with price cap"
+ruleflow-group "acct_stmt"
+    when
+    	$g : Global( cmwhPsoAdm == null, priceCapEffective == true, totalTte != 0, $psoBudget : psoBudget, $dim : dim, $tte : totalTte )
+    then
+        $g.setCmwhPsoAdm( new BigDecimal($psoBudget.doubleValue() / $dim.doubleValue() / $tte.doubleValue()) );
+        $g.setCmwhPsoAdmRounded( $g.getCmwhPsoAdm().setScale(4, BigDecimal.ROUND_HALF_UP) );
+        update( $g );
+end
+
+/*
+* the interval’s computed PSOA = Round(the CMWH for PSOADM * the interval’s TTE, 5)
+*/
+rule "2.7.2.5 PSO Admin Fee (FEE) - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( compPsoa == null, tte != null, $tte : tte )
+    	Global( cmwhPsoAdm != null, $cmwhPsoAdm : cmwhPsoAdm )
+    then
+        $i.setCompPsoa( $cmwhPsoAdm.multiply( $tte ).setScale(5, BigDecimal.ROUND_HALF_UP) );
+        update( $i );
+end
+
+/*
+* the account’s PSOADM = Round(the CMWH for PSOADM * InstanceSum(the account’s intervals, the interval’s TTE), 2)	if 
+* the price cap rule is not in effect and
+* the account is not PSO account
+*
+* the account’s accounting PSOADM = the account’s PSOADM * -1
+*/
+rule "2.7.2.5 PSO Admin Fee (FEE) - account level case no price cap"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( psoAdm == null, psoAccount == false, $id : accountId )
+    	Global( priceCapEffective == false, cmwhPsoAdm != null, $cmwhPsoAdm : cmwhPsoAdm )
+    	$is : List() from collect( Period( accountId == $id ) )
+        $tte : BigDecimal() from accumulate(
+        							Period( tte != null, amt : tte ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setPsoAdm( $cmwhPsoAdm.multiply( $tte ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setAccountingPsoAdm( $a.getPsoAdm().negate() );
+        update( $a );
+end
+
+/*
+* the account’s PSOADM = Round(InstanceSum(the account’s intervals, the interval’s computed PSOA), 2)	if 
+* the price cap rule is in effect and
+* the account is not PSO account
+*
+* the account’s accounting PSOADM = the account’s PSOADM * -1
+*/
+rule "2.7.2.5 PSO Admin Fee (FEE) - account level case with price cap"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( psoAdm == null, psoAccount == false, $id : accountId )
+    	Global( priceCapEffective == true, cmwhPsoAdm != null, $cmwhPsoAdm : cmwhPsoAdm )
+    	$is : List() from collect( Period( accountId == $id ) )
+        $psoa : BigDecimal() from accumulate(
+        							Period( compPsoa != null, amt : compPsoa ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setPsoAdm( $psoa.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setAccountingPsoAdm( $a.getPsoAdm().negate() );
+        update( $a );
+end
+
+/*
+* the account’s PSOADM = Round(InstanceSum(the account’s intervals, the interval’s computed PSOA), 2)	if 
+* the price cap rule is in effect and
+* the account is not PSO account
+*
+* the account’s output GST for PSOADM = Round(the account’s PSOADM * the output GST, 2)
+*
+* the account’s total PSOADM = the account’s PSOADM + the account’s output GST for PSOADM if
+* the account is not PSO account
+*
+* the account’s accounting PSOADM = the account’s PSOADM * -1
+*
+* the account’s accounting output GST for PSOADM = the account’s output GST for PSOADM * -1
+*
+* the account’s accounting total PSOADM = the account’s total PSOADM * -1
+*/
+rule "2.7.2.5 PSO Admin Fee (FEE) - account level for PSO fee account"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( psoAdm == null, psoAccount == true, $id : accountId )
+    then
+        $a.setPsoAdm( BigDecimal.ZERO );
+        $a.setIpGstPsoAdm( BigDecimal.ZERO );
+        $a.setOpGstPsoAdm( BigDecimal.ZERO );
+        $a.setTotalPsoAdm( BigDecimal.ZERO );
+        
+        $a.setAccountingPsoAdm( BigDecimal.ZERO );
+        $a.setAccountingOpGstPsoAdm( BigDecimal.ZERO );
+        $a.setAccountingTotalPsoAdm( BigDecimal.ZERO );
+        update( $a );
+end
+
+/*
+* the account’s input GST for PSOADM = 0
+*
+* the account’s output GST for PSOADM = Round(the account’s PSOADM * the output GST, 2)
+*
+* the account’s accounting output GST for PSOADM = the account’s output GST for PSOADM * -1
+*/
+rule "2.7.2.5 PSO Admin Fee (FEE) - GST at account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( opGstPsoAdm == null, psoAdm != null, $psoAdm : psoAdm )
+    then
+        $a.setIpGstPsoAdm( BigDecimal.ZERO );
+        $a.setOpGstPsoAdm( $psoAdm.multiply( outGstRate ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setAccountingOpGstPsoAdm( $a.getOpGstPsoAdm().negate() );
+        update( $a );
+end
+
+/*
+* the account’s total PSOADM = the account’s PSOADM + the account’s output GST for PSOADM if
+* the account is not PSO account
+*
+* the account’s accounting total PSOADM = the account’s total PSOADM * -1
+*/
+rule "2.7.2.5 PSO Admin Fee (FEE) - total at account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( totalPsoAdm == null, psoAccount == false, psoAdm != null && opGstPsoAdm != null, $psoAdm : psoAdm, $opGstPsoAdm : opGstPsoAdm )
+    then
+        $a.setTotalPsoAdm( $psoAdm.add( $opGstPsoAdm ) );
+        $a.setAccountingTotalPsoAdm( $a.getTotalPsoAdm().negate() );
+        update( $a );
+end
+
+/*
+* the total collected PSOADM = Abs(InstanceSumIf(the settlement accounts, the account’s total PSOADM, the account is not PSO account))
+*/
+rule "2.7.2.5 PSO Admin Fee (FEE) - global level"
+ruleflow-group "acct_stmt"
+    when
+    	$g : Global( totalPsoAdmSet == false, runType == "P" || runType == "F", $run : runId )
+    	$as : List() from collect( Account( runId == $run, psoAccount == false ) )
+        $psoa : BigDecimal() from accumulate(
+        							Account( totalPsoAdm != null, amt : totalPsoAdm ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $g.setTotalPsoAdmSet( true );
+        $g.setTotalPsoAdm( $psoa );
+        update( $g );
+end
+
+/*
+* the account’s ADMFEE = the total collected PSOADM if
+* the account is PSO account
+*
+* the account’s total ADMFEE = the total collected PSOADM if
+* the account is PSO account
+*/
+rule "2.7.2.5 PSO Admin Fee (FEE) - account level for PSO account"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( admFee == null, psoAccount == true )
+    	Global( totalPsoAdm != null, $totalPsoAdm : totalPsoAdm )
+    then
+        $a.setAdmFee( $totalPsoAdm );
+        $a.setTotalAdmFee( $totalPsoAdm );
+        update( $a );
+end
+
+/*
+* the interval’s computed fee total = the interval’s computed EMCA + the interval’s computed PSOA
+*/
+rule "FEE total at period level for reporting purpose"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( compFeeTotal == null, compEmca != null && compPsoa != null, $compEmca : compEmca, $compPsoa : compPsoa )
+    then
+        $i.setCompFeeTotal( $compEmca.add( $compPsoa ) );
+        update( $i );
+end
+
+/*
+* the account's other charges total = the account's accounting EMCADM + the account's accounting PSOADM if
+* the account is not EMC fee account and
+* the account is not PSO account
+*/
+rule "4.2 sum of all the other charges - Other report at account level case default"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( otherTotal == null, emcAccount == false && psoAccount == false, accountingEmcAdm != null && accountingPsoAdm != null, $accountingEmcAdm : accountingEmcAdm, $accountingPsoAdm : accountingPsoAdm )
+    then
+        $a.setOtherTotal( $accountingEmcAdm.add( $accountingPsoAdm ) );
+        update( $a );
+end
+
+/*
+* the account's other charges total = the account’s ADMFEE if
+* the account is EMC fee account
+*/
+rule "4.2 sum of all the other charges - Other report at account level case EMC"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( otherTotal == null, emcAccount == true, admFee != null, $admFee : admFee )
+    then
+        $a.setOtherTotal( $admFee );
+        update( $a );
+end
+
+/*
+* the account's other charges total = the account’s ADMFEE if
+* the account is PSO account
+*/
+rule "4.2 sum of all the other charges - Other report at account level case PSO"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( otherTotal == null, psoAccount == true, admFee != null, $admFee : admFee )
+    then
+        $a.setOtherTotal( $admFee );
+        update( $a );
+end
+
+/*
+* The EMC admin adj total = InstanceSumIf(the settlement accounts, Round(the account’s EMCADM Adj, 2) + the account’s output GST for EMCADM Adj, the account is not EMC fee account)
+*
+* The EMC admin cap total = InstanceSumIf(the settlement accounts, Round(the account’s EMCADM Cap, 2) + the account’s output GST for EMCADM Cap, the account is not EMC fee account)
+*/
+rule "4.2 sum of all the other charges - Other report at global level"
+ruleflow-group "acct_stmt"
+    when
+    	$g : Global( emcAdmAdjTotal == null, $run : runId )
+    	$as : List() from collect( Account( runId == $run, emcAccount == false ) )
+        $tadj : BigDecimal() from accumulate(
+        							Account( emcAdmAdj != null && opGstEmcAdmAdj != null, adj : emcAdmAdj, aadj : opGstEmcAdmAdj ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(adj.setScale(2, BigDecimal.ROUND_HALF_UP).add(aadj)); ),
+									reverse( tt = tt.subtract(adj.setScale(2, BigDecimal.ROUND_HALF_UP).add(aadj)); ),
+									result( tt ) )
+        $tcap : BigDecimal() from accumulate(
+        							Account( emcAdmCap != null && opGstEmcAdmCap != null, cap : emcAdmCap, acap : opGstEmcAdmCap ) from $as,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(cap.setScale(2, BigDecimal.ROUND_HALF_UP).add(acap)); ),
+									reverse( tt = tt.subtract(cap.setScale(2, BigDecimal.ROUND_HALF_UP).add(acap)); ),
+									result( tt ) )
+    then
+        $g.setEmcAdmAdjTotal( $tadj );
+        $g.setEmcAdmCapTotal( $tcap );
+        update( $g );
+end
+
+/*
+* the account’s ADMFEE Cap = the EMC admin cap total * -1 if
+* the account is EMC fee account
+*/
+rule "4.2 sum of all the other charges - cap value in Other report at account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( admFeeCap == null, emcAccount == true )
+    	Global( emcAdmCapTotal != null, $emcAdmCapTotal : emcAdmCapTotal )
+    then
+        $a.setAdmFeeCap( $emcAdmCapTotal.negate() );
+        update( $a );
+end
+
+/*
+* the account’s ADMFEE Adj = the EMC admin adj total * -1 if
+* the account is EMC fee account
+*/
+rule "4.2 sum of all the other charges - adj value in Other report at account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( admFeeAdj == null, emcAccount == true )
+    	Global( emcAdmAdjTotal != null, $emcAdmAdjTotal : emcAdmAdjTotal )
+    then
+        $a.setAdmFeeAdj( $emcAdmAdjTotal.negate() );
+        update( $a );
+end
+
+/*
+* the account’s ADMFEE Cap = the EMC admin cap total * -1 if
+* the account is EMC fee account
+*
+* the account’s ADMFEE Adj = the EMC admin adj total * -1 if
+* the account is EMC fee account
+*/
+rule "4.2 sum of all the other charges - adj value in Other report at account level (non-EMC)"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( admFeeAdj == null, emcAccount == false )
+    then
+        $a.setAdmFeeCap( BigDecimal.ZERO );
+        $a.setAdmFeeAdj( BigDecimal.ZERO );
+        update( $a );
+end
+
+/*
+* the market's EMCADMIN CMWH in $/MWh = the CMWH for EMCADM	if 
+* the igs rule is in effect
+*
+* the market's PSOADMIN CMWH in $/MWh = the CMWH for PSOADM	if 
+* the igs rule is in effect
+*
+* the market's Output Weighted MEP = the market's weighted MEP	if 
+* the igs rule is in effect
+*/
+rule "4.2 sum of all the other charges - market level"
+ruleflow-group "acct_stmt"
+    when
+    	$m : Market( emcAdm == null, wmep != null, $wmep : wmep )
+    	Global( igsEffective == true, cmwhEmcAdm != null && cmwhPsoAdm != null, $cmwhEmcAdm : cmwhEmcAdm, $cmwhPsoAdm : cmwhPsoAdm )
+    then
+        $m.setEmcAdm( $cmwhEmcAdm );
+        $m.setPsoAdm( $cmwhPsoAdm );
+        $m.setWmepOutput( $wmep );
+        update( $m );
+end

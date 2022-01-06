@@ -1,0 +1,814 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import java.util.List;
+import com.emc.sett.impl.*;
+
+global java.math.BigDecimal inGstRate;
+global java.math.BigDecimal outGstRate;
+
+/*
+* the node’s GESCE = Round(the node’s MEP * the node’s IEQ, 2) if
+* the node’s IEQ < 0
+*
+* the node’s GESCP = Round(the node’s MEP * the node’s IEQ, 2) if
+* the node’s IEQ >= 0 and
+* the node’s MEP < 0
+*
+* the node’s GESCN = Round(the node’s MEP * the node’s IEQ, 2) if
+* The node’s MEP >= 0 and
+* The node’s IEQ >= 0
+*/
+rule "3.1.1 Generation Energy Settlement Credit (GESCN) - node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( gescn == null, ieq != null && mep != null, ieq >= 0 && mep >= 0, $mep : mep, $ieq : ieq )
+    then
+        $n.setGesce( BigDecimal.ZERO );
+        $n.setGescp( BigDecimal.ZERO );
+        $n.setGescn( $mep.multiply($ieq).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $n );
+end
+
+/*
+* the node’s GESCE = Round(the node’s MEP * the node’s IEQ, 2) if
+* the node’s IEQ < 0
+*
+* the node’s GESCP = Round(the node’s MEP * the node’s IEQ, 2) if
+* the node’s IEQ >= 0 and
+* the node’s MEP < 0
+*
+* the node’s GESCN = Round(the node’s MEP * the node’s IEQ, 2) if
+* The node’s MEP >= 0 and
+* The node’s IEQ >= 0
+*/
+rule "3.1.1 Generation Energy Settlement Credit (GESCP) - node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( gescp == null, ieq != null && mep != null, ieq >= 0 && mep < 0, $mep : mep, $ieq : ieq )
+    then
+        $n.setGesce( BigDecimal.ZERO );
+        $n.setGescp( $mep.multiply($ieq).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $n.setGescn( BigDecimal.ZERO );
+        update( $n );
+end
+
+/*
+* the node’s GESCE = Round(the node’s MEP * the node’s IEQ, 2) if
+* the node’s IEQ < 0
+*
+* the node’s GESCP = Round(the node’s MEP * the node’s IEQ, 2) if
+* the node’s IEQ >= 0 and
+* the node’s MEP < 0
+*
+* the node’s GESCN = Round(the node’s MEP * the node’s IEQ, 2) if
+* The node’s MEP >= 0 and
+* The node’s IEQ >= 0
+*/
+rule "3.1.1 Generation Energy Settlement Credit (GESCE) - node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( gesce == null, ieq != null && mep != null, ieq < 0, $mep : mep, $ieq : ieq )
+    then
+        $n.setGesce( $mep.multiply($ieq).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $n.setGescp( BigDecimal.ZERO );
+        $n.setGescn( BigDecimal.ZERO );
+        update( $n );
+end
+
+/*
+* the interval’s GESCN = InstanceSum(the interval’s nodes, the node’s GESCN)
+*
+* the interval’s GESCP = InstanceSum(the interval’s nodes, the node’s GESCP)
+*
+* the interval’s GESCE = InstanceSum(the interval’s nodes, the node’s GESCE)
+*
+* the interval’s GESC = the interval’s GESCN + the interval’s GESCP + the interval’s GESCE
+*
+* the interval’s IEQ  = InstanceSum(the interval's nodes, the node’s IEQ)
+*/
+rule "3.1.1 Generation Energy Settlement Credit (GESC) - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( gesc == null, $pd : periodId, $sa : accountId )
+    	$ns : List() from collect( Facility( $pd == periodId && $sa == accountId ) )
+        $gn : BigDecimal() from accumulate(
+        							Facility( gescn != null, amt : gescn ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $gp : BigDecimal() from accumulate(
+        							Facility( gescp != null, amt : gescp ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $ge : BigDecimal() from accumulate(
+        							Facility( gesce != null, amt : gesce ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        // requirement of 3.1.3
+        $ieq : BigDecimal() from accumulate(
+        							Facility( ieq != null, amt : ieq ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setGescn( $gn );
+        $i.setGescp( $gp );
+        $i.setGesce( $ge );
+        $i.setGesc( $ge.add($gp).add($gn) );
+        
+        // requirement of 3.1.3
+        $i.setIeq( $ieq );
+        update( $i );
+end
+
+/*
+* the interval’s input GST for GESCN = the interval’s GESCN * the input GST if
+* For(the interval’s account, the account is GST taxable)
+*
+* the interval’s total GESCN = the interval’s GESCN + the interval’s input GST for GESCN
+*
+* the interval’s output GST for GESCP = the interval’s GESCP * the output GST
+*
+* the interval’s total GESCP = the interval’s GESCP + the interval’s output GST for GESCP
+*
+* the interval’s output GST for GESCE = the interval’s GESCE * the output GST 
+*
+* the interval’s total GESCE = the interval’s GESCE + the interval’s output GST for GESCE
+*
+* the interval’s input GST for GESC = the interval’s input GST for GESCN
+*
+* the interval’s output GST for GESC = the interval’s output GST for GESCP + the interval’s output GST for GESCE
+*
+* the interval’s total GESC = the interval’s GESCN + the interval’s input GST for GESCN + the interval’s GESCP + the interval’s output GST for GESCP + the interval’s GESCE + the interval’s output GST for GESCE
+*/
+rule "3.1.1 Generation Energy Settlement Credit (GESC) - Calculate taxable GST amount"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( opGstGesce == null, $id : accountId, $gn : gescn, $gp : gescp, $ge : gesce )
+    	Account( accountId == $id && taxable == true )
+    then
+        $i.setIpGstGescn( $gn.multiply(inGstRate) );
+        $i.setTotalGescn( $gn.add($gn.multiply(inGstRate)) );
+
+        $i.setOpGstGescp( $gp.multiply(outGstRate) );
+        $i.setTotalGescp( $gp.add($gp.multiply(outGstRate)) );
+
+        $i.setOpGstGesce( $ge.multiply(outGstRate) );
+        $i.setTotalGesce( $ge.add($ge.multiply(outGstRate)) );
+        
+        $i.setIpGstGesc( $gn.multiply(inGstRate) );
+        $i.setOpGstGesc( $gp.multiply(outGstRate).add($ge.multiply(outGstRate)) );
+        $i.setTotalGesc( $i.getTotalGescn().add($i.getTotalGescp()).add($i.getTotalGesce()) );
+        update( $i );
+end
+
+/*
+* the interval’s input GST for GESCN = the interval’s GESCN * the input GST if
+* For(the interval’s account, the account is not GST taxable)
+*
+* the interval’s total GESCN = the interval’s GESCN + the interval’s input GST for GESCN
+*
+* the interval’s output GST for GESCP = the interval’s GESCP * the output GST
+*
+* the interval’s total GESCP = the interval’s GESCP + the interval’s output GST for GESCP
+*
+* the interval’s output GST for GESCE = the interval’s GESCE * the output GST 
+*
+* the interval’s total GESCE = the interval’s GESCE + the interval’s output GST for GESCE
+*
+* the interval’s input GST for GESC = the interval’s input GST for GESCN
+*
+* the interval’s output GST for GESC = the interval’s output GST for GESCP + the interval’s output GST for GESCE
+*
+* the interval’s total GESC = the interval’s GESCN + the interval’s input GST for GESCN + the interval’s GESCP + the interval’s output GST for GESCP + the interval’s GESCE + the interval’s output GST for GESCE
+*/
+rule "3.1.1 Generation Energy Settlement Credit (GESC) - Calculate non-taxable GST amount"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( opGstGesce == null, $id : accountId, $gn : gescn, $gp : gescp, $ge : gesce )
+    	Account( accountId == $id && taxable == false )
+    then
+        $i.setIpGstGescn( BigDecimal.ZERO );
+        $i.setTotalGescn( $gn );
+
+        $i.setOpGstGescp( $gp.multiply(outGstRate) );
+        $i.setTotalGescp( $gp.add($gp.multiply(outGstRate)) );
+
+        $i.setOpGstGesce( $ge.multiply(outGstRate) );
+        $i.setTotalGesce( $ge.add($ge.multiply(outGstRate)) );
+        
+        $i.setIpGstGesc( $gn.multiply(inGstRate) );
+        $i.setOpGstGesc( $gp.multiply(outGstRate).add($ge.multiply(outGstRate)) );
+        $i.setTotalGesc( $i.getTotalGescn().add($i.getTotalGescp()).add($i.getTotalGesce()) );
+        update( $i );
+end
+
+/*
+* the account's GESC = InstanceSum(the account's intervals, the interval’s GESC)
+*
+* the account’s input GST for GESC = Round(InstanceSum(the account’s intervals, the interval’s input GST for GESC), 2)
+*
+* the account’s output GST for GESC = Round(InstanceSum(the account’s intervals, the interval’s output GST for GESCP), 2) + Round(InstanceSum(the account’s intervals, the interval’s output GST for GESCE), 2)
+*
+* the account’s total GESC = the account’s GESC + the account’s input GST for GESC + the account’s output GST for GESC
+*/
+rule "3.1.1 Generation Energy Settlement Credit (GESC) - account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( totalGesc == null, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $gesc : BigDecimal() from accumulate(
+        							Period( gesc != null, amt : gesc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vgn : BigDecimal() from accumulate(
+        							Period( ipGstGescn != null, amt : ipGstGescn ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $age : BigDecimal() from accumulate(
+        							Period( opGstGesce != null, amt : opGstGesce ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $agp : BigDecimal() from accumulate(
+        							Period( opGstGescp != null, amt : opGstGescp ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setGesc( $gesc );
+        $a.setIpGstGesc( $vgn.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setOpGstGesc( $agp.setScale(2, BigDecimal.ROUND_HALF_UP).add( $age.setScale(2, BigDecimal.ROUND_HALF_UP) ) );
+        $a.setTotalGesc( $a.getGesc().add( $a.getIpGstGesc() ).add( $a.getOpGstGesc() ) );
+        update( $a );
+end
+
+/*
+* the node’s LESDP = Round(For(the node’s interval, the interval’s USEP) * the node’s WEQ, 2) if
+* For(the node’s interval, the interval’s USEP) >= 0 and
+* the node’s WEQ >= 0
+* or
+* all
+* For(the node’s interval, the interval’s USEP) < 0 and
+* the node’s WEQ < 0
+*
+* the node’s LESDN = Round(For(the node’s interval, the interval’s USEP) * the node’s WEQ, 2) if
+* all
+* For(the node’s interval, the interval’s USEP) < 0 and
+* the node’s WEQ >= 0
+* or
+* all
+* For(the node’s interval, the interval’s USEP) >= 0 and
+* the node’s WEQ < 0
+*
+* the node’s accounting LESDP = the node’s LESDP * -1
+*
+* the node’s accounting LESDN = the node’s LESDN * -1
+*/
+rule "3.1.2 Load Energy Settlement Debit (LESDP) - node level with all positive values"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( lesdp == null, weq != null, weq >= 0, $pd : periodId, $id : accountId, $weq : weq )
+        Market( periodId == $pd && usep >= 0, $usep : usep )
+    then
+        $n.setLesdp( $usep.multiply($weq).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $n.setLesdn( BigDecimal.ZERO );
+        $n.setAccountingLesdp( $n.getLesdp().negate() );
+        $n.setAccountingLesdn( $n.getLesdn().negate() );
+        update( $n );
+end
+ 
+/*
+* the node’s LESDP = Round(For(the node’s interval, the interval’s USEP) * the node’s WEQ, 2) if
+* For(the node’s interval, the interval’s USEP) >= 0 and
+* the node’s WEQ >= 0
+* or
+* all
+* For(the node’s interval, the interval’s USEP) < 0 and
+* the node’s WEQ < 0
+*
+* the node’s LESDN = Round(For(the node’s interval, the interval’s USEP) * the node’s WEQ, 2) if
+* all
+* For(the node’s interval, the interval’s USEP) < 0 and
+* the node’s WEQ >= 0
+* or
+* all
+* For(the node’s interval, the interval’s USEP) >= 0 and
+* the node’s WEQ < 0
+*
+* the node’s accounting LESDP = the node’s LESDP * -1
+*
+* the node’s accounting LESDN = the node’s LESDN * -1
+*/
+rule "3.1.2 Load Energy Settlement Debit (LESDP) - node level with all negative values"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( lesdp == null, weq != null, weq < 0, $pd : periodId, $id : accountId, $weq : weq )
+        Market( periodId == $pd && usep < 0, $usep : usep )
+    then
+        $n.setLesdp( $usep.multiply($weq).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $n.setLesdn( BigDecimal.ZERO );
+        $n.setAccountingLesdp( $n.getLesdp().negate() );
+        $n.setAccountingLesdn( $n.getLesdn().negate() );
+        update( $n );
+end
+ 
+/*
+* the node’s LESDP = Round(For(the node’s interval, the interval’s USEP) * the node’s WEQ, 2) if
+* For(the node’s interval, the interval’s USEP) >= 0 and
+* the node’s WEQ >= 0
+* or
+* all
+* For(the node’s interval, the interval’s USEP) < 0 and
+* the node’s WEQ < 0
+*
+* the node’s LESDN = Round(For(the node’s interval, the interval’s USEP) * the node’s WEQ, 2) if
+* all
+* For(the node’s interval, the interval’s USEP) < 0 and
+* the node’s WEQ >= 0
+* or
+* all
+* For(the node’s interval, the interval’s USEP) >= 0 and
+* the node’s WEQ < 0
+*
+* the node’s accounting LESDP = the node’s LESDP * -1
+*
+* the node’s accounting LESDN = the node’s LESDN * -1
+*/
+rule "3.1.2 Load Energy Settlement Debit (LESDN) - node level with positive WEQ"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( lesdn == null, weq != null, weq >= 0, $pd : periodId, $id : accountId, $weq : weq )
+        Market( periodId == $pd && usep < 0, $usep : usep )
+    then
+        $n.setLesdp( BigDecimal.ZERO );
+        $n.setLesdn( $usep.multiply($weq).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $n.setAccountingLesdp( $n.getLesdp().negate() );
+        $n.setAccountingLesdn( $n.getLesdn().negate() );
+        update( $n );
+end
+ 
+/*
+* the node’s LESDP = Round(For(the node’s interval, the interval’s USEP) * the node’s WEQ, 2) if
+* For(the node’s interval, the interval’s USEP) >= 0 and
+* the node’s WEQ >= 0
+* or
+* all
+* For(the node’s interval, the interval’s USEP) < 0 and
+* the node’s WEQ < 0
+*
+* the node’s LESDN = Round(For(the node’s interval, the interval’s USEP) * the node’s WEQ, 2) if
+* all
+* For(the node’s interval, the interval’s USEP) < 0 and
+* the node’s WEQ >= 0
+* or
+* all
+* For(the node’s interval, the interval’s USEP) >= 0 and
+* the node’s WEQ < 0
+*
+* the node’s accounting LESDP = the node’s LESDP * -1
+*
+* the node’s accounting LESDN = the node’s LESDN * -1
+*/
+rule "3.1.2 Load Energy Settlement Debit (LESDN) - node level with positive USEP"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( lesdn == null, weq != null, weq < 0, $pd : periodId, $id : accountId, $weq : weq )
+        Market( periodId == $pd && usep >= 0, $usep : usep )
+    then
+        $n.setLesdp( BigDecimal.ZERO );
+        $n.setLesdn( $usep.multiply($weq).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $n.setAccountingLesdp( $n.getLesdp().negate() );
+        $n.setAccountingLesdn( $n.getLesdn().negate() );
+        update( $n );
+end
+
+/*
+* the interval’s LESDN  = instanceSum(the interval’s nodes, the node’s LESDN)
+*
+* the interval’s LESDP  = instanceSum(the interval’s nodes, the node’s LESDP)
+*
+* the interval’s accounting LESDN = the interval’s LESDN * -1
+*
+* the interval’s accounting LESDP = the interval’s LESDP * -1
+*/
+rule "3.1.2 Load Energy Settlement Debit (LESD) - period level from nodes"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( lesdp == null, weq == 0, $pd : periodId, $sa : accountId )
+    	$ns : List() from collect( Facility( $pd == periodId && $sa == accountId ) )
+        $ln : BigDecimal() from accumulate(
+        							Facility( lesdn != null, amt : lesdn ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $lp : BigDecimal() from accumulate(
+        							Facility( lesdp != null, amt : lesdp ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setLesdn( $ln );
+        $i.setLesdp( $lp );
+        $i.setAccountingLesdp( $i.getLesdp().negate() );
+        $i.setAccountingLesdn( $i.getLesdn().negate() );
+        update( $i );
+end
+
+/*
+* the interval’s LESDP = Round(the interval’s USEP * the interval’s WEQ, 2) if
+* the interval’s USEP >= 0 and
+* the interval’s WEQ >= 0
+* or
+* all
+* the interval’s USEP < 0 and
+* the interval’s WEQ < 0
+*
+* the interval’s LESDN = Round(the interval’s USEP * the interval’s WEQ, 2) if
+* all
+* the interval’s USEP < 0 and
+* the interval’s WEQ >= 0
+* or
+* all
+* the interval’s USEP >= 0 and
+* the interval’s WEQ < 0
+*
+* the interval’s accounting LESDN = the interval’s LESDN * -1
+*
+* the interval’s accounting LESDP = the interval’s LESDP * -1
+*/
+rule "3.1.2 Load Energy Settlement Debit (LESDP) - period level"
+ruleflow-group "acct_stmt"
+    when
+        $i : Period( lesdp == null, weq != 0, (usep >= 0 && weq >= 0) || (usep < 0 && weq < 0), $usep : usep, $weq : weq )
+    then
+        $i.setLesdp( $usep.multiply($weq).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $i.setLesdn( BigDecimal.ZERO );
+        $i.setAccountingLesdp( $i.getLesdp().negate() );
+        $i.setAccountingLesdn( $i.getLesdn().negate() );
+        update( $i );
+end
+ 
+/*
+* the interval’s LESDP = Round(the interval’s USEP * the interval’s WEQ, 2) if
+* the interval’s USEP >= 0 and
+* the interval’s WEQ >= 0
+* or
+* all
+* the interval’s USEP < 0 and
+* the interval’s WEQ < 0
+*
+* the interval’s LESDN = Round(the interval’s USEP * the interval’s WEQ, 2) if
+* all
+* the interval’s USEP < 0 and
+* the interval’s WEQ >= 0
+* or
+* all
+* the interval’s USEP >= 0 and
+* the interval’s WEQ < 0
+*
+* the interval’s accounting LESDN = the interval’s LESDN * -1
+*
+* the interval’s accounting LESDP = the interval’s LESDP * -1
+*/
+rule "3.1.2 Load Energy Settlement Debit (LESDN) - period level"
+ruleflow-group "acct_stmt"
+    when
+        $i : Period( lesdn == null, weq != 0, (usep < 0 && weq >= 0) || (usep >= 0 && weq < 0), $usep : usep, $weq : weq )
+    then
+        $i.setLesdp( BigDecimal.ZERO );
+        $i.setLesdn( $usep.multiply($weq).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $i.setAccountingLesdp( $i.getLesdp().negate() );
+        $i.setAccountingLesdn( $i.getLesdn().negate() );
+        update( $i );
+end
+
+/*
+* the interval’s LESD = the interval’s LESDN + the interval’s LESDP
+*/
+rule "3.1.2 Load Energy Settlement Debit (LESD) - period level"
+ruleflow-group "acct_stmt"
+    when
+        $i : Period( lesd == null, lesdn != null && lesdp != null, $lesdn : lesdn, $lesdp : lesdp )
+    then
+        $i.setLesd( $lesdn.add($lesdp) );
+        update( $i );
+end
+
+/*
+* the interval’s output GST for LESDP = the interval’s LESDP * the output GST 
+*
+* the interval’s total LESDP = the interval’s LESDP + the interval’s output GST for LESDP  
+*
+* the interval’s input GST for LESDN = the interval’s LESDN * the input GST if
+* For(the interval’s account, the account is GST taxable)
+*
+* the interval’s total LESDN = the interval’s LESDN + the interval’s input GST for LESDN
+*
+* the interval’s input GST for LESD = the interval’s input GST for LESDN
+*
+* the interval’s output GST for LESD = the interval’s output GST for LESDP
+*
+* the interval’s total LESD = the interval’s LESDN + the interval’s input GST for LESDN + the interval’s LESDP + the interval’s output GST for LESDP
+*/
+rule "3.1.2 Load Energy Settlement Debit (LESD) - Calculate taxable GST amount"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( totalLesd == null, lesdn != null && lesdp != null, $id : accountId, $ln : lesdn, $lp : lesdp )
+    	Account( accountId == $id && taxable == true )
+    then
+        $i.setIpGstLesdn( $ln.multiply(inGstRate) );
+        $i.setTotalLesdn( $ln.add($ln.multiply(inGstRate)) );
+
+        $i.setOpGstLesdp( $lp.multiply(outGstRate) );
+        $i.setTotalLesdp( $lp.add($lp.multiply(outGstRate)) );
+        
+        $i.setIpGstLesd( $i.getIpGstLesdn() );
+        $i.setOpGstLesd( $i.getOpGstLesdp() );
+        $i.setTotalLesd( $i.getTotalLesdn().add($i.getTotalLesdp()) );
+        update( $i );
+end
+
+/*
+* the interval’s output GST for LESDP = the interval’s LESDP * the output GST 
+*
+* the interval’s total LESDP = the interval’s LESDP + the interval’s output GST for LESDP  
+*
+* the interval’s input GST for LESDN = the interval’s LESDN * the input GST if
+* For(the interval’s account, the account is GST taxable)
+*
+* the interval’s total LESDN = the interval’s LESDN + the interval’s input GST for LESDN
+*
+* the interval’s input GST for LESD = the interval’s input GST for LESDN
+*
+* the interval’s output GST for LESD = the interval’s output GST for LESDP
+*
+* the interval’s total LESD = the interval’s LESDN + the interval’s input GST for LESDN + the interval’s LESDP + the interval’s output GST for LESDP
+*/
+rule "3.1.2 Load Energy Settlement Debit (LESD) - Calculate non-taxable GST amount"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( totalLesd == null, lesdn != null && lesdp != null, $id : accountId, $ln : lesdn, $lp : lesdp )
+    	Account( accountId == $id && taxable == false )
+    then
+        $i.setIpGstLesdn( BigDecimal.ZERO );
+        $i.setTotalLesdn( $ln );
+
+        $i.setOpGstLesdp( $lp.multiply(outGstRate) );
+        $i.setTotalLesdp( $lp.add($lp.multiply(outGstRate)) );
+        
+        $i.setIpGstLesd( $i.getIpGstLesdn() );
+        $i.setOpGstLesd( $i.getOpGstLesdp() );
+        $i.setTotalLesd( $i.getTotalLesdn().add($i.getTotalLesdp()) );
+        update( $i );
+end
+
+/*
+* the account's LESD = InstanceSum(the account's intervals, the interval’s LESD) * -1
+*
+* the account’s input GST for LESD = Round(InstanceSum(the account’s intervals, the interval’s input GST for LESD), 2) * -1
+*
+* the account’s output GST for LESD = Round(InstanceSum(the account’s intervals, the interval’s output GST for LESD), 2) * -1
+*
+* the account’s total LESD = the account’s LESD + the account’s input GST for LESD + the account’s output GST for LESD
+*/
+rule "3.1.2 Load Energy Settlement Debit (LESD) - account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( totalLesd == null, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $lesd : BigDecimal() from accumulate(
+        							Period( lesd != null, amt : lesd ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vln : BigDecimal() from accumulate(
+        							Period( ipGstLesd != null, amt : ipGstLesd ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $alp : BigDecimal() from accumulate(
+        							Period( opGstLesd != null, amt : opGstLesd ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setLesd( $lesd.negate() );
+        $a.setIpGstLesd( $vln.setScale(2, BigDecimal.ROUND_HALF_UP).negate() );
+        $a.setOpGstLesd( $alp.setScale(2, BigDecimal.ROUND_HALF_UP).negate() );
+        $a.setTotalLesd( $a.getLesd().add( $a.getIpGstLesd() ).add( $a.getOpGstLesd() ) );
+        update( $a );
+end
+
+/*
+* the bilateral contract’s BWQ purchased = Round(the bilateral contract’s WEQ from retailer * the bilateral contract’s BWF purchased, 3)
+*
+* the bilateral contract’s BWQ sold = Round(the bilateral contract’s WEQ from retailer * the bilateral contract’s BWF sold, 3)
+*
+* the bilateral contract’s BIQ purchased = Round(the bilateral contract’s IEQ from generator * the bilateral contract’s BIF purchased, 3)
+*
+* the bilateral contract’s BIQ sold = Round(the bilateral contract’s IEQ from generator * the bilateral contract’s BIF sold, 3)
+*/
+rule "3.1.3 Bilateral Energy Settlement Credit (BESC) - Calculate contract's values"
+ruleflow-group "acct_stmt"
+    when
+    	$b : Bilateral( biqSold == null, $bwfp : bwfPurchased, $bwfs : bwfSold, $weq : retailerWeq, $bifp : bifPurchased, $bifs : bifSold, $ieq : generatorIeq )
+    then
+        $b.setBwqPurchased( $bwfp.multiply($weq).setScale(3, BigDecimal.ROUND_HALF_UP) );
+        $b.setBwqSold( $bwfs.multiply($weq).setScale(3, BigDecimal.ROUND_HALF_UP) );
+
+        $b.setBiqPurchased( $bifp.multiply($ieq).setScale(3, BigDecimal.ROUND_HALF_UP) );
+        $b.setBiqSold( $bifs.multiply($ieq).setScale(3, BigDecimal.ROUND_HALF_UP) );
+        update( $b );
+end
+
+/*
+* the interval’s BAQ Purchased  = InstanceSum(the interval's bilateral contracts, the bilateral contract’s BAQ Purchased)
+*
+* the interval’s BAQ Sold  = InstanceSum(the interval's bilateral contracts, the bilateral contract’s BAQ Sold)
+*
+* the interval’s BWF purchased = InstanceSum(the interval’s bilateral contracts, the bilateral contract’s BWQ purchased)
+*
+* the interval’s BWF sold = InstanceSum(the interval’s bilateral contracts, the bilateral contract’s BWQ sold)
+*
+* the interval’s BIF purchased = InstanceSum(the interval’s bilateral contracts, the bilateral contract’s BIQ purchased)
+*
+* the interval’s BIF sold = InstanceSum(the interval’s bilateral contracts, the bilateral contract’s BIQ sold)
+*
+* the interval’s BEQ Purchased = Round(the interval’s USEP * the interval’s BAQ Purchased, 2) + Round(the interval’s USEP * the interval’s BWF Purchased, 2) + Round(the interval’s USEP * the interval’s BIF Purchased, 2)
+*
+* the interval’s BEQ Sold = Round(the interval’s USEP * the interval’s BAQ Sold, 2) + Round(the interval’s USEP * the interval’s BWF Sold, 2) + Round(the interval’s USEP * the interval’s BIF Sold, 2)
+*
+* the interval’s BESC = the interval’s BEQ Purchased - the interval’s BEQ Sold
+*
+* the interval’s total BESC = the interval’s BESC
+*/
+rule "3.1.3 Bilateral Energy Settlement Credit (BESC) - put data from contracts into period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( besc == null, usep != null, $pd : periodId, $sa : accountId, $usep : usep )
+    	$bs : List() from collect( Bilateral( $pd == periodId && $sa == accountId ) )
+        $baqp : BigDecimal() from accumulate(
+        							Bilateral( baqPurchased != null, amt : baqPurchased ) from $bs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $baqs : BigDecimal() from accumulate(
+        							Bilateral( baqSold != null, amt : baqSold ) from $bs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $bwfp : BigDecimal() from accumulate(
+        							Bilateral( bwqPurchased != null, amt : bwqPurchased ) from $bs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $bwfs : BigDecimal() from accumulate(
+        							Bilateral( bwqSold != null, amt : bwqSold ) from $bs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $bifp : BigDecimal() from accumulate(
+        							Bilateral( biqPurchased != null, amt : biqPurchased ) from $bs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $bifs : BigDecimal() from accumulate(
+        							Bilateral( biqSold != null, amt : biqSold ) from $bs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setBaqPurchased( $baqp );
+        $i.setBaqSold( $baqs );
+        $i.setBwfPurchased( $bwfp );
+        $i.setBwfSold( $bwfs );
+        $i.setBifPurchased( $bifp );
+        $i.setBifSold( $bifs );
+        $i.setBeqPurchased( $usep.multiply($i.getBaqPurchased()).setScale(2, BigDecimal.ROUND_HALF_UP).add( $usep.multiply($i.getBwfPurchased()).setScale(2, BigDecimal.ROUND_HALF_UP) ).add( $usep.multiply($i.getBifPurchased()).setScale(2, BigDecimal.ROUND_HALF_UP) ) );
+        $i.setBeqSold( $usep.multiply($i.getBaqSold()).setScale(2, BigDecimal.ROUND_HALF_UP).add( $usep.multiply($i.getBwfSold()).setScale(2, BigDecimal.ROUND_HALF_UP) ).add( $usep.multiply($i.getBifSold()).setScale(2, BigDecimal.ROUND_HALF_UP) ) );
+        $i.setBesc( $i.getBeqPurchased().subtract( $i.getBeqSold() ) );
+        $i.setTotalBesc( $i.getBeqPurchased().subtract( $i.getBeqSold() ) );
+        update( $i );
+end
+
+/*
+* the account’s BESC = InstanceSum(the account’s intervals, the interval’s BESC)
+*
+* the account’s input GST for BESC =0
+*
+* the account’s output GST for BESC = 0
+*
+* the account’s total BESC = InstanceSum(the account’s intervals, the interval’s total BESC)
+*/
+rule "3.1.3 Bilateral Energy Settlement Credit (BESC) - account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( totalBesc == null, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $besc : BigDecimal() from accumulate(
+        							Period( besc != null, amt : besc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $total : BigDecimal() from accumulate(
+        							Period( totalBesc != null, amt : totalBesc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setBesc( $besc );
+        $a.setIpGstBesc( BigDecimal.ZERO );
+        $a.setOpGstBesc( BigDecimal.ZERO );
+        $a.setTotalBesc( $total );
+        update( $a );
+end
+
+/*
+* the interval’s NESC = the interval’s GESC - the interval’s LESD + the interval’s BESC
+*
+* the interval’s total NESC = the interval’s total GESC - the interval’s total LESD + the interval’s BESC
+*
+* the interval’s input GST for NESC = the interval’s input GST for GESC – the interval’s input GST for LESD
+*
+* the interval’s output GST for NESC = the interval’s output GST for GESC – the interval’s output GST for LESD
+*/
+rule "3.1.4 Net Energy Settlement Credit (NESC) - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( nesc == null, gesc != null && lesd != null && besc != null, $gesc : gesc, $lesd : lesd, $besc : besc, $tgesc : totalGesc, $tlesd : totalLesd, $tbesc : totalBesc )
+    then
+        $i.setNesc( $gesc.subtract( $lesd ).add( $besc ) );
+        $i.setTotalNesc( $tgesc.subtract( $tlesd ).add( $tbesc ) );
+
+        $i.setIpGstNesc( $i.getIpGstGesc().subtract( $i.getIpGstLesd() ) );
+        $i.setOpGstNesc( $i.getOpGstGesc().subtract( $i.getOpGstLesd() ) );
+        update( $i );
+end
+
+/*
+* the account’s NESC  = InstanceSum(the account's intervals, the interval’s NESC)
+*
+* the account’s input GST for NESC = the account’s input GST for GESC - Round(InstanceSum(the account’s intervals, the interval’s input GST for LESD), 2)
+*
+* the account’s output GST for NESC = the account’s output GST for GESC - Round(InstanceSum(the account’s intervals, the interval’s output GST for LESD), 2)
+*
+* the account’s total NESC = the account’s NESC + the account’s input GST for NESC + the account’s output GST for NESC
+*/
+rule "3.1.4 Net Energy Settlement Credit (NESC) - account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( totalNesc == null, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $nesc : BigDecimal() from accumulate(
+        							Period( nesc != null, amt : nesc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vln : BigDecimal() from accumulate(
+        							Period( ipGstLesd != null, amt : ipGstLesd ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $alp : BigDecimal() from accumulate(
+        							Period( opGstLesd != null, amt : opGstLesd ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setNesc( $nesc );
+        $a.setIpGstNesc( $a.getIpGstGesc().subtract( $vln.setScale(2, BigDecimal.ROUND_HALF_UP) ) );
+        $a.setOpGstNesc( $a.getOpGstGesc().subtract( $alp.setScale(2, BigDecimal.ROUND_HALF_UP) ) );
+        $a.setTotalNesc( $a.getNesc().add( $a.getIpGstNesc() ).add( $a.getOpGstNesc() ) );
+        update( $a );
+end
+

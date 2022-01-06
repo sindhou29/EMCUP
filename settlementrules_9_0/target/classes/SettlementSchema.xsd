@@ -1,0 +1,975 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<xs:schema targetNamespace="http://www.model.sett.emc.com"  elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.model.sett.emc.com" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="Global" type="GlobalT"/>
+    <xs:element name="Market" type="MarketT"/>
+    <xs:element name="Participant" type="ParticipantT"/>
+    <xs:element name="Account" type="AccountT"/>
+    <xs:element name="Period" type="PeriodT"/>
+    <xs:element name="Facility" type="FacilityT"/>
+    <xs:element name="Vesting" type="VestingT"/>
+    <xs:element name="Mnmea" type="MnmeaT"/>
+    <xs:element name="Tvc" type="TvcT"/>
+    <xs:element name="Bilateral" type="BilateralT"/>
+    <xs:element name="Fsc" type="FscT"/>
+    <xs:element name="CnmeaSettRe" type="CnmeaSettReT"/>
+    <xs:element name="Adjustment" type="AdjustmentT"/>
+    <xs:element name="Ftr" type="FtrT"/>
+    <xs:element name="Rerun" type="RerunT"/>
+    <xs:element name="Cnmea" type="CnmeaT"/>
+    <xs:element name="MnmeaSub" type="MnmeaSubT"/>
+    <xs:element name="Brq" type="BrqT"/>
+    <xs:element name="RsvClass" type="RsvClassT"/>
+    <xs:element name="Reserve" type="ReserveT"/>
+    <xs:complexType name="GlobalT">
+        <xs:sequence>
+            <xs:element name="runId" type="xs:string"/>
+            <xs:element name="participants" type="ParticipantT" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="markets" type="MarketT" minOccurs="0" maxOccurs="48"/>
+            <xs:element name="emcAdmAdjTotal" type="xs:decimal"/>
+            <xs:element name="emcAdmCapTotal" type="xs:decimal"/>
+            <xs:element name="emcAdmPriceAdjRate" type="xs:decimal"/>
+            <xs:element name="emcAdmPriceAdjRateRounded" type="xs:decimal"/>
+            <xs:element name="emcAdmPriceCap" type="xs:decimal"/>
+            <xs:element name="cmwhEmcAdm" type="xs:decimal"/>
+            <xs:element name="cmwhEmcAdmRounded" type="xs:decimal"/>
+            <xs:element name="cmwhPsoAdm" type="xs:decimal"/>
+            <xs:element name="cmwhPsoAdmRounded" type="xs:decimal"/>
+            <xs:element name="csz" type="xs:decimal"/>
+            <xs:element name="dim" type="xs:decimal"/>
+            <xs:element name="emcBudget" type="xs:decimal"/>
+            <xs:element name="fscStartDate" type="xs:date"/>
+            <xs:element name="fscEndDate" type="xs:date"/>
+            <xs:element name="psoBudget" type="xs:decimal"/>
+            <xs:element name="inputGstRate" type="xs:decimal"/>
+            <xs:element name="inputGstCode" type="xs:string"/>
+            <xs:element name="meuc" type="xs:decimal"/>
+            <xs:element name="nonInputGstRate" type="xs:decimal"/>
+            <xs:element name="nonInputGstCode" type="xs:string"/>
+            <xs:element name="nonOutputGstRate" type="xs:decimal"/>
+            <xs:element name="nonOutputGstCode" type="xs:string"/>
+            <xs:element name="outputGstRate" type="xs:decimal"/>
+            <xs:element name="outputGstCode" type="xs:string"/>
+            <xs:element name="runType" type="xs:string"/>
+            <xs:element name="standingVersion" type="xs:string"/>
+            <xs:element name="tradingDate" type="xs:date"/>
+            <xs:element name="totalEmcAdm" type="xs:decimal"/>
+            <xs:element name="totalGmee" type="xs:decimal"/>
+            <xs:element name="totalGmef" type="xs:decimal"/>
+            <xs:element name="totalLmee" type="xs:decimal"/>
+            <xs:element name="totalLmef" type="xs:decimal"/>
+            <xs:element name="totalNmea" type="xs:decimal"/>
+            <xs:element name="totalPsoAdm" type="xs:decimal"/>
+            <xs:element name="totalTte" type="xs:decimal"/>
+            <xs:element name="priceCapEffective" type="xs:boolean"/>
+            <xs:element name="igsEffective" type="xs:boolean"/>
+            <xs:element name="zeroInputGstRate" type="xs:decimal"/>
+            <xs:element name="zeroInputGstCode" type="xs:string"/>
+            <xs:element name="zeroOutputGstRate" type="xs:decimal"/>
+            <xs:element name="zeroOutputGstCode" type="xs:string"/>
+            <xs:element name="nafpEffective" type="xs:boolean"/>
+            <xs:element name="totalEmcAdmSet" type="xs:boolean"/>
+            <xs:element name="totalPsoAdmSet" type="xs:boolean"/>
+            <xs:element name="totalTteSet" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType> 
+    <xs:complexType name="MarketT">
+        <xs:sequence>
+            <xs:element name="runId" type="xs:string"/>
+        	<xs:element name="periodId" type="xs:string"/>
+            <xs:element name="reserves" type="ReserveT" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="facilities" type="FacilityT" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="wmepOutput" type="xs:decimal"/>
+            <xs:element name="accountingNeaa" type="xs:decimal"/>
+            <xs:element name="afp" type="xs:decimal"/>
+            <xs:element name="egaWeq" type="xs:decimal"/>
+            <xs:element name="emcAdm" type="xs:decimal"/>
+            <xs:element name="feq" type="xs:decimal"/>
+            <xs:element name="fsc" type="xs:decimal"/>
+            <xs:element name="fsq" type="xs:decimal"/>
+            <xs:element name="fsrp" type="xs:decimal"/>
+            <xs:element name="fsrpfsq" type="xs:decimal"/>
+            <xs:element name="fssc" type="xs:decimal"/>
+            <xs:element name="fssck" type="xs:decimal"/>
+            <xs:element name="heua" type="xs:decimal"/>
+            <xs:element name="heuc" type="xs:decimal"/>
+            <xs:element name="heur" type="xs:decimal"/>
+            <xs:element name="hlcu" type="xs:decimal"/>
+            <xs:element name="hpk" type="xs:decimal"/>
+            <xs:element name="hq" type="xs:decimal"/>
+            <xs:element name="lcsc" type="xs:decimal"/>
+            <xs:element name="meuc" type="xs:decimal"/>
+            <xs:element name="neaa" type="xs:decimal"/>
+            <xs:element name="pcuCount" type="xs:decimal"/>
+            <xs:element name="prq" type="xs:decimal"/>
+            <xs:element name="psoAdm" type="xs:decimal"/>
+            <xs:element name="roundedHeua" type="xs:decimal"/>
+            <xs:element name="roundedHeuc" type="xs:decimal"/>
+            <xs:element name="roundedHeur" type="xs:decimal"/>
+            <xs:element name="roundedHlcu" type="xs:decimal"/>
+            <xs:element name="rsa" type="xs:decimal"/>
+            <xs:element name="rsc" type="xs:decimal"/>
+            <xs:element name="srq" type="xs:decimal"/>
+            <xs:element name="trq" type="xs:decimal"/>
+            <xs:element name="tte" type="xs:decimal"/>
+            <xs:element name="usep" type="xs:decimal"/>
+            <xs:element name="vcrp" type="xs:decimal"/>
+            <xs:element name="vcsc" type="xs:decimal"/>
+            <xs:element name="wcq" type="xs:decimal"/>
+            <xs:element name="wdq" type="xs:decimal"/>
+            <xs:element name="weq" type="xs:decimal"/>
+            <xs:element name="wmep" type="xs:decimal"/>
+            <xs:element name="wmq" type="xs:decimal"/>
+            <xs:element name="wsp" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType> 
+    <xs:complexType name="ParticipantT">
+        <xs:sequence>
+            <xs:element name="runId" type="xs:string"/>
+            <xs:element name="participantId" type="xs:string"/>
+            <xs:element name="accounts" type="AccountT" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="opGstBesc" type="xs:decimal"/>
+            <xs:element name="opGstEmcAdm" type="xs:decimal"/>
+            <xs:element name="opGstFcc" type="xs:decimal"/>
+            <xs:element name="opGstFsc" type="xs:decimal"/>
+            <xs:element name="opGstFsd" type="xs:decimal"/>
+            <xs:element name="opGstFssc" type="xs:decimal"/>
+            <xs:element name="opGstGesc" type="xs:decimal"/>
+            <xs:element name="opGstGmee" type="xs:decimal"/>
+            <xs:element name="opGstGmef" type="xs:decimal"/>
+            <xs:element name="opGstHeuc" type="xs:decimal"/>
+            <xs:element name="opGstLcsc" type="xs:decimal"/>
+            <xs:element name="opGstLesd" type="xs:decimal"/>
+            <xs:element name="opGstLmee" type="xs:decimal"/>
+            <xs:element name="opGstLmef" type="xs:decimal"/>
+            <xs:element name="opGstMeuc" type="xs:decimal"/>
+            <xs:element name="opGstNasc" type="xs:decimal"/>
+            <xs:element name="opGstNeaa" type="xs:decimal"/>
+            <xs:element name="opGstNead" type="xs:decimal"/>
+            <xs:element name="opGstNegc" type="xs:decimal"/>
+            <xs:element name="opGstNelc" type="xs:decimal"/>
+            <xs:element name="opGstNesc" type="xs:decimal"/>
+            <xs:element name="opGstNfsc" type="xs:decimal"/>
+            <xs:element name="opGstNmea" type="xs:decimal"/>
+            <xs:element name="opGstNpsc" type="xs:decimal"/>
+            <xs:element name="opGstNrsc" type="xs:decimal"/>
+            <xs:element name="opGstNtsc" type="xs:decimal"/>
+            <xs:element name="opGstPsoAdm" type="xs:decimal"/>
+            <xs:element name="opGstRcc" type="xs:decimal"/>
+            <xs:element name="opGstRsc" type="xs:decimal"/>
+            <xs:element name="opGstRsd" type="xs:decimal"/>
+            <xs:element name="opGstTotal" type="xs:decimal"/>
+            <xs:element name="opGstVcsc" type="xs:decimal"/>
+            <xs:element name="besc" type="xs:decimal"/>
+            <xs:element name="emcAccount" type="xs:boolean"/>
+            <xs:element name="emcAdm" type="xs:decimal"/>
+            <xs:element name="fcc" type="xs:decimal"/>
+            <xs:element name="fsc" type="xs:decimal"/>
+            <xs:element name="fsd" type="xs:decimal"/>
+            <xs:element name="fssc" type="xs:decimal"/>
+            <xs:element name="gesc" type="xs:decimal"/>
+            <xs:element name="gmee" type="xs:decimal"/>
+            <xs:element name="gmef" type="xs:decimal"/>
+            <xs:element name="heuc" type="xs:decimal"/>
+            <xs:element name="lcsc" type="xs:decimal"/>
+            <xs:element name="lesd" type="xs:decimal"/>
+            <xs:element name="lmee" type="xs:decimal"/>
+            <xs:element name="lmef" type="xs:decimal"/>
+            <xs:element name="meuc" type="xs:decimal"/>
+            <xs:element name="msslAccount" type="xs:boolean"/>
+            <xs:element name="nasc" type="xs:decimal"/>
+            <xs:element name="neaa" type="xs:decimal"/>
+            <xs:element name="nead" type="xs:decimal"/>
+            <xs:element name="negc" type="xs:decimal"/>
+            <xs:element name="nelc" type="xs:decimal"/>
+            <xs:element name="nesc" type="xs:decimal"/>
+            <xs:element name="netTotal" type="xs:decimal"/>
+            <xs:element name="nfsc" type="xs:decimal"/>
+            <xs:element name="nmea" type="xs:decimal"/>
+            <xs:element name="npsc" type="xs:decimal"/>
+            <xs:element name="nrsc" type="xs:decimal"/>
+            <xs:element name="ntsc" type="xs:decimal"/>
+            <xs:element name="psoAccount" type="xs:boolean"/>
+            <xs:element name="psoAdm" type="xs:decimal"/>
+            <xs:element name="rcc" type="xs:decimal"/>
+            <xs:element name="rsc" type="xs:decimal"/>
+            <xs:element name="rsd" type="xs:decimal"/>
+            <xs:element name="taxable" type="xs:boolean"/>
+            <xs:element name="vcsc" type="xs:decimal"/>
+            <xs:element name="totalAmount" type="xs:decimal"/>
+            <xs:element name="totalBesc" type="xs:decimal"/>
+            <xs:element name="totalEmcAdm" type="xs:decimal"/>
+            <xs:element name="totalFcc" type="xs:decimal"/>
+            <xs:element name="totalFsc" type="xs:decimal"/>
+            <xs:element name="totalFsd" type="xs:decimal"/>
+            <xs:element name="totalFssc" type="xs:decimal"/>
+            <xs:element name="totalGesc" type="xs:decimal"/>
+            <xs:element name="totalGmee" type="xs:decimal"/>
+            <xs:element name="totalGmef" type="xs:decimal"/>
+            <xs:element name="totalHeuc" type="xs:decimal"/>
+            <xs:element name="totalLcsc" type="xs:decimal"/>
+            <xs:element name="totalLesd" type="xs:decimal"/>
+            <xs:element name="totalLmee" type="xs:decimal"/>
+            <xs:element name="totalLmef" type="xs:decimal"/>
+            <xs:element name="totalMeuc" type="xs:decimal"/>
+            <xs:element name="totalNasc" type="xs:decimal"/>
+            <xs:element name="totalNeaa" type="xs:decimal"/>
+            <xs:element name="totalNead" type="xs:decimal"/>
+            <xs:element name="totalNegc" type="xs:decimal"/>
+            <xs:element name="totalNelc" type="xs:decimal"/>
+            <xs:element name="totalNesc" type="xs:decimal"/>
+            <xs:element name="totalNfsc" type="xs:decimal"/>
+            <xs:element name="totalNmea" type="xs:decimal"/>
+            <xs:element name="totalNpsc" type="xs:decimal"/>
+            <xs:element name="totalNrsc" type="xs:decimal"/>
+            <xs:element name="totalNtsc" type="xs:decimal"/>
+            <xs:element name="totalPsoAdm" type="xs:decimal"/>
+            <xs:element name="totalRcc" type="xs:decimal"/>
+            <xs:element name="totalRsc" type="xs:decimal"/>
+            <xs:element name="totalRsd" type="xs:decimal"/>
+            <xs:element name="totalVcsc" type="xs:decimal"/>
+            <xs:element name="ipGstBesc" type="xs:decimal"/>
+            <xs:element name="ipGstEmcAdm" type="xs:decimal"/>
+            <xs:element name="ipGstFcc" type="xs:decimal"/>
+            <xs:element name="ipGstFsc" type="xs:decimal"/>
+            <xs:element name="ipGstFsd" type="xs:decimal"/>
+            <xs:element name="ipGstFssc" type="xs:decimal"/>
+            <xs:element name="ipGstGesc" type="xs:decimal"/>
+            <xs:element name="ipGstGmee" type="xs:decimal"/>
+            <xs:element name="ipGstGmef" type="xs:decimal"/>
+            <xs:element name="ipGstHeuc" type="xs:decimal"/>
+            <xs:element name="ipGstLcsc" type="xs:decimal"/>
+            <xs:element name="ipGstLesd" type="xs:decimal"/>
+            <xs:element name="ipGstLmee" type="xs:decimal"/>
+            <xs:element name="ipGstLmef" type="xs:decimal"/>
+            <xs:element name="ipGstMeuc" type="xs:decimal"/>
+            <xs:element name="ipGstNasc" type="xs:decimal"/>
+            <xs:element name="ipGstNeaa" type="xs:decimal"/>
+            <xs:element name="ipGstNead" type="xs:decimal"/>
+            <xs:element name="ipGstNegc" type="xs:decimal"/>
+            <xs:element name="ipGstNelc" type="xs:decimal"/>
+            <xs:element name="ipGstNesc" type="xs:decimal"/>
+            <xs:element name="ipGstNfsc" type="xs:decimal"/>
+            <xs:element name="ipGstNmea" type="xs:decimal"/>
+            <xs:element name="ipGstNpsc" type="xs:decimal"/>
+            <xs:element name="ipGstNrsc" type="xs:decimal"/>
+            <xs:element name="ipGstNtsc" type="xs:decimal"/>
+            <xs:element name="ipGstPsoAdm" type="xs:decimal"/>
+            <xs:element name="ipGstRcc" type="xs:decimal"/>
+            <xs:element name="ipGstRsc" type="xs:decimal"/>
+            <xs:element name="ipGstRsd" type="xs:decimal"/>
+            <xs:element name="ipGstTotal" type="xs:decimal"/>
+            <xs:element name="ipGstVcsc" type="xs:decimal"/>
+            <xs:element name="rerunGstRate" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType> 
+    <xs:complexType name="AccountT">
+        <xs:sequence>
+            <xs:element name="runId" type="xs:string"/>
+            <xs:element name="accountId" type="xs:string"/>
+            <xs:element name="participantId" type="xs:string"/>
+            <xs:element name="periods" type="PeriodT" minOccurs="0" maxOccurs="48"/>
+            <xs:element name="opGstBesc" type="xs:decimal"/>
+            <xs:element name="opGstEmcAdm" type="xs:decimal"/>
+            <xs:element name="opGstEmcAdmAdj" type="xs:decimal"/>
+            <xs:element name="opGstEmcAdmCap" type="xs:decimal"/>
+            <xs:element name="opGstFcc" type="xs:decimal"/>
+            <xs:element name="opGstFsc" type="xs:decimal"/>
+            <xs:element name="opGstFsd" type="xs:decimal"/>
+            <xs:element name="opGstGesc" type="xs:decimal"/>
+            <xs:element name="opGstGmee" type="xs:decimal"/>
+            <xs:element name="opGstGmef" type="xs:decimal"/>
+            <xs:element name="opGstHeuc" type="xs:decimal"/>
+            <xs:element name="opGstHeusa" type="xs:decimal"/>
+            <xs:element name="opGstIncGmef" type="xs:decimal"/>
+            <xs:element name="opGstIncLmee" type="xs:decimal"/>
+            <xs:element name="opGstIncLmef" type="xs:decimal"/>
+            <xs:element name="opGstIncNmea" type="xs:decimal"/>
+            <xs:element name="opGstLcsc" type="xs:decimal"/>
+            <xs:element name="opGstLesd" type="xs:decimal"/>
+            <xs:element name="opGstLmee" type="xs:decimal"/>
+            <xs:element name="opGstLmef" type="xs:decimal"/>
+            <xs:element name="opGstMeuc" type="xs:decimal"/>
+            <xs:element name="opGstMeusa" type="xs:decimal"/>
+            <xs:element name="opGstNasc" type="xs:decimal"/>
+            <xs:element name="opGstNeaa" type="xs:decimal"/>
+            <xs:element name="opGstNead" type="xs:decimal"/>
+            <xs:element name="opGstNegc" type="xs:decimal"/>
+            <xs:element name="opGstNelc" type="xs:decimal"/>
+            <xs:element name="opGstNesc" type="xs:decimal"/>
+            <xs:element name="opGstNfsc" type="xs:decimal"/>
+            <xs:element name="opGstNmea" type="xs:decimal"/>
+            <xs:element name="opGstNpsc" type="xs:decimal"/>
+            <xs:element name="opGstNrsc" type="xs:decimal"/>
+            <xs:element name="opGstNtsc" type="xs:decimal"/>
+            <xs:element name="opGstPsoAdm" type="xs:decimal"/>
+            <xs:element name="opGstRcc" type="xs:decimal"/>
+            <xs:element name="opGstRsc" type="xs:decimal"/>
+            <xs:element name="opGstRsd" type="xs:decimal"/>
+            <xs:element name="opGstTotal" type="xs:decimal"/>
+            <xs:element name="opGstTotalGmef" type="xs:decimal"/>
+            <xs:element name="opGstVcsc" type="xs:decimal"/>
+            <xs:element name="accountingOpGstEmcAdm" type="xs:decimal"/>
+            <xs:element name="accountingOpGstNasc" type="xs:decimal"/>
+            <xs:element name="accountingOpGstPsoAdm" type="xs:decimal"/>
+            <xs:element name="accountingEmcAdm" type="xs:decimal"/>
+            <xs:element name="accountingIncGmef" type="xs:decimal"/>
+            <xs:element name="accountingIncLmee" type="xs:decimal"/>
+            <xs:element name="accountingIncLmef" type="xs:decimal"/>
+            <xs:element name="accountingPsoAdm" type="xs:decimal"/>
+            <xs:element name="accountingTotalEmcAdm" type="xs:decimal"/>
+            <xs:element name="accountingTotalPsoAdm" type="xs:decimal"/>
+            <xs:element name="admFee" type="xs:decimal"/>
+            <xs:element name="admFeeAdj" type="xs:decimal"/>
+            <xs:element name="admFeeCap" type="xs:decimal"/>
+            <xs:element name="breached" type="xs:boolean"/>
+            <xs:element name="displayTitle" type="xs:string"/>
+            <xs:element name="besc" type="xs:decimal"/>
+            <xs:element name="egaRetailer" type="xs:boolean"/>
+            <xs:element name="emcAccount" type="xs:boolean"/>
+            <xs:element name="emcAdm" type="xs:decimal"/>
+            <xs:element name="emcAdmAdj" type="xs:decimal"/>
+            <xs:element name="emcAdmCap" type="xs:decimal"/>
+            <xs:element name="eua" type="xs:decimal"/>
+            <xs:element name="facilityRsc" type="xs:decimal"/>
+            <xs:element name="fcc" type="xs:decimal"/>
+            <xs:element name="fsc" type="xs:decimal"/>
+            <xs:element name="fsd" type="xs:decimal"/>
+            <xs:element name="fssc" type="xs:decimal"/>
+            <xs:element name="gesc" type="xs:decimal"/>
+            <xs:element name="gmea" type="xs:decimal"/>
+            <xs:element name="gmee" type="xs:decimal"/>
+            <xs:element name="gmef" type="xs:decimal"/>
+            <xs:element name="heuc" type="xs:decimal"/>
+            <xs:element name="heusa" type="xs:decimal"/>
+            <xs:element name="incGmee" type="xs:decimal"/>
+            <xs:element name="incGmef" type="xs:decimal"/>
+            <xs:element name="incLmee" type="xs:decimal"/>
+            <xs:element name="incLmef" type="xs:decimal"/>
+            <xs:element name="incNmea" type="xs:decimal"/>
+            <xs:element name="intertie" type="xs:boolean"/>
+            <xs:element name="lcsc" type="xs:decimal"/>
+            <xs:element name="lesd" type="xs:decimal"/>
+            <xs:element name="lmea" type="xs:decimal"/>
+            <xs:element name="lmee" type="xs:decimal"/>
+            <xs:element name="lmef" type="xs:decimal"/>
+            <xs:element name="meuc" type="xs:decimal"/>
+            <xs:element name="meusa" type="xs:decimal"/>
+            <xs:element name="msslAccount" type="xs:boolean"/>
+            <xs:element name="nasc" type="xs:decimal"/>
+            <xs:element name="nodeCount" type="xs:decimal"/>
+            <xs:element name="neaa" type="xs:decimal"/>
+            <xs:element name="nead" type="xs:decimal"/>
+            <xs:element name="negc" type="xs:decimal"/>
+            <xs:element name="nelc" type="xs:decimal"/>
+            <xs:element name="nesc" type="xs:decimal"/>
+            <xs:element name="netAmount" type="xs:decimal"/>
+            <xs:element name="netSett" type="xs:boolean"/>
+            <xs:element name="nfsc" type="xs:decimal"/>
+            <xs:element name="nmea" type="xs:decimal"/>
+            <xs:element name="npsc" type="xs:decimal"/>
+            <xs:element name="nrsc" type="xs:decimal"/>
+            <xs:element name="ntsc" type="xs:decimal"/>
+            <xs:element name="otherTotal" type="xs:decimal"/>
+            <xs:element name="priceNeutralization" type="xs:boolean"/>
+            <xs:element name="psoAccount" type="xs:boolean"/>
+            <xs:element name="psoAdm" type="xs:decimal"/>
+            <xs:element name="rcc" type="xs:decimal"/>
+            <xs:element name="rsc" type="xs:decimal"/>
+            <xs:element name="rsd" type="xs:decimal"/>
+            <xs:element name="taxable" type="xs:boolean"/>
+            <xs:element name="vcsc" type="xs:decimal"/>
+            <xs:element name="totalAdmFee" type="xs:decimal"/>
+            <xs:element name="totalAmount" type="xs:decimal"/>
+            <xs:element name="totalBesc" type="xs:decimal"/>
+            <xs:element name="totalEmcAdm" type="xs:decimal"/>
+            <xs:element name="totalFcc" type="xs:decimal"/>
+            <xs:element name="totalFsc" type="xs:decimal"/>
+            <xs:element name="totalFsd" type="xs:decimal"/>
+            <xs:element name="totalFssc" type="xs:decimal"/>
+            <xs:element name="totalGesc" type="xs:decimal"/>
+            <xs:element name="totalGmee" type="xs:decimal"/>
+            <xs:element name="totalHeuc" type="xs:decimal"/>
+            <xs:element name="totalHeusa" type="xs:decimal"/>
+            <xs:element name="totalIncGmee" type="xs:decimal"/>
+            <xs:element name="totalIncGmef" type="xs:decimal"/>
+            <xs:element name="totalIncLmee" type="xs:decimal"/>
+            <xs:element name="totalIncLmef" type="xs:decimal"/>
+            <xs:element name="totalIncNmea" type="xs:decimal"/>
+            <xs:element name="totalLcsc" type="xs:decimal"/>
+            <xs:element name="totalLesd" type="xs:decimal"/>
+            <xs:element name="totalLmee" type="xs:decimal"/>
+            <xs:element name="totalLmef" type="xs:decimal"/>
+            <xs:element name="totalMeuc" type="xs:decimal"/>
+            <xs:element name="totalMeusa" type="xs:decimal"/>
+            <xs:element name="totalNasc" type="xs:decimal"/>
+            <xs:element name="totalNeaa" type="xs:decimal"/>
+            <xs:element name="totalNead" type="xs:decimal"/>
+            <xs:element name="totalNegc" type="xs:decimal"/>
+            <xs:element name="totalNelc" type="xs:decimal"/>
+            <xs:element name="totalNesc" type="xs:decimal"/>
+            <xs:element name="totalNfsc" type="xs:decimal"/>
+            <xs:element name="totalNmea" type="xs:decimal"/>
+            <xs:element name="totalNpsc" type="xs:decimal"/>
+            <xs:element name="totalNrsc" type="xs:decimal"/>
+            <xs:element name="totalNtsc" type="xs:decimal"/>
+            <xs:element name="totalPsoAdm" type="xs:decimal"/>
+            <xs:element name="totalRcc" type="xs:decimal"/>
+            <xs:element name="totalRsc" type="xs:decimal"/>
+            <xs:element name="totalRsd" type="xs:decimal"/>
+            <xs:element name="totalVcsc" type="xs:decimal"/>
+            <xs:element name="underRetailer" type="xs:boolean"/>
+            <xs:element name="ipGstAdmFee" type="xs:decimal"/>
+            <xs:element name="ipGstBesc" type="xs:decimal"/>
+            <xs:element name="ipGstEmcAdm" type="xs:decimal"/>
+            <xs:element name="ipGstFcc" type="xs:decimal"/>
+            <xs:element name="ipGstFsc" type="xs:decimal"/>
+            <xs:element name="ipGstFsd" type="xs:decimal"/>
+            <xs:element name="ipGstGesc" type="xs:decimal"/>
+            <xs:element name="ipGstGmee" type="xs:decimal"/>
+            <xs:element name="ipGstGmef" type="xs:decimal"/>
+            <xs:element name="ipGstHeuc" type="xs:decimal"/>
+            <xs:element name="ipGstIncGmee" type="xs:decimal"/>
+            <xs:element name="ipGstIncNmea" type="xs:decimal"/>
+            <xs:element name="ipGstLcsc" type="xs:decimal"/>
+            <xs:element name="ipGstLesd" type="xs:decimal"/>
+            <xs:element name="ipGstLmee" type="xs:decimal"/>
+            <xs:element name="ipGstLmef" type="xs:decimal"/>
+            <xs:element name="ipGstMeuc" type="xs:decimal"/>
+            <xs:element name="ipGstNasc" type="xs:decimal"/>
+            <xs:element name="ipGstNeaa" type="xs:decimal"/>
+            <xs:element name="ipGstNead" type="xs:decimal"/>
+            <xs:element name="ipGstNegc" type="xs:decimal"/>
+            <xs:element name="ipGstNelc" type="xs:decimal"/>
+            <xs:element name="ipGstNesc" type="xs:decimal"/>
+            <xs:element name="ipGstNfsc" type="xs:decimal"/>
+            <xs:element name="ipGstNmea" type="xs:decimal"/>
+            <xs:element name="ipGstNpsc" type="xs:decimal"/>
+            <xs:element name="ipGstNrsc" type="xs:decimal"/>
+            <xs:element name="ipGstNtsc" type="xs:decimal"/>
+            <xs:element name="ipGstPsoAdm" type="xs:decimal"/>
+            <xs:element name="ipGstRcc" type="xs:decimal"/>
+            <xs:element name="ipGstRsc" type="xs:decimal"/>
+            <xs:element name="ipGstRsd" type="xs:decimal"/>
+            <xs:element name="ipGstTotal" type="xs:decimal"/>
+            <xs:element name="ipGstVcsc" type="xs:decimal"/>
+            <xs:element name="residentialAccount" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType> 
+    <xs:complexType name="PeriodT">
+        <xs:sequence>
+        	<xs:element name="periodId" type="xs:string"/>
+            <xs:element name="accountId" type="xs:string"/>
+        	<xs:element name="facilities" type="FacilityT" minOccurs="0" maxOccurs="unbounded"/>
+        	<xs:element name="adjustments" type="AdjustmentT" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="opGstFsd" type="xs:decimal"/>
+            <xs:element name="opGstGesc" type="xs:decimal"/>
+            <xs:element name="opGstGesce" type="xs:decimal"/>
+            <xs:element name="opGstGescp" type="xs:decimal"/>
+            <xs:element name="opGstGmea" type="xs:decimal"/>
+            <xs:element name="opGstGmef" type="xs:decimal"/>
+            <xs:element name="opGstHersa" type="xs:decimal"/>
+            <xs:element name="opGstHeur" type="xs:decimal"/>
+            <xs:element name="opGstHeusa" type="xs:decimal"/>
+            <xs:element name="opGstHlcsa" type="xs:decimal"/>
+            <xs:element name="opGstIncNmea" type="xs:decimal"/>
+            <xs:element name="opGstLcsc" type="xs:decimal"/>
+            <xs:element name="opGstLesd" type="xs:decimal"/>
+            <xs:element name="opGstLesdp" type="xs:decimal"/>
+            <xs:element name="opGstLmea" type="xs:decimal"/>
+            <xs:element name="opGstLmee" type="xs:decimal"/>
+            <xs:element name="opGstLmef" type="xs:decimal"/>
+            <xs:element name="opGstMeuc" type="xs:decimal"/>
+            <xs:element name="opGstMeusa" type="xs:decimal"/>
+            <xs:element name="opGstNasc" type="xs:decimal"/>
+            <xs:element name="opGstNesc" type="xs:decimal"/>
+            <xs:element name="opGstNmea" type="xs:decimal"/>
+            <xs:element name="opGstNpsc" type="xs:decimal"/>
+            <xs:element name="opGstNsfc" type="xs:decimal"/>
+            <xs:element name="opGstNtsc" type="xs:decimal"/>
+            <xs:element name="opGstRsd" type="xs:decimal"/>
+            <xs:element name="absIeq" type="xs:decimal"/>
+            <xs:element name="accountingEua" type="xs:decimal"/>
+            <xs:element name="accountingFcc" type="xs:decimal"/>
+            <xs:element name="accountingFsd" type="xs:decimal"/>
+            <xs:element name="accountingGmef" type="xs:decimal"/>
+            <xs:element name="accountingHeusa" type="xs:decimal"/>
+            <xs:element name="accountingLesdn" type="xs:decimal"/>
+            <xs:element name="accountingLesdp" type="xs:decimal"/>
+            <xs:element name="accountingLmea" type="xs:decimal"/>
+            <xs:element name="accountingLmee" type="xs:decimal"/>
+            <xs:element name="accountingLmef" type="xs:decimal"/>
+            <xs:element name="accountingMeusa" type="xs:decimal"/>
+            <xs:element name="accountingNead" type="xs:decimal"/>
+            <xs:element name="avcsc" type="xs:decimal"/>
+            <xs:element name="baqPurchased" type="xs:decimal"/>
+            <xs:element name="baqSold" type="xs:decimal"/>
+            <xs:element name="beqPurchased" type="xs:decimal"/>
+            <xs:element name="beqSold" type="xs:decimal"/>
+            <xs:element name="bfqPurchased" type="xs:decimal"/>
+            <xs:element name="bfqSold" type="xs:decimal"/>
+            <xs:element name="bifPurchased" type="xs:decimal"/>
+            <xs:element name="bifSold" type="xs:decimal"/>
+            <xs:element name="bwfPurchased" type="xs:decimal"/>
+            <xs:element name="bwfSold" type="xs:decimal"/>
+            <xs:element name="besc" type="xs:decimal"/>
+            <xs:element name="compEmca" type="xs:decimal"/>
+            <xs:element name="compEmcAdmAdj" type="xs:decimal"/>
+            <xs:element name="compEmcAdmCap" type="xs:decimal"/>
+            <xs:element name="compPsoa" type="xs:decimal"/>
+            <xs:element name="deltaWcq" type="xs:decimal"/>
+            <xs:element name="deltaWdq" type="xs:decimal"/>
+            <xs:element name="deltaWeq" type="xs:decimal"/>
+            <xs:element name="deltaWfq" type="xs:decimal"/>
+            <xs:element name="deltaWmq" type="xs:decimal"/>
+            <xs:element name="egaId" type="xs:string"/>
+            <xs:element name="egaIeq" type="xs:decimal"/>
+            <xs:element name="egaWeq" type="xs:decimal"/>
+            <xs:element name="egaWpq" type="xs:decimal"/>
+            <xs:element name="emca" type="xs:decimal"/>
+            <xs:element name="eua" type="xs:decimal"/>
+            <xs:element name="facilityRsc" type="xs:decimal"/>
+            <xs:element name="fcc" type="xs:decimal"/>
+            <xs:element name="compFeeTotal" type="xs:decimal"/>
+            <xs:element name="feq" type="xs:decimal"/>
+            <xs:element name="fsc" type="xs:decimal"/>
+            <xs:element name="fsd" type="xs:decimal"/>
+            <xs:element name="fsdAdj" type="xs:decimal"/>
+            <xs:element name="fsp" type="xs:decimal"/>
+            <xs:element name="fspc" type="xs:decimal"/>
+            <xs:element name="fspcn" type="xs:decimal"/>
+            <xs:element name="fspcp" type="xs:decimal"/>
+            <xs:element name="fspq" type="xs:decimal"/>
+            <xs:element name="fsq" type="xs:decimal"/>
+            <xs:element name="fsrp" type="xs:decimal"/>
+            <xs:element name="fsrpk" type="xs:decimal"/>
+            <xs:element name="fssc" type="xs:decimal"/>
+            <xs:element name="fssck" type="xs:decimal"/>
+            <xs:element name="fsscn" type="xs:decimal"/>
+            <xs:element name="fsscp" type="xs:decimal"/>
+            <xs:element name="fsscrn" type="xs:decimal"/>
+            <xs:element name="fsscrp" type="xs:decimal"/>
+            <xs:element name="genNode" type="xs:boolean"/>
+            <xs:element name="gesc" type="xs:decimal"/>
+            <xs:element name="gesce" type="xs:decimal"/>
+            <xs:element name="gescn" type="xs:decimal"/>
+            <xs:element name="gescp" type="xs:decimal"/>
+            <xs:element name="gmea" type="xs:decimal"/>
+            <xs:element name="gmee" type="xs:decimal"/>
+            <xs:element name="gmef" type="xs:decimal"/>
+            <xs:element name="hersa" type="xs:decimal"/>
+            <xs:element name="heua" type="xs:decimal"/>
+            <xs:element name="heur" type="xs:decimal"/>
+            <xs:element name="heusa" type="xs:decimal"/>
+            <xs:element name="hlcsa" type="xs:decimal"/>
+            <xs:element name="hlcu" type="xs:decimal"/>
+            <xs:element name="hpk" type="xs:decimal"/>
+            <xs:element name="hqk" type="xs:decimal"/>
+            <xs:element name="ieq" type="xs:decimal"/>
+            <xs:element name="ieqp" type="xs:decimal"/>
+            <xs:element name="impAfp" type="xs:decimal"/>
+            <xs:element name="impEmca" type="xs:decimal"/>
+            <xs:element name="impHeuc" type="xs:decimal"/>
+            <xs:element name="impHeur" type="xs:decimal"/>
+            <xs:element name="impHlcu" type="xs:decimal"/>
+            <xs:element name="impMeuc" type="xs:decimal"/>
+            <xs:element name="impPsoa" type="xs:decimal"/>
+            <xs:element name="impUsep" type="xs:decimal"/>
+            <xs:element name="incNmea" type="xs:decimal"/>
+            <xs:element name="lcp" type="xs:decimal"/>
+            <xs:element name="lcsc" type="xs:decimal"/>
+            <xs:element name="lesd" type="xs:decimal"/>
+            <xs:element name="lesdn" type="xs:decimal"/>
+            <xs:element name="lesdp" type="xs:decimal"/>
+            <xs:element name="lmea" type="xs:decimal"/>
+            <xs:element name="lmee" type="xs:decimal"/>
+            <xs:element name="lmef" type="xs:decimal"/>
+            <xs:element name="loadFsd" type="xs:decimal"/>
+            <xs:element name="maxIeq" type="xs:decimal"/>
+            <xs:element name="mep" type="xs:decimal"/>
+            <xs:element name="meuc" type="xs:decimal"/>
+            <xs:element name="meusa" type="xs:decimal"/>
+            <xs:element name="mfp" type="xs:decimal"/>
+            <xs:element name="mrp" type="xs:decimal"/>
+            <xs:element name="nasc" type="xs:decimal"/>
+            <xs:element name="nodeCount" type="xs:decimal"/>
+            <xs:element name="neaa" type="xs:decimal"/>
+            <xs:element name="nead" type="xs:decimal"/>
+            <xs:element name="negc" type="xs:decimal"/>
+            <xs:element name="negcIeq" type="xs:decimal"/>
+            <xs:element name="nelc" type="xs:decimal"/>
+            <xs:element name="nesc" type="xs:decimal"/>
+            <xs:element name="nfsc" type="xs:decimal"/>
+            <xs:element name="nmea" type="xs:decimal"/>
+            <xs:element name="npsc" type="xs:decimal"/>
+            <xs:element name="nrsc" type="xs:decimal"/>
+            <xs:element name="ntsc" type="xs:decimal"/>
+            <xs:element name="psoa" type="xs:decimal"/>
+            <xs:element name="rcc" type="xs:decimal"/>
+            <xs:element name="roundedHeuc" type="xs:decimal"/>
+            <xs:element name="roundedHlcsa" type="xs:decimal"/>
+            <xs:element name="rsa" type="xs:decimal"/>
+            <xs:element name="rsc" type="xs:decimal"/>
+            <xs:element name="rsd" type="xs:decimal"/>
+            <xs:element name="vcsc" type="xs:decimal"/>
+            <xs:element name="vcsck" type="xs:decimal"/>
+            <xs:element name="totalR" type="xs:boolean"/>
+            <xs:element name="totalBesc" type="xs:decimal"/>
+            <xs:element name="totalFsc" type="xs:decimal"/>
+            <xs:element name="totalFsd" type="xs:decimal"/>
+            <xs:element name="totalGesc" type="xs:decimal"/>
+            <xs:element name="totalGesce" type="xs:decimal"/>
+            <xs:element name="totalGescn" type="xs:decimal"/>
+            <xs:element name="totalGescp" type="xs:decimal"/>
+            <xs:element name="totalGmee" type="xs:decimal"/>
+            <xs:element name="totalGmef" type="xs:decimal"/>
+            <xs:element name="totalHeur" type="xs:decimal"/>
+            <xs:element name="totalHeusa" type="xs:decimal"/>
+            <xs:element name="totalHlcu" type="xs:decimal"/>
+            <xs:element name="totalIncNmea" type="xs:decimal"/>
+            <xs:element name="totalLcsc" type="xs:decimal"/>
+            <xs:element name="totalLesd" type="xs:decimal"/>
+            <xs:element name="totalLesdn" type="xs:decimal"/>
+            <xs:element name="totalLesdp" type="xs:decimal"/>
+            <xs:element name="totalLmea" type="xs:decimal"/>
+            <xs:element name="totalLmee" type="xs:decimal"/>
+            <xs:element name="totalLmef" type="xs:decimal"/>
+            <xs:element name="totalMeusa" type="xs:decimal"/>
+            <xs:element name="totalNasc" type="xs:decimal"/>
+            <xs:element name="totalNesc" type="xs:decimal"/>
+            <xs:element name="totalNfsc" type="xs:decimal"/>
+            <xs:element name="totalNmea" type="xs:decimal"/>
+            <xs:element name="totalNpsc" type="xs:decimal"/>
+            <xs:element name="totalNrsc" type="xs:decimal"/>
+            <xs:element name="totalRcc" type="xs:decimal"/>
+            <xs:element name="totalRsc" type="xs:decimal"/>
+            <xs:element name="totalRsd" type="xs:decimal"/>
+            <xs:element name="tte" type="xs:decimal"/>
+            <xs:element name="tvcsc" type="xs:decimal"/>
+            <xs:element name="usep" type="xs:decimal"/>
+            <xs:element name="ipGstFsc" type="xs:decimal"/>
+            <xs:element name="ipGstGesc" type="xs:decimal"/>
+            <xs:element name="ipGstGescn" type="xs:decimal"/>
+            <xs:element name="ipGstGmee" type="xs:decimal"/>
+            <xs:element name="ipGstIncNmea" type="xs:decimal"/>
+            <xs:element name="ipGstLcsc" type="xs:decimal"/>
+            <xs:element name="ipGstLesd" type="xs:decimal"/>
+            <xs:element name="ipGstLesdn" type="xs:decimal"/>
+            <xs:element name="ipGstNasc" type="xs:decimal"/>
+            <xs:element name="ipGstNesc" type="xs:decimal"/>
+            <xs:element name="ipGstNmea" type="xs:decimal"/>
+            <xs:element name="ipGstNpsc" type="xs:decimal"/>
+            <xs:element name="ipGstRsc" type="xs:decimal"/>
+            <xs:element name="vcrp" type="xs:decimal"/>
+            <xs:element name="vcrpk" type="xs:decimal"/>
+            <xs:element name="vcrpkNonMssl" type="xs:decimal"/>
+            <xs:element name="wcq" type="xs:decimal"/>
+            <xs:element name="wdq" type="xs:decimal"/>
+            <xs:element name="weq" type="xs:decimal"/>
+            <xs:element name="wfq" type="xs:decimal"/>
+            <xs:element name="wmq" type="xs:decimal"/>
+            <xs:element name="wpq" type="xs:decimal"/>
+            <xs:element name="genFsd" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="FacilityT">
+        <xs:sequence>
+        	<xs:element name="periodId" type="xs:string"/>
+            <xs:element name="accountId" type="xs:string"/>
+            <xs:element name="facilityId" type="xs:string"/>
+            <xs:element name="reserves" type="ReserveT" minOccurs="0" maxOccurs="unbounded"/>
+        	<xs:element name="noCsz" type="xsd:boolean"/>
+            <xs:element name="accountingFsd" type="xs:decimal"/>
+            <xs:element name="accountingGesce" type="xs:decimal"/>
+            <xs:element name="accountingGescn" type="xs:decimal"/>
+            <xs:element name="accountingGescp" type="xs:decimal"/>
+            <xs:element name="accountingGmef" type="xs:decimal"/>
+            <xs:element name="accountingLesdn" type="xs:decimal"/>
+            <xs:element name="accountingLesdp" type="xs:decimal"/>
+            <xs:element name="accountingNegc" type="xs:decimal"/>
+            <xs:element name="accountingNelc" type="xs:decimal"/>
+            <xs:element name="accountingNtsc" type="xs:decimal"/>
+            <xs:element name="accountingRcc" type="xs:decimal"/>
+            <xs:element name="accountingRsc" type="xs:decimal"/>
+            <xs:element name="accountingRsd" type="xs:decimal"/>
+            <xs:element name="cntbSrq" type="xs:decimal"/>
+            <xs:element name="deltaIeq" type="xs:decimal"/>
+            <xs:element name="facilityRsc" type="xs:decimal"/>
+            <xs:element name="fcc" type="xs:decimal"/>
+            <xs:element name="feqAdj" type="xs:decimal"/>
+            <xs:element name="fsc" type="xs:decimal"/>
+            <xs:element name="fsd" type="xs:decimal"/>
+            <xs:element name="gesce" type="xs:decimal"/>
+            <xs:element name="gescn" type="xs:decimal"/>
+            <xs:element name="gescp" type="xs:decimal"/>
+            <xs:element name="gfq" type="xs:decimal"/>
+            <xs:element name="gmea" type="xs:decimal"/>
+            <xs:element name="gmee" type="xs:decimal"/>
+            <xs:element name="gmef" type="xs:decimal"/>
+            <xs:element name="grq" type="xs:decimal"/>
+        	<xs:element name="hasSzIdx" type="xsd:boolean"/>
+            <xs:element name="ieq" type="xs:decimal"/>
+            <xs:element name="ipf" type="xs:decimal"/>
+            <xs:element name="ipw" type="xs:decimal"/>
+            <xs:element name="lcq" type="xs:decimal"/>
+            <xs:element name="lcscp" type="xs:decimal"/>
+            <xs:element name="lesdn" type="xs:decimal"/>
+            <xs:element name="lesdp" type="xs:decimal"/>
+            <xs:element name="lrq" type="xs:decimal"/>
+            <xs:element name="mep" type="xs:decimal"/>
+            <xs:element name="neaa" type="xs:decimal"/>
+            <xs:element name="negc" type="xs:decimal"/>
+            <xs:element name="negcSzIdx" type="xs:decimal"/>
+            <xs:element name="nelc" type="xs:decimal"/>
+            <xs:element name="nfsc" type="xs:decimal"/>
+            <xs:element name="nrsc" type="xs:decimal"/>
+            <xs:element name="ntsc" type="xs:decimal"/>
+            <xs:element name="oiec" type="xs:decimal"/>
+        	<xs:element name="pcu" type="xsd:boolean"/>
+        	<xs:element name="positiveInj" type="xsd:boolean"/>
+            <xs:element name="rcc" type="xs:decimal"/>
+            <xs:element name="rrs" type="xs:decimal"/>
+            <xs:element name="rrsFactor" type="xs:decimal"/>
+            <xs:element name="rsc" type="xs:decimal"/>
+            <xs:element name="rsd" type="xs:decimal"/>
+            <xs:element name="rtq" type="xs:decimal"/>
+            <xs:element name="rts" type="xs:decimal"/>
+        	<xs:element name="scu" type="xsd:boolean"/>
+            <xs:element name="shd" type="xs:decimal"/>
+            <xs:element name="siec" type="xs:decimal"/>
+            <xs:element name="sizeIndex" type="xs:decimal"/>
+            <xs:element name="spf" type="xs:decimal"/>
+        	<xs:element name="tFactor" type="xsd:decimal"/>
+        	<xs:element name="nodeType" type="xsd:string"/>
+        	<xs:element name="vcrp" type="xsd:decimal"/>
+        	<xs:element name="weq" type="xsd:decimal"/>
+        	<xs:element name="wlq" type="xsd:decimal"/>
+        	<xs:element name="complFlag" type="xsd:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="VestingT">
+        <xs:sequence>
+            <xs:element name="accountId" type="xs:string"/>
+        	<xs:element name="periodId" type="xs:string"/>
+        	<xs:element name="contractName" type="xsd:string"/>
+        	<xs:element name="hp" type="xsd:decimal"/>
+        	<xs:element name="hq" type="xsd:decimal"/>
+        	<xs:element name="vcrp" type="xsd:decimal"/>
+        	<xs:element name="vcsc" type="xsd:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="MnmeaT">
+        <xs:sequence>
+        	<xs:element name="adjustments" type="AdjustmentT" minOccurs="0" maxOccurs="unbounded"/>
+        	<xs:element name="gmee" type="xsd:decimal"/>
+        	<xs:element name="gmef" type="xsd:decimal"/>
+        	<xs:element name="periodId" type="xs:string"/>
+        	<xs:element name="lmee" type="xsd:decimal"/>
+        	<xs:element name="lmef" type="xsd:decimal"/>
+        	<xs:element name="nmea" type="xsd:decimal"/>
+        	<xs:element name="settId" type="xsd:string"/>
+            <xs:element name="runType" type="xs:string"/>
+            <xs:element name="settDate" type="xs:date"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TvcT">
+        <xs:sequence>
+            <xs:element name="accountId" type="xs:string"/>
+        	<xs:element name="periodId" type="xs:string"/>
+        	<xs:element name="contractName" type="xsd:string"/>
+        	<xs:element name="tvp" type="xsd:decimal"/>
+        	<xs:element name="tvq" type="xsd:decimal"/>
+        	<xs:element name="vcrp" type="xsd:decimal"/>
+        	<xs:element name="vcsc" type="xsd:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="BilateralT">
+        <xs:sequence>
+            <xs:element name="accountId" type="xs:string"/>
+        	<xs:element name="periodId" type="xs:string"/>
+        	<xs:element name="contractName" type="xsd:string"/>
+        	<xs:element name="baqPurchased" type="xsd:decimal"/>
+        	<xs:element name="baqSold" type="xsd:decimal"/>
+        	<xs:element name="bfqPurchased" type="xsd:decimal"/>
+        	<xs:element name="bfqSold" type="xsd:decimal"/>
+       	    <xs:element name="bifPurchased" type="xsd:decimal"/>
+        	<xs:element name="bifSold" type="xsd:decimal"/>
+        	<xs:element name="biqPurchased" type="xsd:decimal"/>
+        	<xs:element name="biqSold" type="xsd:decimal"/>
+       	    <xs:element name="bwfPurchased" type="xsd:decimal"/>
+        	<xs:element name="bwfSold" type="xsd:decimal"/>
+        	<xs:element name="bwqPurchased" type="xsd:decimal"/>
+        	<xs:element name="bwqSold" type="xsd:decimal"/>
+        	<xs:element name="generatorIeq" type="xsd:decimal"/>
+        	<xs:element name="retailerWeq" type="xsd:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="FscT">
+        <xs:sequence>
+            <xs:element name="accountId" type="xs:string"/>
+        	<xs:element name="periodId" type="xs:string"/>
+        	<xs:element name="contractName" type="xsd:string"/>
+        	<xs:element name="breached" type="xsd:boolean"/>
+        	<xs:element name="fsp" type="xsd:decimal"/>
+        	<xs:element name="fsq" type="xsd:decimal"/>
+        	<xs:element name="fsrp" type="xsd:decimal"/>
+        	<xs:element name="fssc" type="xsd:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CnmeaSettReT">
+        <xs:sequence>
+        	<xs:element name="adjustments" type="AdjustmentT" minOccurs="0" maxOccurs="unbounded"/>
+        	<xs:element name="opGstGmef" type="xsd:decimal"/>
+        	<xs:element name="opGstLmee" type="xsd:decimal"/>
+        	<xs:element name="opGstLmef" type="xsd:decimal"/>
+        	<xs:element name="opGstNmea" type="xsd:decimal"/>
+            <xs:element name="accountId" type="xs:string"/>
+        	<xs:element name="gmee" type="xsd:decimal"/>
+        	<xs:element name="gmef" type="xsd:decimal"/>
+        	<xs:element name="periodId" type="xs:string"/>
+        	<xs:element name="lmee" type="xsd:decimal"/>
+        	<xs:element name="lmef" type="xsd:decimal"/>
+        	<xs:element name="nmea" type="xsd:decimal"/>
+        	<xs:element name="settId" type="xsd:string"/>
+            <xs:element name="ipGstGmee" type="xs:decimal"/>
+            <xs:element name="version" type="xs:string"/>
+         	<xs:element name="nmeaRequired" type="xsd:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AdjustmentT">
+        <xs:sequence>
+        	<xs:element name="opGstGmef" type="xsd:decimal"/>
+        	<xs:element name="opGstLmee" type="xsd:decimal"/>
+        	<xs:element name="opGstLmef" type="xsd:decimal"/>
+        	<xs:element name="opGstNmea" type="xsd:decimal"/>
+        	<xs:element name="accountingGmef" type="xsd:decimal"/>
+        	<xs:element name="accountingLmee" type="xsd:decimal"/>
+        	<xs:element name="accountingLmef" type="xsd:decimal"/>
+        	<xs:element name="gmee" type="xsd:decimal"/>
+        	<xs:element name="gmef" type="xsd:decimal"/>
+        	<xs:element name="gstRate" type="xsd:decimal"/>
+        	<xs:element name="taxable" type="xsd:boolean"/>
+        	<xs:element name="periodId" type="xs:string"/>
+        	<xs:element name="lmee" type="xsd:decimal"/>
+        	<xs:element name="lmef" type="xsd:decimal"/>
+            <xs:element name="name" type="xs:string"/>
+        	<xs:element name="nmea" type="xsd:decimal"/>
+        	<xs:element name="runType" type="xsd:string"/>
+        	<xs:element name="settDate" type="xsd:date"/>
+        	<xs:element name="settId" type="xsd:string"/>
+            <xs:element name="totalGmee" type="xs:decimal"/>
+            <xs:element name="totalGmef" type="xs:decimal"/>
+            <xs:element name="totalLmee" type="xs:decimal"/>
+            <xs:element name="totalLmef" type="xs:decimal"/>
+            <xs:element name="totalNmea" type="xs:decimal"/>
+            <xs:element name="ipGstGmee" type="xs:decimal"/>
+            <xs:element name="ipGstNmea" type="xs:decimal"/>
+            <xs:element name="version" type="xs:string"/>
+         	<xs:element name="adjRequired" type="xsd:boolean"/>
+       </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="FtrT">
+        <xs:sequence>
+            <xs:element name="nodeId" type="xs:string"/>
+        	<xs:element name="periodId" type="xs:string"/>
+        	<xs:element name="contractName" type="xsd:string"/>
+        	<xs:element name="ftq" type="xsd:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RerunT">
+        <xs:sequence>
+        	<xs:element name="adjustments" type="AdjustmentT" minOccurs="0" maxOccurs="unbounded"/>
+        	<xs:element name="opGstIncGmef" type="xsd:decimal"/>
+        	<xs:element name="opGstIncLmee" type="xsd:decimal"/>
+        	<xs:element name="opGstIncLmef" type="xsd:decimal"/>
+        	<xs:element name="opGstIncNmea" type="xsd:decimal"/>
+        	<xs:element name="incGmee" type="xsd:decimal"/>
+        	<xs:element name="incGmef" type="xsd:decimal"/>
+        	<xs:element name="incLmee" type="xsd:decimal"/>
+        	<xs:element name="incLmef" type="xsd:decimal"/>
+        	<xs:element name="incNmea" type="xsd:decimal"/>
+            <xs:element name="name" type="xs:string"/>
+        	<xs:element name="gstRate" type="xsd:decimal"/>
+        	<xs:element name="taxable" type="xsd:boolean"/>
+            <xs:element name="totalIncGmee" type="xs:decimal"/>
+            <xs:element name="totalIncGmef" type="xs:decimal"/>
+            <xs:element name="totalIncLmee" type="xs:decimal"/>
+            <xs:element name="totalIncLmef" type="xs:decimal"/>
+            <xs:element name="totalIncNmea" type="xs:decimal"/>
+            <xs:element name="ipGstIncGmee" type="xs:decimal"/>
+            <xs:element name="ipGstIncNmea" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CnmeaT">
+        <xs:sequence>
+        	<xs:element name="adjustments" type="AdjustmentT" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="accountId" type="xs:string"/>
+        	<xs:element name="accountingGmef" type="xsd:decimal"/>
+        	<xs:element name="accountingLmee" type="xsd:decimal"/>
+        	<xs:element name="accountingLmef" type="xsd:decimal"/>
+        	<xs:element name="gmee" type="xsd:decimal"/>
+        	<xs:element name="gmef" type="xsd:decimal"/>
+        	<xs:element name="lmee" type="xsd:decimal"/>
+        	<xs:element name="lmef" type="xsd:decimal"/>
+        	<xs:element name="nmea" type="xsd:decimal"/>
+        	<xs:element name="settId" type="xsd:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="MnmeaSubT">
+        <xs:sequence>
+        	<xs:element name="adjustments" type="AdjustmentT" minOccurs="0" maxOccurs="unbounded"/>
+        	<xs:element name="gmee" type="xsd:decimal"/>
+        	<xs:element name="gmef" type="xsd:decimal"/>
+        	<xs:element name="lmee" type="xsd:decimal"/>
+        	<xs:element name="lmef" type="xsd:decimal"/>
+        	<xs:element name="nmea" type="xsd:decimal"/>
+            <xs:element name="rerunId" type="xs:string"/>
+        	<xs:element name="settId" type="xsd:string"/>
+            <xs:element name="runType" type="xs:string"/>
+        	<xs:element name="settDate" type="xsd:date"/>
+        </xs:sequence>
+    </xs:complexType>
+	
+    <xs:complexType name="BrqT">
+        <xs:sequence>
+            <xs:element name="accountId" type="xs:string"/>
+        	<xs:element name="periodId" type="xs:string"/>
+        	<xs:element name="contractName" type="xsd:string"/>
+        	<xs:element name="node" type="xsd:string"/>
+        	<xs:element name="purchased" type="xsd:decimal"/>
+        	<xs:element name="reserveClass" type="xsd:string"/>
+        	<xs:element name="sold" type="xsd:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RsvClassT">
+        <xs:sequence>
+        	<xs:element name="periodId" type="xs:string"/>
+        	<xs:element name="reserveClass" type="xsd:string"/>
+            <xs:element name="reserves" type="ReserveT" minOccurs="0" maxOccurs="unbounded"/>
+        	<xs:element name="rsc" type="xsd:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ReserveT">
+        <xs:sequence>
+            <xs:element name="accountId" type="xs:string"/>
+        	<xs:element name="periodId" type="xs:string"/>
+        	<xs:element name="name" type="xs:string"/>
+        	<xs:element name="node" type="xs:string"/>
+            <xs:element name="purchasedContracts" type="BrqT" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="soldContracts" type="BrqT" minOccurs="0" maxOccurs="unbounded"/>
+        	<xs:element name="accountingRcc" type="xsd:decimal"/>
+        	<xs:element name="accountingRsc" type="xsd:decimal"/>
+        	<xs:element name="accountingRsd" type="xsd:decimal"/>
+        	<xs:element name="brqPurchased" type="xsd:decimal"/>
+        	<xs:element name="brqSold" type="xsd:decimal"/>
+        	<xs:element name="facilityRsc" type="xsd:decimal"/>
+        	<xs:element name="factor" type="xsd:decimal"/>
+        	<xs:element name="grq" type="xsd:decimal"/>
+        	<xs:element name="lrq" type="xsd:decimal"/>
+        	<xs:element name="mrp" type="xsd:decimal"/>
+        	<xs:element name="rcc" type="xsd:decimal"/>
+        	<xs:element name="rsc" type="xsd:decimal"/>
+        	<xs:element name="rsd" type="xsd:decimal"/>
+        	<xs:element name="rsq" type="xsd:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

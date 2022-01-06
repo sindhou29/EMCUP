@@ -1,0 +1,17 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import java.util.List;
+import com.emc.sett.impl.*;
+
+/*
+* the market’s wholesale price = Round(the market’s AFP + the market’s MEUC + the market’s USEP + the market’s HEUC + the CMWH for EMCADM + the CMWH for PSOADM, 2)
+*/
+rule "Wholesale prices report - market level"
+ruleflow-group "acct_stmt"
+    when
+    	$m : Market( wsp == null, afp != null, meuc != null, usep != null, heuc != null, emcAdm != null, psoAdm != null )
+    then
+        $m.setWsp( $m.getAfp().add($m.getMeuc()).add($m.getUsep()).add($m.getHeuc()).add($m.getEmcAdm()).add($m.getPsoAdm()).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $m );
+end

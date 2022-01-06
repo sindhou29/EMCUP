@@ -1,0 +1,2042 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- origin at X=0.0 Y=0.0 -->
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:java="http://www.java.com/javaTypes" xmlns:tns="http://www.jboss.org/drools" xmlns="http://www.jboss.org/drools" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd" id="Definition" exporter="org.eclipse.bpmn2.modeler.core" exporterVersion="1.4.3.Final-v20180418-1358-B1" expressionLanguage="http://www.mvel.org/2.0" targetNamespace="http://www.jboss.org/drools" typeLanguage="http://www.java.com/javaTypes">
+  <bpmn2:itemDefinition id="ItemDefinition_9" isCollection="false" structureRef="java.lang.String"/>
+  <bpmn2:itemDefinition id="ItemDefinition_266" isCollection="false" structureRef="java.lang.Boolean"/>
+  <bpmn2:itemDefinition id="ItemDefinition_925" isCollection="false" structureRef="java.util.List"/>
+  <bpmn2:itemDefinition id="ItemDefinition_1663" isCollection="false" structureRef="com.emc.settlement.model.backend.pojo.PeriodNumber"/>
+  <bpmn2:itemDefinition id="ItemDefinition_2233" isCollection="false" structureRef="com.emc.settlement.model.backend.pojo.SettRunPkg"/>
+  <bpmn2:itemDefinition id="ItemDefinition_2259" isCollection="false" structureRef="com.emc.settlement.model.backend.pojo.SettlementRunParams"/>
+  <bpmn2:itemDefinition id="ItemDefinition_3237" isCollection="false" structureRef="java.util.Date"/>
+  <bpmn2:itemDefinition id="ItemDefinition_3725" isCollection="false" structureRef="java.lang.Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_4176" isCollection="false" structureRef="com.emc.drcap.nemsprerequisite.CheckRunStatusDO"/>
+  <bpmn2:itemDefinition id="ItemDefinition_4416" isCollection="false" structureRef="com.emc.drcap.nemsprerequisite.CheckGreenZoneDO"/>
+  <bpmn2:itemDefinition id="ItemDefinition_4439" isCollection="false" structureRef="com.emc.drcap.nemsprerequisite.RegisterEventRunDO"/>
+  <bpmn2:itemDefinition id="ItemDefinition_4462" isCollection="false" structureRef="com.emc.drcap.nemsprerequisite.AutoApproveRunDO"/>
+  <bpmn2:itemDefinition id="ItemDefinition_4485" isCollection="false" structureRef="com.emc.drcap.nemsprerequisite.RunValidationsDO"/>
+  <bpmn2:itemDefinition id="ItemDefinition_4508" isCollection="false" structureRef="com.emc.drcap.nemsprerequisite.VerifyMCEDataDO"/>
+  <bpmn2:itemDefinition id="ItemDefinition_5875" isCollection="false" structureRef="com.emc.settlement.common.ParamUtil"/>
+  <bpmn2:itemDefinition id="ItemDefinition_1" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_2" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_3" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_41" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_295" isCollection="false" structureRef="com.emc.drcap.nemsprerequisite.StringListList"/>
+  <bpmn2:itemDefinition id="ItemDefinition_1433" isCollection="false" structureRef="java.util.HashMap"/>
+  <bpmn2:itemDefinition id="ItemDefinition_1436" isCollection="false" structureRef="java.util.Map.Entry"/>
+  <bpmn2:itemDefinition id="ItemDefinition_1437" isCollection="false" structureRef="java.util.Map"/>
+  <bpmn2:itemDefinition id="ItemDefinition_49" isCollection="false" structureRef="java.lang.RuntimeException"/>
+  <bpmn2:itemDefinition id="ItemDefinition_936" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_937" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_939" isCollection="false" structureRef="com.emc.settlement.model.backend.pojo.AlertNotification"/>
+  <bpmn2:itemDefinition id="ItemDefinition_30" isCollection="false" structureRef="java.lang.Long"/>
+  <bpmn2:itemDefinition id="ItemDefinition_37" isCollection="false" structureRef="java.lang.Exception"/>
+  <bpmn2:itemDefinition id="ItemDefinition_5" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_6" isCollection="false" structureRef="org.slf4j.Logger"/>
+  <bpmn2:itemDefinition id="ItemDefinition_8" isCollection="false" structureRef="org.slf4j.LoggerFactory"/>
+  <bpmn2:itemDefinition id="ItemDefinition_200" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_242" isCollection="false" structureRef="com.emc.settlement.model.backend.exceptions.SettlementRunException"/>
+  <bpmn2:itemDefinition id="ItemDefinition_995" isCollection="false" structureRef="com.emc.settlement.model.backend.exceptions.ValidateRunException"/>
+  <bpmn2:error id="Error_1" name="runtimeException" structureRef="ItemDefinition_49"/>
+  <bpmn2:error id="Error_2" name="Error 2" structureRef="ItemDefinition_49"/>
+  <bpmn2:error id="Error_3" name="Error 3"/>
+  <bpmn2:process id="RunProcess" tns:packageName="com.emc.settlement.runrelated" name="RunProcess" isExecutable="true" processType="Private">
+    <bpmn2:extensionElements>
+      <tns:import name="java.util.List"/>
+      <tns:import name="com.emc.settlement.model.backend.pojo.PeriodNumber"/>
+      <tns:import name="com.emc.settlement.model.backend.pojo.SettRunPkg"/>
+      <tns:import name="com.emc.settlement.model.backend.pojo.SettlementRunParams"/>
+      <tns:import name="java.util.Date"/>
+      <tns:import name="com.emc.drcap.nemsprerequisite.CheckRunStatusDO"/>
+      <tns:import name="com.emc.drcap.nemsprerequisite.CheckGreenZoneDO"/>
+      <tns:import name="com.emc.drcap.nemsprerequisite.RegisterEventRunDO"/>
+      <tns:import name="com.emc.drcap.nemsprerequisite.AutoApproveRunDO"/>
+      <tns:import name="com.emc.drcap.nemsprerequisite.RunValidationsDO"/>
+      <tns:import name="com.emc.drcap.nemsprerequisite.VerifyMCEDataDO"/>
+      <tns:import name="com.emc.settlement.common.ParamUtil"/>
+      <tns:import name="com.emc.drcap.nemsprerequisite.StringListList"/>
+      <tns:import name="java.util.HashMap"/>
+      <tns:import name="java.util.Map"/>
+      <tns:import name="java.util.Map.Entry"/>
+      <tns:import name="java.lang.RuntimeException"/>
+      <tns:import name="com.emc.settlement.model.backend.pojo.AlertNotification"/>
+      <tns:import name="java.lang.Exception"/>
+      <tns:import name="org.slf4j.Logger"/>
+      <tns:import name="org.slf4j.LoggerFactory"/>
+      <tns:import name="com.emc.settlement.model.backend.exceptions.SettlementRunException"/>
+      <tns:import name="com.emc.settlement.model.backend.exceptions.ValidateRunException"/>
+    </bpmn2:extensionElements>
+    <bpmn2:property id="clwqExists" itemSubjectRef="ItemDefinition_266" name="clwqExists"/>
+    <bpmn2:property id="firstPrelim" itemSubjectRef="ItemDefinition_266" name="firstPrelim"/>
+    <bpmn2:property id="invokedBy" itemSubjectRef="ItemDefinition_266" name="invokedBy"/>
+    <bpmn2:property id="invokedByModule" itemSubjectRef="ItemDefinition_9" name="invokedByModule"/>
+    <bpmn2:property id="isTestRun" itemSubjectRef="ItemDefinition_266" name="isTestRun"/>
+    <bpmn2:property id="mcrChange" itemSubjectRef="ItemDefinition_266" name="mcrChange"/>
+    <bpmn2:property id="mcrIds" itemSubjectRef="ItemDefinition_295" name="mcrIds"/>
+    <bpmn2:property id="mcrString" itemSubjectRef="ItemDefinition_9" name="mcrString"/>
+    <bpmn2:property id="nemsControllerEveId" itemSubjectRef="ItemDefinition_9" name="nemsControllerEveId"/>
+    <bpmn2:property id="pd" itemSubjectRef="ItemDefinition_1663" name="pd"/>
+    <bpmn2:property id="settRunId" itemSubjectRef="ItemDefinition_9" name="settRunId"/>
+    <bpmn2:property id="settRunPackage" itemSubjectRef="ItemDefinition_2233" name="settRunPackage"/>
+    <bpmn2:property id="settlementParam" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+    <bpmn2:property id="srInfo" itemSubjectRef="ItemDefinition_9" name="srInfo"/>
+    <bpmn2:property id="username" itemSubjectRef="ItemDefinition_9" name="username"/>
+    <bpmn2:property id="startTime" itemSubjectRef="ItemDefinition_3237" name="startTime"/>
+    <bpmn2:property id="endTime" itemSubjectRef="ItemDefinition_3237" name="endTime"/>
+    <bpmn2:property id="restResponse" itemSubjectRef="ItemDefinition_3725" name="restResponse"/>
+    <bpmn2:property id="wsParam" itemSubjectRef="ItemDefinition_3725" name="wsParam"/>
+    <bpmn2:property id="wsCheckRunStatusResponse" itemSubjectRef="ItemDefinition_4176" name="wsCheckRunStatusResponse"/>
+    <bpmn2:property id="wsCheckGreenZoneResponse" itemSubjectRef="ItemDefinition_4416" name="wsCheckGreenZoneResponse"/>
+    <bpmn2:property id="wsRegisterEventRunResponse" itemSubjectRef="ItemDefinition_4439" name="wsRegisterEventRunResponse"/>
+    <bpmn2:property id="wsAutoApproveRunResponse" itemSubjectRef="ItemDefinition_4462" name="wsAutoApproveRunResponse"/>
+    <bpmn2:property id="wsRunValidationsResponse" itemSubjectRef="ItemDefinition_4485" name="wsRunValidationsResponse"/>
+    <bpmn2:property id="wsVerifyMCEDataResponse" itemSubjectRef="ItemDefinition_4508" name="wsVerifyMCEDataResponse"/>
+    <bpmn2:property id="wsResponse" itemSubjectRef="ItemDefinition_4176" name="wsResponse"/>
+    <bpmn2:property id="wsAutoApproveResponse" itemSubjectRef="ItemDefinition_4462" name="wsAutoApproveResponse"/>
+    <bpmn2:property id="transferObject" name="transferObject"/>
+    <bpmn2:property id="retMap" itemSubjectRef="ItemDefinition_1437" name="retMap"/>
+    <bpmn2:property id="result" itemSubjectRef="ItemDefinition_9" name="result"/>
+    <bpmn2:property id="runtimeException" name="runtimeException"/>
+    <bpmn2:property id="alertNotification" itemSubjectRef="ItemDefinition_939" name="alertNotification"/>
+    <bpmn2:property id="readTimeOut" itemSubjectRef="ItemDefinition_9" name="readTimeOut"/>
+    <bpmn2:property id="soapServiceUrl" itemSubjectRef="ItemDefinition_9" name="soapServiceUrl"/>
+    <bpmn2:property id="scriptlogger" itemSubjectRef="ItemDefinition_6" name="scriptlogger"/>
+    <bpmn2:property id="exception" itemSubjectRef="ItemDefinition_242" name="exception"/>
+    <bpmn2:property id="mceDataLoadByController" itemSubjectRef="ItemDefinition_266" name="mceDataLoadByController"/>
+    <bpmn2:startEvent id="StartEvent_1" name="Start">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Start]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>SequenceFlow_45</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:task id="Task_4" tns:taskName="WebService" tns:displayName="WS" tns:icon="defaultservicenodeicon.png" name="WS Call Check Run Status">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[WS Call Check Run Status]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Calling WS Get Run Status&quot;);
+wsParam = new Object[]{ParamUtil.toXMLGregorianCalendar(settlementParam.getSettlementDate()), &quot;[EMC]&quot;, settlementParam.getRunFrom(), settlementParam.getRunType(), settlementParam.getMainEveId(), settlementParam.getRunEveId(), &quot;SETTLEMENT&quot;};
+kcontext.setVariable(&quot;wsParam&quot;, wsParam);
+
+log.info(&quot;Calling WS Check Run Status&quot;);</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>kcontext.setVariable(&quot;wsCheckRunStatusResponse&quot;, wsCheckRunStatusResponse);
+Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Run Status : &quot;+wsCheckRunStatusResponse.getRunStatus());
+log.info(&quot;Completed WS Check Run Status&quot;);
+
+</tns:script>
+        </tns:onExit-script>
+        <tns:metaData name="customAsync">
+          <tns:metaValue><![CDATA[true]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_4">
+        <bpmn2:dataInput id="DataInput_22" name="Url"/>
+        <bpmn2:dataInput id="DataInput_23" name="Namespace"/>
+        <bpmn2:dataInput id="DataInput_24" name="Interface"/>
+        <bpmn2:dataInput id="DataInput_25" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_26" itemSubjectRef="ItemDefinition_3725" name="Parameter"/>
+        <bpmn2:dataInput id="DataInput_27" name="Endpoint"/>
+        <bpmn2:dataInput id="DataInput_28" name="Mode"/>
+        <bpmn2:dataOutput id="DataOutput_4" itemSubjectRef="ItemDefinition_4176" name="Result"/>
+        <bpmn2:inputSet id="_InputSet_33">
+          <bpmn2:dataInputRefs>DataInput_22</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_23</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_24</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_25</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_26</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_27</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_28</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="_OutputSet_10">
+          <bpmn2:dataOutputRefs>DataOutput_4</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_87">
+        <bpmn2:targetRef>DataInput_22</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_11">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_29">#{soapServiceUrl}/NEMSPrerequisiteService/CheckRunStatus?WSDL</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_27">DataInput_22</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_88">
+        <bpmn2:targetRef>DataInput_23</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_12">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_32">http://nemsprerequisite.drcap.emc.com/</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_30">DataInput_23</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_89">
+        <bpmn2:targetRef>DataInput_24</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_13">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_35">CheckRunStatusWS</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_33">DataInput_24</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_90">
+        <bpmn2:targetRef>DataInput_25</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_14">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_38">getRunStatus</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_36">DataInput_25</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_91">
+        <bpmn2:sourceRef>wsParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_26</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_92">
+        <bpmn2:targetRef>DataInput_27</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_15">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_41">#{soapServiceUrl}/NEMSPrerequisiteService/CheckRunStatus</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_39">DataInput_27</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_93">
+        <bpmn2:targetRef>DataInput_28</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_16">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_44">SYNC</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_42">DataInput_28</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="_DataOutputAssociation_10">
+        <bpmn2:sourceRef>DataOutput_4</bpmn2:sourceRef>
+        <bpmn2:targetRef>wsCheckRunStatusResponse</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_1" gatewayDirection="Diverging">
+      <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_2" gatewayDirection="Diverging">
+      <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_5</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_44</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_1" tns:priority="1" sourceRef="Task_4" targetRef="ExclusiveGateway_1"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_2" tns:priority="1" name="Run Status ! STOP" sourceRef="ExclusiveGateway_1" targetRef="ExclusiveGateway_2">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_1" language="http://www.java.com/java">return !(wsCheckRunStatusResponse.getRunStatus().equalsIgnoreCase(&quot;STOP&quot;));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:endEvent id="EndEvent_2" name="End">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[End]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_4" tns:priority="1" name="Run Status STOP" sourceRef="ExclusiveGateway_1" targetRef="EndEvent_2">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_2" language="http://www.java.com/java">return (wsCheckRunStatusResponse.getRunStatus().equalsIgnoreCase(&quot;STOP&quot;));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:task id="Task_1" tns:taskName="WebService" tns:displayName="WS" tns:icon="defaultservicenodeicon.png" name="WS Call Check Green Zone">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[WS Call Check Green Zone]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Calling Check Green Zone &quot;);
+wsParam = new Object[]{ settlementParam.getRunType(), &quot;[EMC]&quot;};
+kcontext.setVariable(&quot;wsParam&quot;, wsParam);
+</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>kcontext.setVariable(&quot;wsCheckGreenZoneResponse&quot;, wsCheckGreenZoneResponse);
+Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Green Zone Result : &quot;+wsCheckGreenZoneResponse.getResultGreenZone());
+
+log.info(&quot;SettlementDate : &quot;+settlementParam.getSettlementDate());
+log.info(&quot;SchEveId : &quot;+settlementParam.getSchEveId());
+log.info(&quot;RunType : &quot;+settlementParam.getRunType());
+log.info(&quot;MainEveId : &quot;+settlementParam.getMainEveId());
+</tns:script>
+        </tns:onExit-script>
+        <tns:metaData name="customAsync">
+          <tns:metaValue><![CDATA[true]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_10</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_11</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_1">
+        <bpmn2:dataInput id="DataInput_1" name="Url"/>
+        <bpmn2:dataInput id="DataInput_2" name="Namespace"/>
+        <bpmn2:dataInput id="DataInput_3" name="Interface"/>
+        <bpmn2:dataInput id="DataInput_4" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_5" itemSubjectRef="ItemDefinition_3725" name="Parameter"/>
+        <bpmn2:dataInput id="DataInput_6" name="Endpoint"/>
+        <bpmn2:dataInput id="DataInput_7" name="Mode"/>
+        <bpmn2:dataOutput id="DataOutput_1" itemSubjectRef="ItemDefinition_4416" name="Result"/>
+        <bpmn2:inputSet id="_InputSet_39">
+          <bpmn2:dataInputRefs>DataInput_1</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_2</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_3</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_4</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_5</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_6</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_7</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="_OutputSet_15">
+          <bpmn2:dataOutputRefs>DataOutput_1</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_123">
+        <bpmn2:targetRef>DataInput_1</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_1">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_10">#{soapServiceUrl}/NEMSPrerequisiteService/WsCheckGreenZone?WSDL</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_5">DataInput_1</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_124">
+        <bpmn2:targetRef>DataInput_2</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_2">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_16">http://nemsprerequisite.drcap.emc.com/</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_13">DataInput_2</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_125">
+        <bpmn2:targetRef>DataInput_3</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_3">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_19">CheckGreenZoneWS</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_17">DataInput_3</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_126">
+        <bpmn2:targetRef>DataInput_4</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_7">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_22">checkGreenZone</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_20">DataInput_4</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_127">
+        <bpmn2:sourceRef>wsParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_5</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_128">
+        <bpmn2:targetRef>DataInput_6</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_8">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_25">#{soapServiceUrl}/NEMSPrerequisiteService/WsCheckGreenZone</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_23">DataInput_6</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_129">
+        <bpmn2:targetRef>DataInput_7</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_9">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_31">SYNC</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_26">DataInput_7</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="_DataOutputAssociation_15">
+        <bpmn2:sourceRef>DataOutput_1</bpmn2:sourceRef>
+        <bpmn2:targetRef>wsCheckGreenZoneResponse</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_5" tns:priority="1" sourceRef="ExclusiveGateway_2" targetRef="ExclusiveGateway_3">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_3" language="http://www.java.com/java">return (settlementParam.getRunFrom().equalsIgnoreCase(&quot;B&quot;));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:endEvent id="EndEvent_3" name="End">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[End]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_28</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_3" gatewayDirection="Converging">
+      <bpmn2:incoming>SequenceFlow_5</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_29</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_10</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_10" tns:priority="1" sourceRef="ExclusiveGateway_3" targetRef="Task_1"/>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_4" gatewayDirection="Diverging">
+      <bpmn2:incoming>SequenceFlow_11</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_6</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_31</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_11" tns:priority="1" sourceRef="Task_1" targetRef="ExclusiveGateway_4"/>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_5" gatewayDirection="Converging">
+      <bpmn2:incoming>SequenceFlow_6</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_44</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_41</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_6" tns:priority="1" name="Green Zone" sourceRef="ExclusiveGateway_4" targetRef="ExclusiveGateway_5">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_7" language="http://www.java.com/java">return !(wsCheckGreenZoneResponse.getResultGreenZone().equalsIgnoreCase(&quot;NOT GREENZONE&quot;));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:callActivity id="CallActivity_1" tns:waitForCompletion="true" tns:independent="false" name="Call Compare MCR Data" calledElement="CompareMCRData">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Call Compare MCR Data]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Calling sub-process Compare MCR Data&quot;);
+		</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;invokedBy  :&quot;+invokedBy);
+log.info(&quot;Completed sub-process Compare MCR Data&quot;);</tns:script>
+        </tns:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_13</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_47</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_8">
+        <bpmn2:dataInput id="DataInput_8" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+        <bpmn2:dataInput id="DataInput_97" itemSubjectRef="ItemDefinition_9" name="soapServiceUrl"/>
+        <bpmn2:dataInput id="DataInput_9" itemSubjectRef="ItemDefinition_266" name="invokedBy"/>
+        <bpmn2:dataOutput id="DataOutput_3" itemSubjectRef="ItemDefinition_266" name="clwqExists"/>
+        <bpmn2:dataOutput id="DataOutput_7" itemSubjectRef="ItemDefinition_9" name="mcrChange"/>
+        <bpmn2:dataOutput id="DataOutput_8" itemSubjectRef="ItemDefinition_925" name="mcrIds"/>
+        <bpmn2:dataOutput id="DataOutput_9" itemSubjectRef="ItemDefinition_9" name="mcrStringNew"/>
+        <bpmn2:dataOutput id="DataOutput_10" itemSubjectRef="ItemDefinition_266" name="invokedBy"/>
+        <bpmn2:inputSet id="InputSet_3" name="Input Set 3">
+          <bpmn2:dataInputRefs>DataInput_8</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_97</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_9</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_5" name="Output Set 5">
+          <bpmn2:dataOutputRefs>DataOutput_3</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_7</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_8</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_9</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_10</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_1">
+        <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_8</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_56">
+        <bpmn2:sourceRef>soapServiceUrl</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_97</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_2">
+        <bpmn2:sourceRef>invokedBy</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_9</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_1">
+        <bpmn2:sourceRef>DataOutput_3</bpmn2:sourceRef>
+        <bpmn2:targetRef>clwqExists</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_4">
+        <bpmn2:sourceRef>DataOutput_7</bpmn2:sourceRef>
+        <bpmn2:targetRef>mcrChange</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_5">
+        <bpmn2:sourceRef>DataOutput_8</bpmn2:sourceRef>
+        <bpmn2:targetRef>mcrIds</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_6">
+        <bpmn2:sourceRef>DataOutput_9</bpmn2:sourceRef>
+        <bpmn2:targetRef>mcrString</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_7">
+        <bpmn2:sourceRef>DataOutput_10</bpmn2:sourceRef>
+        <bpmn2:targetRef>invokedBy</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:callActivity>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_8" gatewayDirection="Diverging">
+      <bpmn2:incoming>SequenceFlow_16</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_33</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_34</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:callActivity id="CallActivity_3" tns:waitForCompletion="true" tns:independent="false" name="Call Reload Input MCR Data" calledElement="ReloadInputMCRData">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Call Reload Input MCR Data]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Calling Sub-process Reload Input MCR Data&quot;);
+log.info(&quot;mcrChange  :&quot;+mcrChange);
+log.info(&quot;invokedBy  :&quot;+invokedBy);
+</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Completed processing Sub-process Reload Input MCR Data&quot;);</tns:script>
+        </tns:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_33</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_46</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_15">
+        <bpmn2:dataInput id="DataInput_70" itemSubjectRef="ItemDefinition_266" name="clwqExists"/>
+        <bpmn2:dataInput id="DataInput_71" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+        <bpmn2:dataInput id="DataInput_72" itemSubjectRef="ItemDefinition_9" name="mcrString"/>
+        <bpmn2:dataInput id="DataInput_73" itemSubjectRef="ItemDefinition_1663" name="pd"/>
+        <bpmn2:dataInput id="DataInput_74" itemSubjectRef="ItemDefinition_2233" name="settRunPackage"/>
+        <bpmn2:dataInput id="DataInput_75" itemSubjectRef="ItemDefinition_925" name="mcrIds"/>
+        <bpmn2:dataInput id="DataInput_99" itemSubjectRef="ItemDefinition_9" name="soapServiceUrl"/>
+        <bpmn2:dataInput id="DataInput_106" itemSubjectRef="ItemDefinition_266" name="isRun"/>
+        <bpmn2:inputSet id="InputSet_7" name="Input Set 7">
+          <bpmn2:dataInputRefs>DataInput_70</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_71</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_72</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_73</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_74</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_75</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_99</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_106</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_12" name="Output Set 12"/>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_43">
+        <bpmn2:sourceRef>clwqExists</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_70</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_44">
+        <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_71</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_45">
+        <bpmn2:sourceRef>mcrString</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_72</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_46">
+        <bpmn2:sourceRef>pd</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_73</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_47">
+        <bpmn2:sourceRef>settRunPackage</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_74</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_48">
+        <bpmn2:sourceRef>mcrIds</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_75</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_58">
+        <bpmn2:sourceRef>soapServiceUrl</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_99</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_72">
+        <bpmn2:targetRef>DataInput_106</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_26">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_58">true</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_49">DataInput_106</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_33" tns:priority="1" name="MCR Data Changed" sourceRef="ExclusiveGateway_8" targetRef="CallActivity_3">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_84" language="http://www.java.com/java">return (settlementParam.isMceDataLoadByController() == false &amp;&amp; (mcrChange == true || clwqExists  == true));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_9" gatewayDirection="Converging">
+      <bpmn2:incoming>SequenceFlow_34</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_46</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_8</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_34" tns:priority="1" name="MCR Data No Change" sourceRef="ExclusiveGateway_8" targetRef="ExclusiveGateway_9">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_85" language="http://www.java.com/java">return !(settlementParam.isMceDataLoadByController() == false &amp;&amp; (mcrChange == true || clwqExists  == true));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:callActivity id="CallActivity_2" tns:waitForCompletion="true" tns:independent="false" name="Call Rerun Inclusions" calledElement="RerunInclusions">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Call Rerun Inclusions]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;mcrChange  :&quot;+mcrChange);
+log.info(&quot;invokedBy  :&quot;+invokedBy);
+
+log.info(&quot;Calling Sub-process Rerun Inclusions&quot;);
+log.info(&quot;Rerun Inclusions Run ID : &quot;+settlementParam.getRunId());</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Completed Sub-process Rerun Inclusions&quot;);</tns:script>
+        </tns:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_8</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_20</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_7">
+        <bpmn2:dataInput id="DataInput_45" itemSubjectRef="ItemDefinition_266" name="firstPrelim"/>
+        <bpmn2:dataInput id="DataInput_46" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+        <bpmn2:inputSet id="InputSet_2" name="Input Set 2">
+          <bpmn2:dataInputRefs>DataInput_45</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_46</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_4" name="Output Set 4"/>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_22">
+        <bpmn2:sourceRef>firstPrelim</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_45</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_23">
+        <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_46</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_8" tns:priority="1" sourceRef="ExclusiveGateway_9" targetRef="CallActivity_2"/>
+    <bpmn2:callActivity id="CallActivity_4" tns:waitForCompletion="true" tns:independent="false" name="Call Run Validations" calledElement="RunValidations">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Call Run Validations]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Calling sub-process Run Validations&quot;);
+log.info(&quot;isTestRun :&quot;+isTestRun);</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Completed sub-process Run Validations&quot;);
+log.info(&quot;invokedBy :&quot;+invokedBy);
+log.info(&quot;exception :&quot;+exception);
+</tns:script>
+        </tns:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_20</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_22</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_12">
+        <bpmn2:dataInput id="DataInput_52" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+        <bpmn2:dataInput id="DataInput_53" itemSubjectRef="ItemDefinition_266" name="isTestRun"/>
+        <bpmn2:dataOutput id="DataOutput_18" itemSubjectRef="ItemDefinition_242" name="exception"/>
+        <bpmn2:inputSet id="InputSet_5" name="Input Set 5">
+          <bpmn2:dataInputRefs>DataInput_52</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_53</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_9" name="Output Set 9">
+          <bpmn2:dataOutputRefs>DataOutput_18</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_28">
+        <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_52</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_29">
+        <bpmn2:sourceRef>isTestRun</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_53</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_14">
+        <bpmn2:sourceRef>DataOutput_18</bpmn2:sourceRef>
+        <bpmn2:targetRef>exception</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_20" tns:priority="1" sourceRef="CallActivity_2" targetRef="CallActivity_4"/>
+    <bpmn2:callActivity id="CallActivity_5" tns:waitForCompletion="true" tns:independent="false" name="Call I/P Data Verification and Validation" calledElement="IPDataVerificationsValidations">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Call I/P Data Verification and Validation]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Calling sub-process IPDataVerificationsValidations&quot;);</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Completed sub-process IPDataVerificationsValidations&quot;);</tns:script>
+        </tns:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_23</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_49</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_19">
+        <bpmn2:dataInput id="DataInput_54" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+        <bpmn2:dataInput id="DataInput_55" itemSubjectRef="ItemDefinition_2233" name="settRunPackage"/>
+        <bpmn2:dataInput id="DataInput_56" itemSubjectRef="ItemDefinition_1663" name="pd"/>
+        <bpmn2:dataInput id="DataInput_98" itemSubjectRef="ItemDefinition_9" name="soapServiceUrl"/>
+        <bpmn2:dataOutput id="DataOutput_11" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+        <bpmn2:inputSet id="InputSet_11" name="Input Set 11">
+          <bpmn2:dataInputRefs>DataInput_54</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_55</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_56</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_98</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_16" name="Output Set 16">
+          <bpmn2:dataOutputRefs>DataOutput_11</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_30">
+        <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_54</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_31">
+        <bpmn2:sourceRef>settRunPackage</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_55</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_32">
+        <bpmn2:sourceRef>pd</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_56</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_57">
+        <bpmn2:sourceRef>soapServiceUrl</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_98</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_8">
+        <bpmn2:sourceRef>DataOutput_11</bpmn2:sourceRef>
+        <bpmn2:targetRef>settlementParam</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:callActivity>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_6" gatewayDirection="Diverging">
+      <bpmn2:incoming>SequenceFlow_22</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_23</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_26</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_7" gatewayDirection="Converging">
+      <bpmn2:incoming>SequenceFlow_26</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_49</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_50</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_22" tns:priority="1" sourceRef="CallActivity_4" targetRef="ExclusiveGateway_6"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_23" tns:priority="1" sourceRef="ExclusiveGateway_6" targetRef="CallActivity_5">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_62" language="http://www.java.com/java">return !(invokedBy == true);</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SequenceFlow_26" tns:priority="1" sourceRef="ExclusiveGateway_6" targetRef="ExclusiveGateway_7">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_59" language="http://www.java.com/java">return (invokedBy == true);</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:callActivity id="CallActivity_6" tns:waitForCompletion="true" tns:independent="false" name="Call Update Run Status" calledElement="UpdateRunStatus">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Call Update Run Status]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Calling sub-process UpdateRunStatus&quot;);
+log.info(&quot;isTestRun : &quot;+isTestRun);</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Completed sub-process UpdateRunStatus&quot;);</tns:script>
+        </tns:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_21</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_17</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_11">
+        <bpmn2:dataInput id="DataInput_44" itemSubjectRef="ItemDefinition_266" name="isTestRun"/>
+        <bpmn2:dataInput id="DataInput_47" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+        <bpmn2:dataInput id="DataInput_48" itemSubjectRef="ItemDefinition_9" name="runStatus"/>
+        <bpmn2:dataInput id="DataInput_49" itemSubjectRef="ItemDefinition_9" name="userName"/>
+        <bpmn2:dataInput id="DataInput_50" itemSubjectRef="ItemDefinition_2233" name="settRunPackage"/>
+        <bpmn2:dataInput id="DataInput_100" itemSubjectRef="ItemDefinition_9" name="soapServiceUrl"/>
+        <bpmn2:inputSet id="InputSet_6" name="Input Set 6">
+          <bpmn2:dataInputRefs>DataInput_44</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_47</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_48</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_49</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_50</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_100</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_8" name="Output Set 8"/>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_21">
+        <bpmn2:sourceRef>isTestRun</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_44</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_24">
+        <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_47</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_25">
+        <bpmn2:targetRef>DataInput_48</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_19">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_43">W</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_21">DataInput_48</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_26">
+        <bpmn2:sourceRef>username</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_49</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_27">
+        <bpmn2:sourceRef>settRunPackage</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_50</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_59">
+        <bpmn2:sourceRef>soapServiceUrl</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_100</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+    </bpmn2:callActivity>
+    <bpmn2:task id="Task_9" tns:taskName="WebService" tns:displayName="WS" tns:icon="defaultservicenodeicon.png" name="Call WS Auto Approve Run">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Call WS Auto Approve Run]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Calling WS AutoApproveRun&quot;);
+log.info(&quot;Params -  RunPkgId : &quot;+settlementParam.getRunPkgId());
+log.info(&quot;RunEveId : &quot;+ settlementParam.getRunEveId());
+log.info(&quot;RunId : &quot;+settlementParam.getRunId());
+log.info(&quot;UserName : &quot;+username);
+wsParam = new Object[]{&quot;EMC&quot;, settlementParam.getRunPkgId(), settlementParam.getRunEveId(), settlementParam.getRunType(), settlementParam.getRunId(), settRunPackage.getStandingVersion(), username, &quot;SETTLEMENT&quot;};
+kcontext.setVariable(&quot;wsParam&quot;, wsParam);</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Completed WS AutoApproveRun&quot;);</tns:script>
+        </tns:onExit-script>
+        <tns:metaData name="customAsync">
+          <tns:metaValue><![CDATA[true]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_17</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_27</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_16">
+        <bpmn2:dataInput id="DataInput_78" name="Url"/>
+        <bpmn2:dataInput id="DataInput_79" name="Namespace"/>
+        <bpmn2:dataInput id="DataInput_80" name="Interface"/>
+        <bpmn2:dataInput id="DataInput_81" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_82" itemSubjectRef="ItemDefinition_3725" name="Parameter"/>
+        <bpmn2:dataInput id="DataInput_83" name="Endpoint"/>
+        <bpmn2:dataInput id="DataInput_84" name="Mode"/>
+        <bpmn2:dataOutput id="DataOutput_14" itemSubjectRef="ItemDefinition_4462" name="Result"/>
+        <bpmn2:inputSet id="_InputSet_53">
+          <bpmn2:dataInputRefs>DataInput_78</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_79</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_80</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_81</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_82</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_83</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_84</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="_OutputSet_22">
+          <bpmn2:dataOutputRefs>DataOutput_14</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_191">
+        <bpmn2:targetRef>DataInput_78</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_20">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_48">#{soapServiceUrl}/NEMSPrerequisiteService/WsAutoApproveRun?WSDL</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_46">DataInput_78</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_192">
+        <bpmn2:targetRef>DataInput_79</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_21">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_56">http://nemsprerequisite.drcap.emc.com/</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_50">DataInput_79</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_193">
+        <bpmn2:targetRef>DataInput_80</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_34">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_71">AutoApproveRunWS</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_65">DataInput_80</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_194">
+        <bpmn2:targetRef>DataInput_81</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_35">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_82">autoApproveRun</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_76">DataInput_81</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_195">
+        <bpmn2:sourceRef>wsParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_82</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_196">
+        <bpmn2:targetRef>DataInput_83</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_36">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_88">#{soapServiceUrl}/NEMSPrerequisiteService/WsAutoApproveRun</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_86">DataInput_83</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_197">
+        <bpmn2:targetRef>DataInput_84</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_37">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_91">SYNC</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_89">DataInput_84</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="_DataOutputAssociation_22">
+        <bpmn2:sourceRef>DataOutput_14</bpmn2:sourceRef>
+        <bpmn2:targetRef>wsAutoApproveResponse</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_17" tns:priority="1" sourceRef="CallActivity_6" targetRef="Task_9"/>
+    <bpmn2:task id="Task_10" tns:taskName="WebService" tns:displayName="WS" tns:icon="defaultservicenodeicon.png" name="Call WS Log End Message">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Call WS Log End Message]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Calling WS Log End Message&quot;);
+wsParam = new Object[]{&quot;EMC&quot;, settlementParam.getRunEveId(), ParamUtil.toXMLGregorianCalendar(startTime), &quot;SETTLEMENT&quot;};
+kcontext.setVariable(&quot;wsParam&quot;, wsParam);</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Completed WS Log End Message&quot;);</tns:script>
+        </tns:onExit-script>
+        <tns:metaData name="customAsync">
+          <tns:metaValue><![CDATA[true]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_27</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_28</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_17">
+        <bpmn2:dataInput id="DataInput_85" name="Url"/>
+        <bpmn2:dataInput id="DataInput_86" name="Namespace"/>
+        <bpmn2:dataInput id="DataInput_87" name="Interface"/>
+        <bpmn2:dataInput id="DataInput_88" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_89" itemSubjectRef="ItemDefinition_3725" name="Parameter"/>
+        <bpmn2:dataInput id="DataInput_90" name="Endpoint"/>
+        <bpmn2:dataInput id="DataInput_91" name="Mode"/>
+        <bpmn2:dataOutput id="DataOutput_15" itemSubjectRef="ItemDefinition_3725" name="Result"/>
+        <bpmn2:inputSet id="_InputSet_54">
+          <bpmn2:dataInputRefs>DataInput_85</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_86</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_87</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_88</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_89</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_90</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_91</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="_OutputSet_23">
+          <bpmn2:dataOutputRefs>DataOutput_15</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_198">
+        <bpmn2:targetRef>DataInput_85</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_38">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_94">#{soapServiceUrl}/NEMSPrerequisiteService/WsLogEndMessage?wsdl</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_92">DataInput_85</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_199">
+        <bpmn2:targetRef>DataInput_86</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_39">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_97">http://nemsprerequisite.drcap.emc.com/</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_95">DataInput_86</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_200">
+        <bpmn2:targetRef>DataInput_87</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_40">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_100">LogEndMessagesWS</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_98">DataInput_87</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_201">
+        <bpmn2:targetRef>DataInput_88</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_41">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_103">logEndMessage</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_101">DataInput_88</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_202">
+        <bpmn2:sourceRef>wsParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_89</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_203">
+        <bpmn2:targetRef>DataInput_90</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_42">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_106">#{soapServiceUrl}/NEMSPrerequisiteService/WsLogEndMessage</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_104">DataInput_90</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_204">
+        <bpmn2:targetRef>DataInput_91</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_43">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_109">SYNC</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_107">DataInput_91</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="_DataOutputAssociation_23">
+        <bpmn2:sourceRef>DataOutput_15</bpmn2:sourceRef>
+        <bpmn2:targetRef>restResponse</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_27" tns:priority="1" sourceRef="Task_9" targetRef="Task_10"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_28" tns:priority="1" sourceRef="Task_10" targetRef="EndEvent_3"/>
+    <bpmn2:intermediateCatchEvent id="IntermediateCatchEvent_1">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_31</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_29</bpmn2:outgoing>
+      <bpmn2:timerEventDefinition id="TimerEventDefinition_4">
+        <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression" id="FormalExpression_105">60s</bpmn2:timeDuration>
+      </bpmn2:timerEventDefinition>
+    </bpmn2:intermediateCatchEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_29" tns:priority="1" sourceRef="IntermediateCatchEvent_1" targetRef="ExclusiveGateway_3"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_31" tns:priority="1" sourceRef="ExclusiveGateway_4" targetRef="IntermediateCatchEvent_1">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_108" language="http://www.java.com/java">return (wsCheckGreenZoneResponse.getResultGreenZone().equalsIgnoreCase(&quot;NOT GREENZONE&quot;));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SequenceFlow_41" tns:priority="1" sourceRef="ExclusiveGateway_5" targetRef="Task_13"/>
+    <bpmn2:subProcess id="SubProcess_1" name="Event Handler" triggeredByEvent="true">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Event Handler]]></tns:metaValue>
+        </tns:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:endEvent id="EndEvent_1" name="Error End Event">
+        <bpmn2:extensionElements>
+          <tns:metaData name="elementname">
+            <tns:metaValue><![CDATA[Error End Event]]></tns:metaValue>
+          </tns:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
+      </bpmn2:endEvent>
+      <bpmn2:callActivity id="CallActivity_7" tns:waitForCompletion="true" tns:independent="false" name="Call Update Run Status" calledElement="UpdateRunStatus">
+        <bpmn2:extensionElements>
+          <tns:metaData name="elementname">
+            <tns:metaValue><![CDATA[Call Update Run Status]]></tns:metaValue>
+          </tns:metaData>
+          <tns:onEntry-script scriptFormat="http://www.java.com/java">
+            <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Calling sub-process UpdateRunStatus : Exception thrown from Run Process : UserName : &quot;+username);</tns:script>
+          </tns:onEntry-script>
+          <tns:onExit-script scriptFormat="http://www.java.com/java">
+            <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Completed sub-process UpdateRunStatus : Exception thrown from Run Process&quot;);</tns:script>
+          </tns:onExit-script>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SequenceFlow_9</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_19</bpmn2:outgoing>
+        <bpmn2:ioSpecification id="InputOutputSpecification_18">
+          <bpmn2:dataInput id="DataInput_13" itemSubjectRef="ItemDefinition_266" name="isTestRun"/>
+          <bpmn2:dataInput id="DataInput_21" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+          <bpmn2:dataInput id="DataInput_29" itemSubjectRef="ItemDefinition_9" name="userName"/>
+          <bpmn2:dataInput id="DataInput_30" itemSubjectRef="ItemDefinition_2233" name="settRunPackage"/>
+          <bpmn2:dataInput id="DataInput_31" itemSubjectRef="ItemDefinition_9" name="soapServiceUrl"/>
+          <bpmn2:dataInput id="DataInput_32" itemSubjectRef="ItemDefinition_9" name="runStatus"/>
+          <bpmn2:inputSet id="InputSet_8" name="Input Set 8">
+            <bpmn2:dataInputRefs>DataInput_13</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_21</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_29</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_30</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_31</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_32</bpmn2:dataInputRefs>
+          </bpmn2:inputSet>
+          <bpmn2:outputSet id="OutputSet_15" name="Output Set 15"/>
+        </bpmn2:ioSpecification>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_11">
+          <bpmn2:sourceRef>isTestRun</bpmn2:sourceRef>
+          <bpmn2:targetRef>DataInput_13</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_61">
+          <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+          <bpmn2:targetRef>DataInput_21</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_62">
+          <bpmn2:sourceRef>username</bpmn2:sourceRef>
+          <bpmn2:targetRef>DataInput_29</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_63">
+          <bpmn2:sourceRef>settRunPackage</bpmn2:sourceRef>
+          <bpmn2:targetRef>DataInput_30</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_64">
+          <bpmn2:sourceRef>soapServiceUrl</bpmn2:sourceRef>
+          <bpmn2:targetRef>DataInput_31</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_65">
+          <bpmn2:targetRef>DataInput_32</bpmn2:targetRef>
+          <bpmn2:assignment id="Assignment_22">
+            <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_51">E</bpmn2:from>
+            <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_15">DataInput_32</bpmn2:to>
+          </bpmn2:assignment>
+        </bpmn2:dataInputAssociation>
+      </bpmn2:callActivity>
+      <bpmn2:sequenceFlow id="SequenceFlow_19" tns:priority="1" sourceRef="CallActivity_7" targetRef="Task_18"/>
+      <bpmn2:startEvent id="StartEvent_2" name="Error Start Event">
+        <bpmn2:extensionElements>
+          <tns:metaData name="elementname">
+            <tns:metaValue><![CDATA[Error Start Event]]></tns:metaValue>
+          </tns:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:outgoing>SequenceFlow_9</bpmn2:outgoing>
+        <bpmn2:dataOutput id="DataOutput_5" name="Error_1_Output"/>
+        <bpmn2:dataOutputAssociation id="DataOutputAssociation_12">
+          <bpmn2:sourceRef>DataOutput_5</bpmn2:sourceRef>
+          <bpmn2:targetRef>runtimeException</bpmn2:targetRef>
+        </bpmn2:dataOutputAssociation>
+        <bpmn2:outputSet id="OutputSet_11" name="Output Set 11">
+          <bpmn2:dataOutputRefs>DataOutput_5</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+        <bpmn2:errorEventDefinition id="ErrorEventDefinition_1" errorRef="Error_3"/>
+      </bpmn2:startEvent>
+      <bpmn2:sequenceFlow id="SequenceFlow_9" tns:priority="1" sourceRef="StartEvent_2" targetRef="CallActivity_7"/>
+      <bpmn2:task id="Task_18" tns:taskName="SettlementRunProcessWIH" tns:displayName="SettlementRunProcessWIH" tns:icon="icon-info.gif" name="Exception Notification">
+        <bpmn2:extensionElements>
+          <tns:metaData name="elementname">
+            <tns:metaValue><![CDATA[Exception Notification]]></tns:metaValue>
+          </tns:metaData>
+          <tns:metaData name="customAsync">
+            <tns:metaValue><![CDATA[true]]></tns:metaValue>
+          </tns:metaData>
+          <tns:onEntry-script scriptFormat="http://www.java.com/java">
+            <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Run Process Stacktrace - Runtime Exception : &quot;+runtimeException.toString());
+if(exception == null){
+log.info(&quot;Run Process - Calling Exception : &quot;+exception);
+exception = (runtimeException instanceof SettlementRunException) ? (SettlementRunException) runtimeException : exception;
+}
+log.info(&quot;Run Process - Inside Handle Exception: &quot;+exception);
+
+kcontext.setVariable(&quot;exception&quot;, exception);</tns:script>
+          </tns:onEntry-script>
+          <tns:onExit-script scriptFormat="http://www.java.com/java">
+            <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Run Process - Completed Exception : &quot;+exception);</tns:script>
+          </tns:onExit-script>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SequenceFlow_19</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_7</bpmn2:outgoing>
+        <bpmn2:ioSpecification id="InputOutputSpecification_25">
+          <bpmn2:dataInput id="DataInput_145" name="className"/>
+          <bpmn2:dataInput id="DataInput_146" itemSubjectRef="ItemDefinition_9" name="TaskName"/>
+          <bpmn2:dataInput id="DataInput_147" itemSubjectRef="ItemDefinition_9" name="Operation"/>
+          <bpmn2:dataInput id="DataInput_148" itemSubjectRef="ItemDefinition_242" name="exception"/>
+          <bpmn2:dataInput id="DataInput_149" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+          <bpmn2:dataInput id="DataInput_150" itemSubjectRef="ItemDefinition_266" name="invokedBy"/>
+          <bpmn2:dataOutput id="DataOutput_6" itemSubjectRef="ItemDefinition_242" name="exception"/>
+          <bpmn2:inputSet id="InputSet_13">
+            <bpmn2:dataInputRefs>DataInput_145</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_146</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_147</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_148</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_149</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_150</bpmn2:dataInputRefs>
+          </bpmn2:inputSet>
+          <bpmn2:outputSet id="OutputSet_22" name="Output Set 13">
+            <bpmn2:dataOutputRefs>DataOutput_6</bpmn2:dataOutputRefs>
+          </bpmn2:outputSet>
+        </bpmn2:ioSpecification>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_109">
+          <bpmn2:targetRef>DataInput_145</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_110">
+          <bpmn2:targetRef>DataInput_146</bpmn2:targetRef>
+          <bpmn2:assignment id="Assignment_61">
+            <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_134">SettlementRunProcessWIH</bpmn2:from>
+            <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_135">DataInput_109</bpmn2:to>
+          </bpmn2:assignment>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_111">
+          <bpmn2:targetRef>DataInput_147</bpmn2:targetRef>
+          <bpmn2:assignment id="Assignment_62">
+            <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_136">exceptionNotification</bpmn2:from>
+            <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_137">DataInput_110</bpmn2:to>
+          </bpmn2:assignment>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_112">
+          <bpmn2:sourceRef>exception</bpmn2:sourceRef>
+          <bpmn2:targetRef>DataInput_148</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_113">
+          <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+          <bpmn2:targetRef>DataInput_149</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_114">
+          <bpmn2:sourceRef>invokedBy</bpmn2:sourceRef>
+          <bpmn2:targetRef>DataInput_150</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataOutputAssociation id="DataOutputAssociation_3">
+          <bpmn2:sourceRef>DataOutput_6</bpmn2:sourceRef>
+          <bpmn2:targetRef>exception</bpmn2:targetRef>
+        </bpmn2:dataOutputAssociation>
+      </bpmn2:task>
+      <bpmn2:sequenceFlow id="SequenceFlow_7" tns:priority="1" sourceRef="Task_18" targetRef="EndEvent_1"/>
+    </bpmn2:subProcess>
+    <bpmn2:sequenceFlow id="SequenceFlow_44" tns:priority="1" sourceRef="ExclusiveGateway_2" targetRef="ExclusiveGateway_5">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_117" language="http://www.java.com/java">return !(settlementParam.getRunFrom().equalsIgnoreCase(&quot;B&quot;));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SequenceFlow_45" tns:priority="1" sourceRef="StartEvent_1" targetRef="Task_12"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_46" tns:priority="1" sourceRef="CallActivity_3" targetRef="ExclusiveGateway_9"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_47" tns:priority="1" sourceRef="CallActivity_1" targetRef="Task_15"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_49" tns:priority="1" sourceRef="CallActivity_5" targetRef="ExclusiveGateway_7"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_50" tns:priority="1" sourceRef="ExclusiveGateway_7" targetRef="Task_17"/>
+    <bpmn2:task id="Task_12" tns:taskName="SettlementRunProcessWIH" tns:displayName="SettlementRunProcessWIH" tns:icon="icon-info.gif" name="Start Logging Messages">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Start Logging Messages]]></tns:metaValue>
+        </tns:metaData>
+        <tns:metaData name="customAsync">
+          <tns:metaValue><![CDATA[true]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Calling Start Logging Messages&quot;);
+log.info(&quot;startTime : &quot;+startTime);
+log.info(&quot;settlementParam : &quot;+settlementParam);
+log.info(&quot;isTestRun : &quot;+isTestRun);
+log.info(&quot;mceDataLoadByController : &quot;+settlementParam.isMceDataLoadByController());
+</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Completed Start Logging Messages&quot;);</tns:script>
+        </tns:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_45</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_5">
+        <bpmn2:dataInput id="DataInput_108" name="className"/>
+        <bpmn2:dataInput id="DataInput_109" itemSubjectRef="ItemDefinition_9" name="TaskName"/>
+        <bpmn2:dataInput id="DataInput_110" itemSubjectRef="ItemDefinition_9" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_111" itemSubjectRef="ItemDefinition_3237" name="startTime"/>
+        <bpmn2:dataInput id="DataInput_112" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+        <bpmn2:dataOutput id="DataOutput_17" itemSubjectRef="ItemDefinition_3237" name="startTime"/>
+        <bpmn2:inputSet id="_InputSet_92">
+          <bpmn2:dataInputRefs>DataInput_108</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_109</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_110</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_111</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_112</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_13" name="Output Set 13">
+          <bpmn2:dataOutputRefs>DataOutput_17</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_314">
+        <bpmn2:targetRef>DataInput_108</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_73">
+        <bpmn2:targetRef>DataInput_109</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_27">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_63">SettlementRunProcessWIH</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_4">DataInput_109</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_74">
+        <bpmn2:targetRef>DataInput_110</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_50">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_102">startLoggingMessages</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_66">DataInput_110</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_75">
+        <bpmn2:sourceRef>startTime</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_111</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_76">
+        <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_112</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_13">
+        <bpmn2:sourceRef>DataOutput_17</bpmn2:sourceRef>
+        <bpmn2:targetRef>startTime</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_3" tns:priority="1" sourceRef="Task_12" targetRef="Task_4"/>
+    <bpmn2:task id="Task_13" tns:taskName="SettlementRunProcessWIH" tns:displayName="SettlementRunProcessWIH" tns:icon="icon-info.gif" name="Register Event For Run">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Register Event For Run]]></tns:metaValue>
+        </tns:metaData>
+        <tns:metaData name="customAsync">
+          <tns:metaValue><![CDATA[true]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Calling Register Event for Run&quot;);
+if(settRunPackage == null)
+{
+	log.info(&quot;settRunPackage : &quot;+settRunPackage);
+	settRunPackage = new com.emc.settlement.model.backend.pojo.SettRunPkg();
+}
+kcontext.setVariable(&quot;settRunPackage&quot;, settRunPackage);
+log.info(&quot; Run Packages initialised &quot;);</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Calling Register Event for Run&quot;);</tns:script>
+        </tns:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_41</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_12</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_14">
+        <bpmn2:dataInput id="DataInput_113" name="className"/>
+        <bpmn2:dataInput id="DataInput_114" itemSubjectRef="ItemDefinition_9" name="TaskName"/>
+        <bpmn2:dataInput id="DataInput_115" itemSubjectRef="ItemDefinition_9" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_117" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+        <bpmn2:dataOutput id="DataOutput_19" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+        <bpmn2:inputSet id="InputSet_1">
+          <bpmn2:dataInputRefs>DataInput_113</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_114</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_115</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_117</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_14" name="Output Set 13">
+          <bpmn2:dataOutputRefs>DataOutput_19</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_77">
+        <bpmn2:targetRef>DataInput_113</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_78">
+        <bpmn2:targetRef>DataInput_114</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_51">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_112">SettlementRunProcessWIH</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_114">DataInput_109</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_79">
+        <bpmn2:targetRef>DataInput_115</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_52">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_115">registerEventForRun</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_116">DataInput_110</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_81">
+        <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_117</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_15">
+        <bpmn2:sourceRef>DataOutput_19</bpmn2:sourceRef>
+        <bpmn2:targetRef>settlementParam</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:task id="Task_14" tns:taskName="SettlementRunProcessWIH" tns:displayName="SettlementRunProcessWIH" tns:icon="icon-info.gif" name="Prerequisite Complete">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Prerequisite Complete]]></tns:metaValue>
+        </tns:metaData>
+        <tns:metaData name="customAsync">
+          <tns:metaValue><![CDATA[true]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Calling Prerequisite Complete&quot;);</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Completed Prerequisite Complete&quot;);</tns:script>
+        </tns:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_12</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_13</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_21">
+        <bpmn2:dataInput id="DataInput_118" name="className"/>
+        <bpmn2:dataInput id="DataInput_119" itemSubjectRef="ItemDefinition_9" name="TaskName"/>
+        <bpmn2:dataInput id="DataInput_120" itemSubjectRef="ItemDefinition_9" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_121" itemSubjectRef="ItemDefinition_266" name="invokedBy"/>
+        <bpmn2:dataInput id="DataInput_122" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+        <bpmn2:dataOutput id="DataOutput_20" itemSubjectRef="ItemDefinition_266" name="invokedBy"/>
+        <bpmn2:inputSet id="InputSet_4">
+          <bpmn2:dataInputRefs>DataInput_118</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_119</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_120</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_121</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_122</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_18" name="Output Set 13">
+          <bpmn2:dataOutputRefs>DataOutput_20</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_82">
+        <bpmn2:targetRef>DataInput_118</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_83">
+        <bpmn2:targetRef>DataInput_119</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_53">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_118">SettlementRunProcessWIH</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_119">DataInput_109</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_84">
+        <bpmn2:targetRef>DataInput_120</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_54">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_120">preRequisiteComplete</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_121">DataInput_110</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_85">
+        <bpmn2:sourceRef>invokedBy</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_121</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_86">
+        <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_122</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_16">
+        <bpmn2:sourceRef>DataOutput_20</bpmn2:sourceRef>
+        <bpmn2:targetRef>invokedBy</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_12" tns:priority="1" sourceRef="Task_13" targetRef="Task_14"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_13" tns:priority="1" sourceRef="Task_14" targetRef="CallActivity_1"/>
+    <bpmn2:task id="Task_15" tns:taskName="SettlementRunProcessWIH" tns:displayName="SettlementRunProcessWIH" tns:icon="icon-info.gif" name="Call Prepare Run Packages">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Call Prepare Run Packages]]></tns:metaValue>
+        </tns:metaData>
+        <tns:metaData name="customAsync">
+          <tns:metaValue><![CDATA[true]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Calling Prepare Run Packages&quot;);
+
+</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Completed Prepare Run Packages&quot;);</tns:script>
+        </tns:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_47</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_15</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_22">
+        <bpmn2:dataInput id="DataInput_123" name="className"/>
+        <bpmn2:dataInput id="DataInput_124" itemSubjectRef="ItemDefinition_9" name="TaskName"/>
+        <bpmn2:dataInput id="DataInput_125" itemSubjectRef="ItemDefinition_9" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_126" itemSubjectRef="ItemDefinition_266" name="invokedBy"/>
+        <bpmn2:dataInput id="DataInput_127" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+        <bpmn2:dataInput id="DataInput_128" itemSubjectRef="ItemDefinition_2233" name="settRunPackage"/>
+        <bpmn2:dataInput id="DataInput_129" itemSubjectRef="ItemDefinition_266" name="mcrChange"/>
+        <bpmn2:dataInput id="DataInput_130" itemSubjectRef="ItemDefinition_9" name="invokedByModule"/>
+        <bpmn2:dataInput id="DataInput_12" itemSubjectRef="ItemDefinition_266" name="clwqExists"/>
+        <bpmn2:dataOutput id="DataOutput_21" itemSubjectRef="ItemDefinition_9" name="invokedByModule"/>
+        <bpmn2:dataOutput id="DataOutput_22" itemSubjectRef="ItemDefinition_2233" name="settRunPackage"/>
+        <bpmn2:inputSet id="InputSet_9">
+          <bpmn2:dataInputRefs>DataInput_123</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_124</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_125</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_126</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_127</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_128</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_129</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_130</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_12</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_19" name="Output Set 13">
+          <bpmn2:dataOutputRefs>DataOutput_21</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_22</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_87">
+        <bpmn2:targetRef>DataInput_123</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_88">
+        <bpmn2:targetRef>DataInput_124</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_55">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_122">SettlementRunProcessWIH</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_123">DataInput_109</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_89">
+        <bpmn2:targetRef>DataInput_125</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_56">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_124">prepareRunPackages</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_125">DataInput_110</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_90">
+        <bpmn2:sourceRef>invokedBy</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_126</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_91">
+        <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_127</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_92">
+        <bpmn2:sourceRef>settRunPackage</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_128</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_93">
+        <bpmn2:sourceRef>mcrChange</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_129</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_94">
+        <bpmn2:sourceRef>invokedByModule</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_130</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_5">
+        <bpmn2:sourceRef>clwqExists</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_12</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_17">
+        <bpmn2:sourceRef>DataOutput_21</bpmn2:sourceRef>
+        <bpmn2:targetRef>invokedByModule</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_18">
+        <bpmn2:sourceRef>DataOutput_22</bpmn2:sourceRef>
+        <bpmn2:targetRef>settRunPackage</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:task id="Task_16" tns:taskName="SettlementRunProcessWIH" tns:displayName="SettlementRunProcessWIH" tns:icon="icon-info.gif" name="Call Create Run Entry">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Call Create Run Entry]]></tns:metaValue>
+        </tns:metaData>
+        <tns:metaData name="customAsync">
+          <tns:metaValue><![CDATA[true]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Calling Create Run Entry&quot;);</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Completed Create Run Entry - settRunId :&quot;+settRunId);
+log.info(&quot;mcrChange : &quot;+mcrChange);
+log.info(&quot;invokedBy : &quot;+invokedBy);
+log.info(&quot;mceDataLoadByController : &quot;+settlementParam.isMceDataLoadByController());</tns:script>
+        </tns:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_15</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_16</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_23">
+        <bpmn2:dataInput id="DataInput_131" name="className"/>
+        <bpmn2:dataInput id="DataInput_132" itemSubjectRef="ItemDefinition_9" name="TaskName"/>
+        <bpmn2:dataInput id="DataInput_133" itemSubjectRef="ItemDefinition_9" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_134" itemSubjectRef="ItemDefinition_2233" name="settRunPackage"/>
+        <bpmn2:dataInput id="DataInput_135" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+        <bpmn2:dataInput id="DataInput_136" itemSubjectRef="ItemDefinition_9" name="nemsControllerEveId"/>
+        <bpmn2:dataInput id="DataInput_137" itemSubjectRef="ItemDefinition_9" name="mcrString"/>
+        <bpmn2:dataInput id="DataInput_138" itemSubjectRef="ItemDefinition_9" name="settRunId"/>
+        <bpmn2:dataOutput id="DataOutput_26" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+        <bpmn2:dataOutput id="DataOutput_2" itemSubjectRef="ItemDefinition_9" name="settRunId"/>
+        <bpmn2:inputSet id="InputSet_10">
+          <bpmn2:dataInputRefs>DataInput_131</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_132</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_133</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_134</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_135</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_136</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_137</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_138</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_20" name="Output Set 13">
+          <bpmn2:dataOutputRefs>DataOutput_26</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_2</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_95">
+        <bpmn2:targetRef>DataInput_131</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_96">
+        <bpmn2:targetRef>DataInput_132</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_57">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_126">SettlementRunProcessWIH</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_127">DataInput_109</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_97">
+        <bpmn2:targetRef>DataInput_133</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_58">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_128">createRunEntry</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_129">DataInput_110</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_98">
+        <bpmn2:sourceRef>settRunPackage</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_134</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_99">
+        <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_135</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_100">
+        <bpmn2:sourceRef>nemsControllerEveId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_136</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_101">
+        <bpmn2:sourceRef>mcrString</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_137</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_102">
+        <bpmn2:sourceRef>settRunId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_138</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_22">
+        <bpmn2:sourceRef>DataOutput_26</bpmn2:sourceRef>
+        <bpmn2:targetRef>settlementParam</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_2">
+        <bpmn2:sourceRef>DataOutput_2</bpmn2:sourceRef>
+        <bpmn2:targetRef>settRunId</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_15" tns:priority="1" sourceRef="Task_15" targetRef="Task_16"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_16" tns:priority="1" sourceRef="Task_16" targetRef="ExclusiveGateway_8"/>
+    <bpmn2:task id="Task_17" tns:taskName="SettlementRunProcessWIH" tns:displayName="SettlementRunProcessWIH" tns:icon="icon-info.gif" name="Call Execute Rules">
+      <bpmn2:extensionElements>
+        <tns:metaData name="elementname">
+          <tns:metaValue><![CDATA[Call Execute Rules]]></tns:metaValue>
+        </tns:metaData>
+        <tns:metaData name="customAsync">
+          <tns:metaValue><![CDATA[true]]></tns:metaValue>
+        </tns:metaData>
+        <tns:onEntry-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Calling Invoke Rules&quot;);
+if(alertNotification == null)
+{
+	alertNotification = new com.emc.settlement.model.backend.pojo.AlertNotification();
+}
+log.info(&quot;alertNotification  :&quot;+alertNotification );
+kcontext.setVariable(&quot;alertNotification&quot;,alertNotification);</tns:script>
+        </tns:onEntry-script>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>Logger log = LoggerFactory.getLogger(&quot;RunProcess&quot;);
+log.info(&quot;Completed Invoke Rules&quot;);</tns:script>
+        </tns:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_50</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_21</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_24">
+        <bpmn2:dataInput id="DataInput_139" name="className"/>
+        <bpmn2:dataInput id="DataInput_140" itemSubjectRef="ItemDefinition_9" name="TaskName"/>
+        <bpmn2:dataInput id="DataInput_141" itemSubjectRef="ItemDefinition_9" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_142" itemSubjectRef="ItemDefinition_2233" name="settRunPackage"/>
+        <bpmn2:dataInput id="DataInput_143" itemSubjectRef="ItemDefinition_2259" name="settlementParam"/>
+        <bpmn2:dataInput id="DataInput_144" itemSubjectRef="ItemDefinition_939" name="alertNotification"/>
+        <bpmn2:inputSet id="InputSet_12">
+          <bpmn2:dataInputRefs>DataInput_139</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_140</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_141</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_142</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_143</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_144</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_21" name="Output Set 13"/>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_103">
+        <bpmn2:targetRef>DataInput_139</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_104">
+        <bpmn2:targetRef>DataInput_140</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_59">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_130">SettlementRunProcessWIH</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_131">DataInput_109</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_105">
+        <bpmn2:targetRef>DataInput_141</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_60">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_132">invokeRules</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_133">DataInput_110</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_106">
+        <bpmn2:sourceRef>settRunPackage</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_142</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_107">
+        <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_143</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_108">
+        <bpmn2:sourceRef>alertNotification</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_144</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_21" tns:priority="1" sourceRef="Task_17" targetRef="CallActivity_6"/>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_Process_1" bpmnElement="RunProcess">
+      <bpmndi:BPMNShape id="BPMNShape_SubProcess_1" bpmnElement="SubProcess_1" isExpanded="true">
+        <dc:Bounds height="196.0" width="581.0" x="98.0" y="645.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_1">
+          <dc:Bounds height="17.0" width="91.0" x="104.0" y="648.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_StartEvent_1" bpmnElement="StartEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="170.0" y="250.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_2">
+          <dc:Bounds height="17.0" width="31.0" x="172.0" y="286.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_4" bpmnElement="Task_4" isExpanded="true">
+        <dc:Bounds height="67.0" width="110.0" x="450.0" y="234.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_3">
+          <dc:Bounds height="51.0" width="85.0" x="462.0" y="242.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_1" bpmnElement="ExclusiveGateway_1" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="610.0" y="243.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_4"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_2" bpmnElement="ExclusiveGateway_2" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="730.0" y="243.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_5"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_2" bpmnElement="EndEvent_2">
+        <dc:Bounds height="36.0" width="36.0" x="618.0" y="97.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_6">
+          <dc:Bounds height="17.0" width="26.0" x="623.0" y="133.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_1" bpmnElement="Task_1" isExpanded="true">
+        <dc:Bounds height="60.0" width="110.0" x="700.0" y="20.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_7">
+          <dc:Bounds height="51.0" width="98.0" x="706.0" y="24.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_3" bpmnElement="EndEvent_3">
+        <dc:Bounds height="36.0" width="36.0" x="678.0" y="562.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_8">
+          <dc:Bounds height="17.0" width="26.0" x="683.0" y="598.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_3" bpmnElement="ExclusiveGateway_3" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="730.0" y="130.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_9"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_4" bpmnElement="ExclusiveGateway_4" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="965.0" y="69.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_10"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_5" bpmnElement="ExclusiveGateway_5" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="869.0" y="243.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_11"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CallActivity_1" bpmnElement="CallActivity_1" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="1280.0" y="244.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_12">
+          <dc:Bounds height="34.0" width="98.0" x="1286.0" y="252.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_8" bpmnElement="ExclusiveGateway_8" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="990.0" y="377.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_13"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CallActivity_3" bpmnElement="CallActivity_3" isExpanded="true">
+        <dc:Bounds height="73.0" width="131.0" x="729.0" y="365.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_14">
+          <dc:Bounds height="34.0" width="122.0" x="733.0" y="384.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_9" bpmnElement="ExclusiveGateway_9" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="990.0" y="514.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_15"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CallActivity_2" bpmnElement="CallActivity_2" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="1109.0" y="514.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_16">
+          <dc:Bounds height="34.0" width="81.0" x="1123.0" y="522.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CallActivity_4" bpmnElement="CallActivity_4" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="1280.0" y="514.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_17">
+          <dc:Bounds height="34.0" width="70.0" x="1300.0" y="522.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CallActivity_5" bpmnElement="CallActivity_5" isExpanded="true">
+        <dc:Bounds height="74.0" width="110.0" x="1600.0" y="503.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_18">
+          <dc:Bounds height="51.0" width="108.0" x="1601.0" y="514.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_6" bpmnElement="ExclusiveGateway_6" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="1445.0" y="515.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_19"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_7" bpmnElement="ExclusiveGateway_7" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="1445.0" y="644.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_20"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CallActivity_6" bpmnElement="CallActivity_6" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="951.0" y="644.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_21">
+          <dc:Bounds height="34.0" width="87.0" x="962.0" y="652.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_9" bpmnElement="Task_9" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="756.0" y="644.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_22">
+          <dc:Bounds height="34.0" width="103.0" x="759.0" y="652.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_10" bpmnElement="Task_10" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="756.0" y="555.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_23">
+          <dc:Bounds height="34.0" width="98.0" x="762.0" y="563.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_IntermediateCatchEvent_1" bpmnElement="IntermediateCatchEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="840.0" y="118.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_24"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_1" bpmnElement="EndEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="621.0" y="715.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_25">
+          <dc:Bounds height="34.0" width="75.0" x="602.0" y="751.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CallActivity_7" bpmnElement="CallActivity_7" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="440.0" y="708.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_26">
+          <dc:Bounds height="34.0" width="87.0" x="451.0" y="716.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_StartEvent_2" bpmnElement="StartEvent_2">
+        <dc:Bounds height="36.0" width="36.0" x="137.0" y="715.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_27">
+          <dc:Bounds height="34.0" width="80.0" x="115.0" y="751.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_12" bpmnElement="Task_12" isExpanded="true">
+        <dc:Bounds height="62.0" width="132.0" x="250.0" y="237.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_28">
+          <dc:Bounds height="34.0" width="98.0" x="267.0" y="251.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_13" bpmnElement="Task_13" isExpanded="true">
+        <dc:Bounds height="62.0" width="132.0" x="950.0" y="238.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_29">
+          <dc:Bounds height="34.0" width="108.0" x="962.0" y="252.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_14" bpmnElement="Task_14" isExpanded="true">
+        <dc:Bounds height="62.0" width="132.0" x="1123.0" y="238.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_30">
+          <dc:Bounds height="34.0" width="86.0" x="1146.0" y="252.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_15" bpmnElement="Task_15" isExpanded="true">
+        <dc:Bounds height="62.0" width="132.0" x="1269.0" y="370.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_31">
+          <dc:Bounds height="34.0" width="128.0" x="1271.0" y="384.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_16" bpmnElement="Task_16" isExpanded="true">
+        <dc:Bounds height="62.0" width="132.0" x="1098.0" y="370.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_32">
+          <dc:Bounds height="34.0" width="120.0" x="1104.0" y="384.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_17" bpmnElement="Task_17" isExpanded="true">
+        <dc:Bounds height="62.0" width="132.0" x="1169.0" y="638.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_33">
+          <dc:Bounds height="17.0" width="124.0" x="1173.0" y="660.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_18" bpmnElement="Task_18" isExpanded="true">
+        <dc:Bounds height="62.0" width="132.0" x="250.0" y="702.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_34">
+          <dc:Bounds height="34.0" width="72.0" x="280.0" y="716.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="SequenceFlow_1" sourceElement="BPMNShape_Task_4" targetElement="BPMNShape_ExclusiveGateway_1">
+        <di:waypoint xsi:type="dc:Point" x="560.0" y="267.0"/>
+        <di:waypoint xsi:type="dc:Point" x="585.0" y="267.0"/>
+        <di:waypoint xsi:type="dc:Point" x="610.0" y="268.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_35"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_2" bpmnElement="SequenceFlow_2" sourceElement="BPMNShape_ExclusiveGateway_1" targetElement="BPMNShape_ExclusiveGateway_2">
+        <di:waypoint xsi:type="dc:Point" x="660.0" y="268.0"/>
+        <di:waypoint xsi:type="dc:Point" x="695.0" y="268.0"/>
+        <di:waypoint xsi:type="dc:Point" x="730.0" y="268.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_36">
+          <dc:Bounds height="51.0" width="54.0" x="669.0" y="269.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_4" bpmnElement="SequenceFlow_4" sourceElement="BPMNShape_ExclusiveGateway_1" targetElement="BPMNShape_EndEvent_2">
+        <di:waypoint xsi:type="dc:Point" x="635.0" y="243.0"/>
+        <di:waypoint xsi:type="dc:Point" x="635.0" y="188.0"/>
+        <di:waypoint xsi:type="dc:Point" x="636.0" y="133.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_37">
+          <dc:Bounds height="51.0" width="46.0" x="613.0" y="189.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_5" bpmnElement="SequenceFlow_5" sourceElement="BPMNShape_ExclusiveGateway_2" targetElement="BPMNShape_ExclusiveGateway_3">
+        <di:waypoint xsi:type="dc:Point" x="755.0" y="243.0"/>
+        <di:waypoint xsi:type="dc:Point" x="755.0" y="212.0"/>
+        <di:waypoint xsi:type="dc:Point" x="755.0" y="180.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_38"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_10" bpmnElement="SequenceFlow_10" sourceElement="BPMNShape_ExclusiveGateway_3" targetElement="BPMNShape_Task_1">
+        <di:waypoint xsi:type="dc:Point" x="755.0" y="130.0"/>
+        <di:waypoint xsi:type="dc:Point" x="755.0" y="105.0"/>
+        <di:waypoint xsi:type="dc:Point" x="755.0" y="80.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_39"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_11" bpmnElement="SequenceFlow_11" sourceElement="BPMNShape_Task_1" targetElement="BPMNShape_ExclusiveGateway_4">
+        <di:waypoint xsi:type="dc:Point" x="810.0" y="50.0"/>
+        <di:waypoint xsi:type="dc:Point" x="990.0" y="50.0"/>
+        <di:waypoint xsi:type="dc:Point" x="990.0" y="69.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_40"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_6" bpmnElement="SequenceFlow_6" sourceElement="BPMNShape_ExclusiveGateway_4" targetElement="BPMNShape_ExclusiveGateway_5">
+        <di:waypoint xsi:type="dc:Point" x="990.0" y="119.0"/>
+        <di:waypoint xsi:type="dc:Point" x="990.0" y="181.0"/>
+        <di:waypoint xsi:type="dc:Point" x="894.0" y="181.0"/>
+        <di:waypoint xsi:type="dc:Point" x="894.0" y="243.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_41">
+          <dc:Bounds height="17.0" width="76.0" x="905.0" y="182.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_33" bpmnElement="SequenceFlow_33" sourceElement="BPMNShape_ExclusiveGateway_8" targetElement="BPMNShape_CallActivity_3">
+        <di:waypoint xsi:type="dc:Point" x="990.0" y="402.0"/>
+        <di:waypoint xsi:type="dc:Point" x="925.0" y="402.0"/>
+        <di:waypoint xsi:type="dc:Point" x="860.0" y="401.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_42">
+          <dc:Bounds height="34.0" width="80.0" x="886.0" y="403.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_34" bpmnElement="SequenceFlow_34" sourceElement="BPMNShape_ExclusiveGateway_8" targetElement="BPMNShape_ExclusiveGateway_9">
+        <di:waypoint xsi:type="dc:Point" x="1015.0" y="427.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1015.0" y="470.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1015.0" y="514.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_43">
+          <dc:Bounds height="51.0" width="80.0" x="976.0" y="472.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_8" bpmnElement="SequenceFlow_8" sourceElement="BPMNShape_ExclusiveGateway_9" targetElement="BPMNShape_CallActivity_2">
+        <di:waypoint xsi:type="dc:Point" x="1040.0" y="539.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1074.0" y="539.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1109.0" y="539.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_44"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_20" bpmnElement="SequenceFlow_20" sourceElement="BPMNShape_CallActivity_2" targetElement="BPMNShape_CallActivity_4">
+        <di:waypoint xsi:type="dc:Point" x="1219.0" y="539.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1249.0" y="539.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1280.0" y="539.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_45"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_22" bpmnElement="SequenceFlow_22" sourceElement="BPMNShape_CallActivity_4" targetElement="BPMNShape_ExclusiveGateway_6">
+        <di:waypoint xsi:type="dc:Point" x="1390.0" y="539.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1417.0" y="540.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1445.0" y="540.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_46"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_23" bpmnElement="SequenceFlow_23" sourceElement="BPMNShape_ExclusiveGateway_6" targetElement="BPMNShape_CallActivity_5">
+        <di:waypoint xsi:type="dc:Point" x="1495.0" y="540.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1547.0" y="540.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1600.0" y="540.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_47"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_26" bpmnElement="SequenceFlow_26" sourceElement="BPMNShape_ExclusiveGateway_6" targetElement="BPMNShape_ExclusiveGateway_7">
+        <di:waypoint xsi:type="dc:Point" x="1470.0" y="565.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1470.0" y="604.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1470.0" y="644.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_48"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_17" bpmnElement="SequenceFlow_17" sourceElement="BPMNShape_CallActivity_6" targetElement="BPMNShape_Task_9">
+        <di:waypoint xsi:type="dc:Point" x="951.0" y="669.0"/>
+        <di:waypoint xsi:type="dc:Point" x="909.0" y="669.0"/>
+        <di:waypoint xsi:type="dc:Point" x="866.0" y="669.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_49"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_27" bpmnElement="SequenceFlow_27" sourceElement="BPMNShape_Task_9" targetElement="BPMNShape_Task_10">
+        <di:waypoint xsi:type="dc:Point" x="811.0" y="644.0"/>
+        <di:waypoint xsi:type="dc:Point" x="811.0" y="625.0"/>
+        <di:waypoint xsi:type="dc:Point" x="811.0" y="605.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_50"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_28" bpmnElement="SequenceFlow_28" sourceElement="BPMNShape_Task_10" targetElement="BPMNShape_EndEvent_3">
+        <di:waypoint xsi:type="dc:Point" x="756.0" y="580.0"/>
+        <di:waypoint xsi:type="dc:Point" x="735.0" y="580.0"/>
+        <di:waypoint xsi:type="dc:Point" x="714.0" y="580.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_51"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_29" bpmnElement="SequenceFlow_29" sourceElement="BPMNShape_IntermediateCatchEvent_1" targetElement="BPMNShape_ExclusiveGateway_3">
+        <di:waypoint xsi:type="dc:Point" x="840.0" y="136.0"/>
+        <di:waypoint xsi:type="dc:Point" x="810.0" y="136.0"/>
+        <di:waypoint xsi:type="dc:Point" x="810.0" y="155.0"/>
+        <di:waypoint xsi:type="dc:Point" x="780.0" y="155.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_52"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_31" bpmnElement="SequenceFlow_31" sourceElement="BPMNShape_ExclusiveGateway_4" targetElement="BPMNShape_IntermediateCatchEvent_1">
+        <di:waypoint xsi:type="dc:Point" x="965.0" y="94.0"/>
+        <di:waypoint xsi:type="dc:Point" x="858.0" y="94.0"/>
+        <di:waypoint xsi:type="dc:Point" x="858.0" y="118.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_53"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_41" bpmnElement="SequenceFlow_41" sourceElement="BPMNShape_ExclusiveGateway_5" targetElement="BPMNShape_Task_13">
+        <di:waypoint xsi:type="dc:Point" x="919.0" y="268.0"/>
+        <di:waypoint xsi:type="dc:Point" x="934.0" y="268.0"/>
+        <di:waypoint xsi:type="dc:Point" x="950.0" y="269.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_54"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_19" bpmnElement="SequenceFlow_19" sourceElement="BPMNShape_CallActivity_7" targetElement="BPMNShape_Task_18">
+        <di:waypoint xsi:type="dc:Point" x="440.0" y="733.0"/>
+        <di:waypoint xsi:type="dc:Point" x="411.0" y="733.0"/>
+        <di:waypoint xsi:type="dc:Point" x="382.0" y="733.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_55"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_44" bpmnElement="SequenceFlow_44" sourceElement="BPMNShape_ExclusiveGateway_2" targetElement="BPMNShape_ExclusiveGateway_5">
+        <di:waypoint xsi:type="dc:Point" x="780.0" y="268.0"/>
+        <di:waypoint xsi:type="dc:Point" x="824.0" y="268.0"/>
+        <di:waypoint xsi:type="dc:Point" x="869.0" y="268.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_56"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_45" bpmnElement="SequenceFlow_45" sourceElement="BPMNShape_StartEvent_1" targetElement="BPMNShape_Task_12">
+        <di:waypoint xsi:type="dc:Point" x="206.0" y="268.0"/>
+        <di:waypoint xsi:type="dc:Point" x="228.0" y="268.0"/>
+        <di:waypoint xsi:type="dc:Point" x="250.0" y="268.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_57"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_46" bpmnElement="SequenceFlow_46" sourceElement="BPMNShape_CallActivity_3" targetElement="BPMNShape_ExclusiveGateway_9">
+        <di:waypoint xsi:type="dc:Point" x="794.0" y="438.0"/>
+        <di:waypoint xsi:type="dc:Point" x="794.0" y="539.0"/>
+        <di:waypoint xsi:type="dc:Point" x="990.0" y="539.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_58"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_47" bpmnElement="SequenceFlow_47" sourceElement="BPMNShape_CallActivity_1" targetElement="BPMNShape_Task_15">
+        <di:waypoint xsi:type="dc:Point" x="1335.0" y="294.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1335.0" y="332.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1335.0" y="370.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_59"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_49" bpmnElement="SequenceFlow_49" sourceElement="BPMNShape_CallActivity_5" targetElement="BPMNShape_ExclusiveGateway_7">
+        <di:waypoint xsi:type="dc:Point" x="1655.0" y="577.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1655.0" y="669.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1495.0" y="669.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_60"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_50" bpmnElement="SequenceFlow_50" sourceElement="BPMNShape_ExclusiveGateway_7" targetElement="BPMNShape_Task_17">
+        <di:waypoint xsi:type="dc:Point" x="1445.0" y="669.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1373.0" y="669.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1301.0" y="669.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_61"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_9" bpmnElement="SequenceFlow_9" sourceElement="BPMNShape_StartEvent_2">
+        <di:waypoint xsi:type="dc:Point" x="173.0" y="733.0"/>
+        <di:waypoint xsi:type="dc:Point" x="240.0" y="733.0"/>
+        <di:waypoint xsi:type="dc:Point" x="240.0" y="774.0"/>
+        <di:waypoint xsi:type="dc:Point" x="494.0" y="774.0"/>
+        <di:waypoint xsi:type="dc:Point" x="494.0" y="760.0"/>
+        <di:waypoint xsi:type="dc:Point" x="494.0" y="750.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_62"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="SequenceFlow_3" sourceElement="BPMNShape_Task_12" targetElement="BPMNShape_Task_4">
+        <di:waypoint xsi:type="dc:Point" x="382.0" y="268.0"/>
+        <di:waypoint xsi:type="dc:Point" x="416.0" y="267.0"/>
+        <di:waypoint xsi:type="dc:Point" x="450.0" y="267.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_63"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_12" bpmnElement="SequenceFlow_12" sourceElement="BPMNShape_Task_13" targetElement="BPMNShape_Task_14">
+        <di:waypoint xsi:type="dc:Point" x="1082.0" y="269.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1102.0" y="269.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1123.0" y="269.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_64"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_13" bpmnElement="SequenceFlow_13" sourceElement="BPMNShape_Task_14" targetElement="BPMNShape_CallActivity_1">
+        <di:waypoint xsi:type="dc:Point" x="1255.0" y="269.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1267.0" y="269.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1280.0" y="269.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_65"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_15" bpmnElement="SequenceFlow_15" sourceElement="BPMNShape_Task_15" targetElement="BPMNShape_Task_16">
+        <di:waypoint xsi:type="dc:Point" x="1269.0" y="401.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1250.0" y="401.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1230.0" y="401.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_66"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_16" bpmnElement="SequenceFlow_16" sourceElement="BPMNShape_Task_16" targetElement="BPMNShape_ExclusiveGateway_8">
+        <di:waypoint xsi:type="dc:Point" x="1098.0" y="401.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1069.0" y="402.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1040.0" y="402.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_67"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_21" bpmnElement="SequenceFlow_21" sourceElement="BPMNShape_Task_17" targetElement="BPMNShape_CallActivity_6">
+        <di:waypoint xsi:type="dc:Point" x="1169.0" y="669.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1115.0" y="669.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1061.0" y="669.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_68"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_7" bpmnElement="SequenceFlow_7" sourceElement="BPMNShape_Task_18" targetElement="BPMNShape_EndEvent_1">
+        <di:waypoint xsi:type="dc:Point" x="316.0" y="702.0"/>
+        <di:waypoint xsi:type="dc:Point" x="316.0" y="692.0"/>
+        <di:waypoint xsi:type="dc:Point" x="639.0" y="692.0"/>
+        <di:waypoint xsi:type="dc:Point" x="639.0" y="715.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_69"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

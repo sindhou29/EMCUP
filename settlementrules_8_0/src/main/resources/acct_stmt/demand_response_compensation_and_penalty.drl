@@ -1,0 +1,120 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import java.util.List;
+import com.emc.sett.impl.*;
+
+global java.math.BigDecimal inGstRate;
+global java.math.BigDecimal outGstRate;
+
+/*
+* the node’s LCSCP = Round(For(the node’s interval, the interval’s LCP) * the node’s LCQ, 2)
+*/
+rule "LCSC in Settlement - node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( lcscp == null, lcq != null, $pd : periodId, $id : accountId, $lcq : lcq )
+    	Period( lcp != null, periodId == $pd && accountId == $id, $lcp : lcp )
+    then
+        $n.setLcscp( $lcp.multiply( $lcq ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $n );
+end
+
+/*
+* the interval’s LCSC = InstanceSum(the interval’s nodes, the node’s LCSCP) 
+*/
+rule "LCSC in Settlement - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( lcsc == null, $pd : periodId, $sa : accountId )
+    	$ns : List() from collect( Facility( $pd == periodId && $sa == accountId ) )
+        $lcsc : BigDecimal() from accumulate(
+        							Facility( lcscp != null, amt : lcscp ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setLcsc( $lcsc );
+        update( $i );
+end
+
+/*
+* the interval’s input GST for LCSC = the interval’s LCSC * the input GST if
+* For(the interval’s account, the account is GST taxable)
+*
+* the interval’s output GST for LCSC = 0
+*
+* the interval’s total LCSC = the interval’s LCSC + the interval’s input GST for LCSC
+*/
+rule "LCSC in Settlement - Calculate taxable GST amount"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( ipGstLcsc == null, lcsc != null, $id : accountId, $lcsc : lcsc )
+    	Account( accountId == $id && taxable == true )
+    then
+        $i.setIpGstLcsc( $lcsc.multiply(inGstRate) );
+        $i.setOpGstLcsc( BigDecimal.ZERO );
+        $i.setTotalLcsc( $i.getLcsc().add( $i.getIpGstLcsc() ) );
+        update( $i );
+end
+
+/*
+* the interval’s input GST for LCSC = the interval’s LCSC * the input GST if
+* For(the interval’s account, the account is GST taxable)
+*
+* the interval’s output GST for LCSC = 0
+*
+* the interval’s total LCSC = the interval’s LCSC + the interval’s input GST for LCSC
+*/
+rule "LCSC in Settlement - Calculate non-taxable GST amount"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( ipGstLcsc == null, lcsc != null, $id : accountId, $lcsc : lcsc )
+    	Account( accountId == $id && taxable == false )
+    then
+        $i.setIpGstLcsc( BigDecimal.ZERO );
+        $i.setOpGstLcsc( BigDecimal.ZERO );
+        $i.setTotalLcsc( $i.getLcsc().add( $i.getIpGstLcsc() ) );
+        update( $i );
+end
+
+/*
+* the account’s LCSC = InstanceSum(the account's intervals, the interval’s LCSC)
+*
+* the account’s input GST for LCSC = Round(InstanceSum(the account's intervals, the interval’s input GST for LCSC), 2)
+*
+* the account’s output GST for LCSC = Round(InstanceSum(the account's intervals, the interval’s output GST for LCSC), 2)
+*
+* the account’s total LCSC = the account’s LCSC + the account’s input GST for LCSC
+*/
+rule "LCSC in Settlement - account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( lcsc == null, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $lcsc : BigDecimal() from accumulate(
+        							Period( lcsc != null, amt : lcsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vlcsc : BigDecimal() from accumulate(
+        							Period( ipGstLcsc != null, amt : ipGstLcsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $alcsc : BigDecimal() from accumulate(
+        							Period( opGstLcsc != null, amt : opGstLcsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setLcsc( $lcsc );
+        $a.setIpGstLcsc( $vlcsc.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setOpGstLcsc( $alcsc.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setTotalLcsc( $a.getLcsc().add( $a.getIpGstLcsc() ) );
+        update( $a );
+end

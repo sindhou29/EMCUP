@@ -1,0 +1,288 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import java.util.List;
+import com.emc.sett.impl.*;
+
+global java.math.BigDecimal meuc;
+global java.math.BigDecimal inGstRate;
+global java.math.BigDecimal outGstRate;
+
+/*
+* the interval’s HEUA = the interval’s NESC + the interval’s NRSC + the interval’s NTSC + the interval’s NFSC + the interval’s included NMEA
+*/
+rule "3.5.1 Settlement Interval Energy Uplift Amount (HEUA) - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( heua == null, nesc != null && nrsc != null && ntsc != null && nfsc != null && incNmea != null, $pd : periodId )
+    then
+        $i.setHeua( $i.getNesc().add( $i.getNrsc() ).add( $i.getNtsc() ).add( $i.getNfsc() ).add( $i.getIncNmea() ) );
+        update( $i );
+end
+
+/*
+* the market’s HEUA = InstanceSum(the market's intervals, the interval’s HEUA)
+*
+* the market's rounded HEUA = Round(the market's HEUA, 2)	// from 3.7_EUA_report.doc
+*
+* the market’s LCSC = InstanceSum(the market's intervals, the interval’s LCSC)
+*
+* the market’s WDQ = InstanceSum(the market's intervals, the interval’s WDQ)
+*
+* the market’s WEQ = InstanceSum(the market's intervals, the interval’s WEQ)
+*/
+rule "3.5.1 Settlement Interval Energy Uplift Amount (HEUA) - market level"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$m : Market( heua == null, $pd : periodId )
+    	$is : List() from collect( Period( periodId == $pd ) )
+        $heua : BigDecimal() from accumulate(
+        							Period( heua != null, amt : heua ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+		
+		// For 3.5.2 Hourly Energy Uplift Charge (HEUC)
+        $lcsc : BigDecimal() from accumulate(
+        							Period( lcsc != null, amt : lcsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $wdq : BigDecimal() from accumulate(
+        							Period( wdq != null, amt : wdq ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $weq : BigDecimal() from accumulate(
+        							Period( weq != null, amt : weq ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $m.setHeua( $heua );
+        $m.setRoundedHeua( $heua.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        
+		// For 3.5.2 Hourly Energy Uplift Charge (HEUC)
+        $m.setLcsc( $lcsc );
+        $m.setWdq( $wdq );
+        $m.setWeq( $weq );
+        update( $m );
+end
+
+/*
+* the market’s HLCU = Round(the market’s LCSC / the market’s WDQ, 8) if
+* the market's WDQ is not equal to 0
+*
+* the market's rounded HLCU = Round(the market's HLCU, 2)
+*/
+rule "3.5.2 Hourly Energy Uplift Charge (HEUC) - calculate HLCU using WDQ"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$m : Market( hlcu == null, lcsc != null && wdq != null, wdq > 0, $lcsc : lcsc, $wdq : wdq )
+    then
+        $m.setHlcu( $lcsc.divide( $wdq, 8, BigDecimal.ROUND_HALF_UP) );
+        $m.setRoundedHlcu( $m.getHlcu().setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $m );
+end
+
+/*
+* the market’s HLCU = 0 if
+* the market’s WDQ = 0 or
+* the market’s WDQ is unknown
+*
+* the market's rounded HLCU = Round(the market's HLCU, 2)
+*/
+rule "3.5.2 Hourly Energy Uplift Charge (HEUC) - calculate HLCU when zero WDQ"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$m : Market( hlcu == null, lcsc != null, wdq == null || wdq == 0 )
+    then
+        $m.setHlcu( BigDecimal.ZERO );
+        $m.setRoundedHlcu( BigDecimal.ZERO );
+        update( $m );
+end
+
+/*
+* the market’s HEUR = the market’s HEUA / the market’s WEQ
+*
+* the market's rounded HEUR = Round(the market's HEUR, 2)
+*
+* the market’s HEUC = the market’s HEUR + the market’s HLCU
+*
+* The market’s rounded HEUC = Round(the market’s HEUC, 2)
+*/
+rule "3.5.2 Hourly Energy Uplift Charge (HEUC) - calculate HEUR"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$m : Market( heuc == null, heua != null && weq != null && weq != 0 && hlcu != null, $heua : heua, $weq : weq, $hlcu : hlcu )
+    then
+        $m.setHeur( $heua.divide( $weq, 11, BigDecimal.ROUND_HALF_UP) );
+        $m.setRoundedHeur( $m.getHeur().setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $m.setHeuc( $m.getHeur().add( $hlcu ) );
+        $m.setRoundedHeuc( $m.getHeuc().setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $m );
+end
+
+/*
+* the interval’s HLCSA = For( the interval's market, the market’s HLCU ) * the interval’s WDQ
+*
+* the interval’s rounded HLCSA = Round(the interval’s HLCSA, 2)
+*/
+rule "3.5.2 Hourly Energy Uplift Charge (HEUC) - calculate HLCSA at period level"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$i : Period( hlcsa == null, wdq != null, $pd : periodId, $wdq : wdq )
+    	Market( periodId == $pd, hlcu != null, $hlcu : hlcu )
+    then
+        $i.setHlcsa( $hlcu.multiply( $wdq ) );
+        $i.setRoundedHlcsa( $i.getHlcsa().setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $i );
+end
+
+/*
+* the interval’s HERSA = Round(For( the interval's market, the market’s HEUR )* the interval’s WEQ, 2)
+*
+* the interval’s HEUSA = the interval’s rounded HLCSA + the interval’s HERSA
+*
+* the interval’s accounting HEUSA = the interval’s HEUSA * -1
+*/
+rule "3.5.2 Hourly Energy Uplift Charge (HEUC) - calculate HERSA at period level"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$i : Period( hersa == null, weq != null, $pd : periodId, $weq : weq )
+    	Market( periodId == $pd, heur != null, $heur : heur )
+    then
+        $i.setHersa( $heur.multiply( $weq ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $i.setHeusa( $i.getRoundedHlcsa().add( $i.getHersa() ) );
+        $i.setAccountingHeusa( $i.getHeusa().negate() );
+        update( $i );
+end
+
+/*
+* the interval’s output GST for HLCSA = the interval’s rounded HLCSA * the output GST
+*
+* the interval’s output GST for HERSA = the interval’s HERSA * the output GST
+*
+* the interval’s output GST for HEUSA = the interval’s output GST for HLCSA + the interval’s output GST for HERSA
+*
+* the interval’s total HEUSA = the interval’s HEUSA + the interval’s output GST for HEUSA
+*/
+rule "3.5.2 Hourly Energy Uplift Charge (HEUC) - Calculate GST amount"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$i : Period( opGstHlcsa == null, roundedHlcsa != null && hersa != null, $id : accountId, $roundedHlcsa : roundedHlcsa, $hersa : hersa )
+    then
+        $i.setOpGstHlcsa( $roundedHlcsa.multiply(outGstRate) );
+        $i.setOpGstHersa( $hersa.multiply(outGstRate) );
+        $i.setOpGstHeusa( $i.getOpGstHlcsa().add( $i.getOpGstHersa() ) );
+        
+        $i.setTotalHeusa( $i.getHeusa().add( $i.getOpGstHeusa() ) );
+        update( $i );
+end
+
+/*
+* the interval’s MEUSA = Round(the MEUC * the interval’s WMQ, 2)
+*
+* the interval’s accounting MEUSA = the interval’s MEUSA * -1
+*/
+rule "3.5.3 Monthly Energy Uplift Charge (MEUC) - calculate MEUSA at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( meusa == null, wmq != null, $pd : periodId, $wmq : wmq )
+    then
+        $i.setMeusa( meuc.multiply( $wmq ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $i.setAccountingMeusa( $i.getMeusa().negate() );
+        update( $i );
+end
+
+/*
+* the interval’s output GST for MEUSA = the interval’s MEUSA * the output GST
+*
+* the interval’s total MEUSA = the interval’s MEUSA + the interval’s output GST for MEUSA
+*/
+rule "3.5.3 Monthly Energy Uplift Charge (MEUC) - Calculate GST amount"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( opGstMeusa == null, meusa != null, $id : accountId, $meusa : meusa )
+    then
+        $i.setOpGstMeusa( $meusa.multiply(outGstRate) );
+        $i.setTotalMeusa( $i.getMeusa().add( $i.getOpGstMeusa() ) );
+        update( $i );
+end
+
+/*
+* the account's HEUSA = InstanceSum(the account's intervals, the interval’s HEUSA) * -1
+*
+* the account’s input GST for HEUC = 0
+*
+* the account’s output GST for HEUSA = (Round(InstanceSum(the account’s intervals,the interval’s output GST for HLCSA), 2) + Round(InstanceSum(the account’s intervals,the interval’s output GST for HERSA), 2)) * -1
+*
+* the account’s total HEUSA = the account’s HEUSA + the account’s output GST for HEUSA
+*
+* the account's MEUSA = InstanceSum(the account's intervals, the interval’s MEUSA) * -1
+*
+* the account’s input GST for MEUC = 0
+*
+* the account's output GST for MEUSA = Round(InstanceSum(the account's intervals, the interval’s output GST for MEUSA), 2) * -1
+*
+* the account's total MEUSA = Round(InstanceSum(the account's intervals, the interval’s total MEUSA), 2) * -1
+*/
+rule "3.5 Energy Uplift Charge - account level"
+ruleflow-group "acct_stmt"
+salience -1
+    when
+    	$a : Account( totalMeusa == null, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $heusa : BigDecimal() from accumulate(
+        							Period( heusa != null, amt : heusa ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $ahlcsa : BigDecimal() from accumulate(
+        							Period( opGstHlcsa != null, amt : opGstHlcsa ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $ahersa : BigDecimal() from accumulate(
+        							Period( opGstHersa != null, amt : opGstHersa ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $meusa : BigDecimal() from accumulate(
+        							Period( meusa != null, amt : meusa ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $ameusa : BigDecimal() from accumulate(
+        							Period( opGstMeusa != null, amt : opGstMeusa ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setHeusa( $heusa.negate() );
+        $a.setIpGstHeuc( BigDecimal.ZERO );
+        $a.setOpGstHeusa( $ahlcsa.setScale(2, BigDecimal.ROUND_HALF_UP).add( $ahersa.setScale(2, BigDecimal.ROUND_HALF_UP) ).negate() );
+        $a.setTotalHeusa( $a.getHeusa().add( $a.getOpGstHeusa() ) );
+        
+        $a.setMeusa( $meusa.negate() );
+        $a.setIpGstMeuc( BigDecimal.ZERO );
+        $a.setOpGstMeusa( $ameusa.setScale(2, BigDecimal.ROUND_HALF_UP).negate() );
+        $a.setTotalMeusa( $a.getMeusa().add( $a.getOpGstMeusa() ) );
+        update( $a );
+end

@@ -1,0 +1,450 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import java.util.List;
+import com.emc.sett.impl.*;
+
+global java.math.BigDecimal inGstRate;
+global java.math.BigDecimal outGstRate;
+global java.math.BigDecimal csz;
+global java.lang.Boolean igsEffective;
+
+/*
+* the node’s FSC = Round(For(the node’s interval, the interval’s MFP) * the node’s GFQ, 2)
+*/
+rule "3.2.1 Regulation Settlement Credit (FSC) - node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( fsc == null, gfq != null, $pd : periodId, $gfq : gfq )
+    	Period( mfp != null, periodId == $pd, $mfp : mfp )
+    then
+        $n.setFsc( $mfp.multiply($gfq).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $n );
+end
+
+/*
+* the interval’s FSC = InstanceSum(the interval’s nodes, the node’s FSC)
+*/
+rule "3.2.1 Regulation Settlement Credit (FSC) - period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( fsc == null, $pd : periodId, $sa : accountId )
+    	$ns : List() from collect( Facility( $pd == periodId && $sa == accountId ) )
+        $fsc : BigDecimal() from accumulate(
+        							Facility( fsc != null, amt : fsc ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setFsc( $fsc );
+        update( $i );
+end
+
+/*
+* the interval’s input GST for FSC = the interval’s FSC * the input GST if
+* For(the interval’s account, the account is GST taxable)
+*
+* the interval’s total FSC = the interval’s FSC + the interval’s input GST for FSC
+*/
+rule "3.2.1 Regulation Settlement Credit (FSC) - Calculate taxable GST amount"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( ipGstFsc == null, $id : accountId, $fsc : fsc )
+    	Account( accountId == $id && taxable == true )
+    then
+        $i.setIpGstFsc( $fsc.multiply(inGstRate) );
+        $i.setTotalFsc( $fsc.add($fsc.multiply(inGstRate)) );
+        update( $i );
+end
+
+/*
+* the interval’s input GST for FSC = the interval’s FSC * the input GST if
+* For(the interval’s account, the account is GST taxable)
+*
+* the interval’s total FSC = the interval’s FSC + the interval’s input GST for FSC
+*/
+rule "3.2.1 Regulation Settlement Credit (FSC) - Calculate non-taxable GST amount"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( ipGstFsc == null, $id : accountId, $fsc : fsc )
+    	Account( accountId == $id && taxable == false )
+    then
+        $i.setIpGstFsc( BigDecimal.ZERO );
+        $i.setTotalFsc( $fsc );
+        update( $i );
+end
+
+/*
+* the account's FSC = InstanceSum(the account's intervals, the interval’s FSC)
+*
+* the account’s input GST for FSC = Round(InstanceSum(the account's intervals, the interval’s input GST for FSC), 2)
+*
+* the account’s output GST for FSC = 0
+*
+* the account’s total FSC = the account’s FSC + the account’s input GST for FSC
+*/
+rule "3.2.1 Regulation Settlement Credit (FSC) - account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( totalFsc == null, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $fsc : BigDecimal() from accumulate(
+        							Period( fsc != null, amt : fsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vfsc : BigDecimal() from accumulate(
+        							Period( ipGstFsc != null, amt : ipGstFsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setFsc( $fsc );
+        $a.setIpGstFsc( $vfsc.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setOpGstFsc( BigDecimal.ZERO );
+        $a.setTotalFsc( $a.getFsc().add( $a.getIpGstFsc() ) );
+        update( $a );
+end
+
+/*
+* the node’s FEQ adjustment = Abs(Minimum(the node's IEQ, For(the node’s market, the market’s cutoff size))) if 
+* the igs rule is not in effect
+*/
+rule "3.2.2 Allocated Regulation Price (AFP) - finding feq when igsEffective is false"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( feqAdj == null, ieq != null, $ieq : ieq )
+    	eval( igsEffective == false )
+    then
+        $n.setFeqAdj( $ieq.min( csz ).abs() );
+        update( $n );
+end
+
+/*
+* the node’s FEQ adjustment = Abs(Minimum(the node's IEQ, For(the node’s market, the market’s cutoff size)))	if 
+* the igs rule is in effect and 
+* the node is not designated as NO CSZ Applicable
+*/
+rule "3.2.2 Allocated Regulation Price (AFP) - finding feq when igsEffective is true"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( feqAdj == null, noCsz == false, ieq != null, $ieq : ieq )
+    	eval( igsEffective == true )
+    then
+        $n.setFeqAdj( $ieq.min( csz ).abs() );
+        update( $n );
+end
+
+/*
+* the node’s FEQ adjustment = Abs(the node's IEQ)	if
+* the igs rule is in effect and  
+* the node is designated as NO CSZ Applicable
+*/
+rule "3.2.2 Allocated Regulation Price (AFP) - finding feq when NO CSZ Applicable is true"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( feqAdj == null, noCsz == true, ieq != null, $ieq : ieq )
+    then
+        $n.setFeqAdj( $ieq.abs() );
+        update( $n );
+end
+
+/*
+* the interval’s FEQ = the interval's WEQ + instanceSum(the interval’s nodes, the node’s FEQ adjustment) if
+* For(the interval’s account, the account is not under a retailer)
+*/
+rule "3.2.2 Allocated Regulation Price (AFP) - FEQ at period level when not under Retailer"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( feq == null, weq != null, $pd : periodId, $sa : accountId, $weq : weq )
+    	Account( accountId == $sa && underRetailer == false )
+    	$ns : List() from collect( Facility( $pd == periodId && $sa == accountId ) )
+        $feqAdj : BigDecimal() from accumulate(
+        							Facility( feqAdj != null, amt : feqAdj ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setFeq( $weq.add( $feqAdj ) );
+        update( $i );
+end
+
+/*
+* the interval’s FEQ = instanceSum(the interval’s nodes, the node’s FEQ adjustment) if
+* For(the interval’s account, the account is under a retailer)
+*/
+rule "3.2.2 Allocated Regulation Price (AFP) - FEQ at period level when under Retailer"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( feq == null, $pd : periodId, $sa : accountId )
+    	Account( accountId == $sa && underRetailer == true )
+    	$ns : List() from collect( Facility( $pd == periodId && $sa == accountId ) )
+        $feqAdj : BigDecimal() from accumulate(
+        							Facility( feqAdj != null, amt : feqAdj ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setFeq( $feqAdj );
+        update( $i );
+end
+
+/*
+* the market’s FEQ = InstanceSum(the market’s intervals, the interval’s FEQ)
+*/
+rule "3.2.2 Allocated Regulation Price (AFP) - FEQ at market level"
+ruleflow-group "acct_stmt"
+    when
+    	$m : Market( feq == null, $pd : periodId )
+    	$is : List() from collect( Period( $pd == periodId ) )
+        $feq : BigDecimal() from accumulate(
+        							Period( feq != null, amt : feq ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        modify ( $m ) { setFeq( $feq ) }
+end
+
+/*
+* the market’s FSC = InstanceSum(the market’s intervals, the interval’s FSC)
+*
+* the market’s AFP = Round(the market’s FSC / the market’s FEQ, 2)
+*/
+rule "3.2.2 Allocated Regulation Price (AFP) - AFP at market level"
+ruleflow-group "acct_stmt"
+    when
+    	$m : Market( afp == null, feq != 0, $pd : periodId, $feq : feq )
+    	$is : List() from collect( Period( $pd == periodId ) )
+        $fsc : BigDecimal() from accumulate(
+        							Period( fsc != null, amt : fsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $m.setFsc( $fsc );
+        $m.setAfp( $fsc.divide( $feq, 6 ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        update( $m );
+end
+
+/*
+* the node’s FSD = Round(For(the node’s market, the market’s AFP) * the node’s FEQ adjustment, 2)
+*
+* the node’s accounting FSD = the node’s FSD * -1
+*/
+rule "3.2.3 Regulation Settlement Debit (FSD) - node level"
+ruleflow-group "acct_stmt"
+    when
+    	$n : Facility( fsd == null, feqAdj != null, $pd : periodId, $feqAdj : feqAdj )
+    	Market( periodId == $pd, afp != null, $afp : afp )
+    then
+        $n.setFsd( $afp.multiply( $feqAdj ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $n.setAccountingFsd( $n.getFsd().negate() );
+        update( $n );
+end
+
+/*
+* the interval’s FSD adjustment = InstanceSum(the interval’s nodes, the node’s FSD)
+*
+* the interval’s FSD = Round(For(the interval’s market, the market’s AFP) * the interval’s WEQ, 2) + the interval’s FSD adjustment
+*
+* the interval’s Load FSD = Round(For(the interval’s market, the market’s AFP) * the interval’s WEQ, 2) * -1
+*
+* the interval’s accounting FSD = the interval’s FSD * -1
+*
+* the interval’s output GST for FSD = the interval’s FSD * the output GST
+*
+* the interval’s total FSD = the interval’s FSD + the interval’s output GST for FSD
+*/
+rule "3.2.3 Regulation Settlement Debit (FSD) - FSD and GST at period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( fsd == null, weq != null, $pd : periodId, $sa : accountId, $weq : weq )
+    	Market( periodId == $pd, afp != null, $afp : afp )
+    	$ns : List() from collect( Facility( $pd == periodId && $sa == accountId ) )
+        $fsdAdj : BigDecimal() from accumulate(
+        							Facility( fsd != null, amt : fsd ) from $ns,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setFsdAdj( $fsdAdj );
+        $i.setFsd( $afp.multiply( $weq ).setScale(2, BigDecimal.ROUND_HALF_UP).add( $fsdAdj ) );
+        $i.setLoadFsd( $afp.multiply( $weq ).setScale(2, BigDecimal.ROUND_HALF_UP).negate() );
+        $i.setAccountingFsd( $i.getFsd().negate() );
+        
+        $i.setOpGstFsd( $i.getFsd().multiply(outGstRate) );
+        $i.setTotalFsd( $i.getFsd().add($i.getFsd().multiply(outGstRate)) );
+        update( $i );
+end
+
+/*
+* the account's FSD = InstanceSum(the account's intervals, the interval’s FSD) * -1
+*
+* the account’s input GST for FSD = 0
+*
+* the account's output GST for FSD = Round(InstanceSum(the account's intervals, the interval’s output GST for FSD), 2) * -1
+*
+* the account’s total FSD = the account’s FSD + the account’s output GST for FSD
+*/
+rule "3.2.3 Regulation Settlement Debit (FSD) - account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( totalFsd == null, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $fsd : BigDecimal() from accumulate(
+        							Period( fsd != null, amt : fsd ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $afsd : BigDecimal() from accumulate(
+        							Period( opGstFsd != null, amt : opGstFsd ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setFsd( $fsd.negate() );
+        $a.setIpGstFsd( BigDecimal.ZERO );
+        $a.setOpGstFsd( $afsd.setScale(2, BigDecimal.ROUND_HALF_UP).negate() );
+        $a.setTotalFsd( $a.getFsd().add( $a.getOpGstFsd() ) );
+        update( $a );
+end
+
+/*
+* the interval’s BFQ Purchased = InstanceSum(the interval’s bilateral contracts, the bilateral contract’s BFQ Purchased)
+*
+* the interval’s BFQ Sold = InstanceSum(the interval’s bilateral contracts, the bilateral contract’s BFQ Sold)
+*
+* the interval’s FCC = Round(the interval’s MFP * (the interval’s BFQ Purchased - the interval’s BFQ Sold), 2)
+*
+* the interval’s accounting FCC = the interval’s FCC * 1
+*/
+rule "3.2.4 Regulation Contract Credit (FCC) - put contract data into period level"
+ruleflow-group "acct_stmt"
+    when
+    	$i : Period( fcc == null, $pd : periodId, $sa : accountId, $mfp : mfp )
+    	$fs : List() from collect( Bilateral( $pd == periodId && $sa == accountId ) )
+        $bfqp : BigDecimal() from accumulate(
+        							Bilateral( bfqPurchased != null, amt : bfqPurchased ) from $fs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $bfqs : BigDecimal() from accumulate(
+        							Bilateral( bfqSold != null, amt : bfqSold ) from $fs,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $i.setBfqPurchased( $bfqp );
+        $i.setBfqSold( $bfqs );
+        $i.setFcc( $mfp.multiply( $bfqp.subtract( $bfqs ) ).setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $i.setAccountingFcc( $i.getFcc().negate() );
+        update( $i );
+end
+
+/*
+* the account’s FCC = InstanceSum(the account’s intervals, the interval’s FCC)
+*
+* the account’s input GST for FCC = 0
+*
+* the account’s output GST for FCC = 0
+*
+* the account’s total FCC = the account’s FCC
+*/
+rule "3.2.4 Regulation Contract Credit (FCC) - account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( totalFcc == null, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $fcc : BigDecimal() from accumulate(
+        							Period( fcc != null, amt : fcc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+    then
+        $a.setFcc( $fcc );
+        $a.setIpGstFcc( BigDecimal.ZERO );
+        $a.setOpGstFcc( BigDecimal.ZERO );
+        $a.setTotalFcc( $fcc );
+        update( $a );
+end
+
+/*
+* the node's NFSC = the node's FSC - the node's FSD + the node's FCC
+*/
+rule "3.2.5 Net Regulation Settlement Credit (NFSC) - node level"
+ruleflow-group "acct_stmt"
+    when
+        $n : Facility( nfsc == null, fsc != null && fsd != null && fcc != null, $fsc : fsc, $fsd : fsd, $fcc : fcc )
+    then
+        $n.setNfsc( $fsc.subtract( $fsd ).add( $fcc ) );
+        update( $n );
+end
+
+/*
+* the interval’s NFSC = the interval’s FSC - the interval’s FSD + the interval’s FCC
+*
+* the interval’s total NFSC = the interval’s total FSC - the interval’s total FSD + the interval’s FCC
+*/
+rule "3.2.5 Net Regulation Settlement Credit (NFSC) - period level"
+ruleflow-group "acct_stmt"
+    when
+        $i : Period( nfsc == null, fsc != null && fsd != null && fcc != null && totalFsc != null && totalFsd != null )
+    then
+        $i.setNfsc( $i.getFsc().subtract( $i.getFsd() ).add( $i.getFcc() ) );
+        $i.setTotalNfsc( $i.getTotalFsc().subtract( $i.getTotalFsd() ).add( $i.getFcc() ) );
+        update( $i );
+end
+
+/*
+* the account’s NFSC = InstanceSum(the account's intervals, the interval’s NFSC)
+*
+* the account’s input GST for NFSC = Round(InstanceSum(the account's intervals, the interval’s input GST for FSC - 0), 2)
+*
+* the account’s output GST for NFSC = Round(InstanceSum(the account's intervals, 0 - the interval’s output GST for FSD), 2)
+*
+* the account’s total NFSC = the account’s NFSC + the account’s input GST for NFSC + the account’s output GST for NFSC
+*/
+rule "3.2.5 Net Regulation Settlement Credit (NFSC) - account level"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( totalNfsc == null, $sa : accountId )
+    	$is : List() from collect( Period( $sa == accountId ) )
+        $nfsc : BigDecimal() from accumulate(
+        							Period( nfsc != null, amt : nfsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $vfsc : BigDecimal() from accumulate(
+        							Period( ipGstFsc != null, amt : ipGstFsc ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.add(amt); ),
+									reverse( tt = tt.subtract(amt); ),
+									result( tt ) )
+        $afsd : BigDecimal() from accumulate(
+        							Period( opGstFsd != null, amt : opGstFsd ) from $is,
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.subtract(amt); ),	// 0 - FSD output GST
+									reverse( tt = tt.add(amt); ),
+									result( tt ) )
+    then
+        $a.setNfsc( $nfsc );
+        $a.setIpGstNfsc( $vfsc.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setOpGstNfsc( $afsd.setScale(2, BigDecimal.ROUND_HALF_UP) );
+        $a.setTotalNfsc( $a.getNfsc().add( $a.getIpGstNfsc() ).add( $a.getOpGstNfsc() ) );
+        update( $a );
+end

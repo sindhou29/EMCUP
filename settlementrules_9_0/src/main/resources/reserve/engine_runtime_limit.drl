@@ -1,0 +1,14 @@
+package com.emc.sett
+
+import com.emc.sett.common.SettlementRunException;
+
+rule "Timer to stop long running rules"
+timer (int: 1500s)
+ruleflow-group "reserve"
+salience 99
+	when
+	then
+	System.err.println("**** Exit rule engine ****");
+	drools.halt();
+	throw new SettlementRunException("Exit rule engine due to long running rules");
+end

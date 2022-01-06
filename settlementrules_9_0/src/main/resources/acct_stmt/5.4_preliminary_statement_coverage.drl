@@ -1,0 +1,55 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import java.util.List;
+import com.emc.sett.impl.*;
+
+/*
+* the account’s net amount = the account’s NASC + the account’s included NMEA + the account’s NEAA + the account’s NEAD + the account’s accounting EMCADM + the account’s accounting PSOADM if
+* the account is not EMC fee account and
+* the account is not PSO account
+*
+* the account’s input GST total = the account’s input GST for NASC + the account’s input GST for included NMEA
+*
+* the account’s output GST total = the account’s output GST for NASC + the account’s output GST for included NMEA + the account’s accounting output GST for EMCADM + the account’s accounting output GST for PSOADM
+*
+* the account’s total amount = the account’s total NASC + the account’s total of included NMEA + the account’s total NEAA + the account’s total NEAD + the account’s accounting total EMCADM + the account’s accounting total PSOADM if
+* the account is not EMC fee account and
+* the account is not PSO account
+*/
+rule "5.4.2 PRELIMINARY STATEMENT COVERAGE - amounts at account level case normal MPs"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( netAmount == null, emcAccount == false && psoAccount == false, nasc != null, incNmea != null, neaa != null, nead != null, accountingEmcAdm != null, accountingPsoAdm != null )
+    then
+        $a.setNetAmount( $a.getNasc().add($a.getIncNmea()).add($a.getNeaa()).add($a.getNead()).add($a.getAccountingEmcAdm()).add($a.getAccountingPsoAdm()) );
+        $a.setIpGstTotal( $a.getIpGstNasc().add( $a.getIpGstIncNmea() ) );
+        $a.setOpGstTotal( $a.getOpGstNasc().add($a.getOpGstIncNmea()).add($a.getAccountingOpGstEmcAdm()).add($a.getAccountingOpGstPsoAdm()) );
+        $a.setTotalAmount( $a.getTotalNasc().add($a.getTotalIncNmea()).add($a.getTotalNeaa()).add($a.getTotalNead()).add($a.getAccountingTotalEmcAdm()).add($a.getAccountingTotalPsoAdm()) );
+        update( $a );
+end
+
+/*
+* the account’s net amount = the account’s ADMFEE if
+* the account is EMC fee account or
+* the account is PSO account
+*
+* the account’s input GST total = the account’s input GST for NASC + the account’s input GST for included NMEA
+*
+* the account’s output GST total = the account’s output GST for NASC + the account’s output GST for included NMEA + the account’s accounting output GST for EMCADM + the account’s accounting output GST for PSOADM
+*
+* the account’s total amount = the account’s total ADMFEE if
+* the account is EMC fee account or
+* the account is PSO account
+*/
+rule "5.4.2 PRELIMINARY STATEMENT COVERAGE - amounts at account level case EMC and PSO"
+ruleflow-group "acct_stmt"
+    when
+    	$a : Account( netAmount == null, emcAccount == true || psoAccount == true, admFee != null, $admFee : admFee, $totalAdmFee : totalAdmFee )
+    then
+        $a.setNetAmount( $admFee );
+        $a.setIpGstTotal( BigDecimal.ZERO );
+        $a.setOpGstTotal( BigDecimal.ZERO );
+        $a.setTotalAmount( $totalAdmFee );
+        update( $a );
+end

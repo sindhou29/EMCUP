@@ -1,0 +1,200 @@
+package com.emc.sett
+
+import java.math.BigDecimal;
+import java.util.List;
+import com.emc.sett.impl.*;
+import com.emc.sett.rules.SettlementFunctions;
+
+global java.math.BigDecimal csz;
+
+/*
+* the node is designated as PCU if
+* the node’s SHD > the cutoff size and
+* the node is not designated as SCU
+*/
+rule "A.4_identification_and_ordering_of_primary_contingency_units - Determine PCU"
+ruleflow-group "reserve"
+    when
+        $n : Facility( pcu == false, shd != null, shd > csz && scu == false )
+    then
+        $n.setPcu( true );
+        update( $n );
+end
+
+/*
+* the node's PCU size index = Number(CallCustomFunction("PCUSizeIndex", " nodesmarket, market_number,marketsnodes, node_size_index, node_shd, node_pcu"))
+*/
+rule "A.4_identification_and_ordering_of_primary_contingency_units - Calculate facility size index"
+ruleflow-group "reserve"
+    when
+        $n : Facility( sizeIndex == null, shd != null, pcu == true, $shd : shd, $isPCU : pcu, $period : periodId )
+    	$ns : List() from collect( Facility( $period == periodId, pcu == true ) )
+        $idx : BigDecimal() from SettlementFunctions.getPCUSizeIndex( $ns, $shd, $isPCU )
+    then
+        $n.setSizeIndex( $idx );
+        update( $n );
+end
+
+/*
+* the market’s PRQ = InstanceMaximumIf(the market’s nodes, the node’s SHD, the node is designated as PCU)
+*/
+rule "A.5_reserve_requirements - Find the PRQ"
+ruleflow-group "reserve"
+    when
+    	$m : Market( prq == null, $pd : periodId )
+        $prq : BigDecimal() from accumulate(
+        							Facility( periodId == $pd, pcu == true, amt : shd ),
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.max(amt); ),
+									reverse( tt = tt.min(amt); ),
+									result( tt ) )
+    then
+        $m.setPrq( $prq );
+        update( $m );
+end
+
+/*
+* the market’s SRQ = InstanceMaximum(the market’s nodes, the node is contributing to the SRQ)
+*
+* the market’s TRQ = the market’s SRQ + the market’s PRQ
+*/
+rule "A.5_reserve_requirements - Find the SRQ and TRQ"
+ruleflow-group "reserve"
+    when
+    	$m : Market( trq == null, prq != null, $pd : periodId, $prq : prq )
+        $srq : BigDecimal() from accumulate(
+        							Facility( periodId == $pd, shd != null, scu == true && shd > 0, amt : shd ),
+									init( BigDecimal tt = BigDecimal.ZERO; ),
+									action( tt = tt.max(amt); ),
+									reverse( tt = tt.min(amt); ),
+									result( tt ) )
+    then
+        $m.setSrq( $srq );
+        $m.setTrq( $srq.add($prq) );
+        update( $m );
+end
+
+/*
+* the node's RTQ = Number(CallCustomFunction("ReserveTierQuantity", " nodesmarket, market_number,marketsnodes,node_interval, node_size_index, node_shd, csz")) if
+* the node is designated as PCU
+*
+* the node’s RTS = the node’s RTQ / (the market’s PRQ – the cutoff size)
+*/
+rule "A.6_reserve_tiers_and_reserve_tier_shares - Calculate facility RTQ and RTS"
+ruleflow-group "reserve"
+    when
+        $n : Facility( rts == null, shd != null, pcu == true, $shd : shd, $idx : sizeIndex, $period : periodId )
+    	$m : Market( $period == periodId, prq != null, $prq : prq )
+    	$ns : List() from collect( Facility( $period == periodId, pcu == true ) )
+        $rtq : BigDecimal() from SettlementFunctions.getReserveTierQuantity( $ns, $idx, $shd, csz )
+    then
+        $n.setRtq( $rtq );
+        $n.setRts( $rtq.divide($prq.subtract(csz), 16, BigDecimal.ROUND_HALF_UP) );
+        update( $n );
+end
+
+/*
+* the node’s IPF = the node’s SPF
+*/
+rule "A.7_failure_probabilities_and_weights - Setting facility IPF"
+ruleflow-group "reserve"
+    when
+        $n : Facility( ipf == null, spf != null, $spf : spf )
+    then
+        $n.setIpf( $spf );
+        update( $n );
+end
+
+/*
+* the node's IPW = Number(CallCustomFunction("IntervalProbabilityWeights", "nodesmarket, market_number,marketsnodes,node_interval, node_size_index,node_ipf")) if
+* the node is designated as PCU
+*/
+rule "A.7_failure_probabilities_and_weights - Calculate facility IPW"
+ruleflow-group "reserve"
+    when
+        $n : Facility( ipw == null, ipf != null, pcu == true, $ipf : ipf, $idx : sizeIndex, $period : periodId )
+    	$ns : List() from collect( Facility( $period == periodId, pcu == true ) )
+        $ipw : BigDecimal() from SettlementFunctions.getIntervalProbabilityWeights( $ns, $idx, $ipf )
+    then
+        $n.setIpw( $ipw );
+        update( $n );
+end
+
+/*
+* the node’s RRS = 0 if
+* the node is designated as SCU and
+* the node’s SHD <= 0
+*/
+rule "A.8_rrss_for_secondary_contigency_units - Calculate SCU RRS when negative SHD"
+ruleflow-group "reserve"
+    when
+        $n : Facility( rrs == null, shd != null, scu == true && shd <= 0 )
+    then
+        $n.setRrs( BigDecimal.ZERO );
+        update( $n );
+end
+
+/*
+* the node’s RRS = Round(the node’s SHD / For(the node's market, the market’s TRQ), 5) if
+* the node is designated as SCU and
+* the node’s SHD > 0
+*/
+rule "A.8_rrss_for_secondary_contigency_units - Calculate SCU RRS when positive SHD"
+ruleflow-group "reserve"
+    when
+        $n : Facility( rrs == null, shd != null, scu == true && shd > 0, $shd : shd, $period : periodId )
+    	$m : Market( $period == periodId, trq != null, $trq : trq )
+    then
+        $n.setRrs( $shd.divide($trq).setScale(5, BigDecimal.ROUND_HALF_UP) );
+        update( $n );
+end
+
+/*
+* the node's IPW = Number(CallCustomFunction("IntervalProbabilityWeights", "nodesmarket, market_number,marketsnodes,node_interval, node_size_index,node_ipf")) if
+* the node is designated as PCU
+*
+* the node’s RRS = 0 if
+* the node is not designated as SCU and
+* the node is not designated as PCU
+*
+* the node's RRS factor = Number(CallCustomFunction("OrderedReserveShareFactor", "nodesmarket, market_number,marketsnodes,node_interval, node_size_index, node_rts, node_ipw")) if
+* the node is designated as PCU
+*
+* the node's RTQ = Number(CallCustomFunction("ReserveTierQuantity", " nodesmarket, market_number,marketsnodes,node_interval, node_size_index, node_shd, csz")) if
+* the node is designated as PCU
+*
+* the node’s RTS = the node’s RTQ / (the market’s PRQ – the cutoff size)
+*/
+rule "A.8_rrss_for_secondary_contigency_units - Calculate SCU RRS when not PCU or SCU"
+ruleflow-group "reserve"
+    when
+        $n : Facility( rrs == null, shd != null, pcu == false && scu == false )
+    then
+        $n.setIpw( BigDecimal.ZERO );
+        $n.setRrs( BigDecimal.ZERO );
+        $n.setRrsFactor( BigDecimal.ZERO );
+        $n.setRts( BigDecimal.ZERO );
+        $n.setRtq( BigDecimal.ZERO );
+        update( $n );
+end
+
+/*
+* the node's RRS factor = Number(CallCustomFunction("OrderedReserveShareFactor", "nodesmarket, market_number,marketsnodes,node_interval, node_size_index, node_rts, node_ipw")) if
+* the node is designated as PCU
+*
+* the node’s RRS = Round(For(the node's market, the market’s PRQ / the market’s TRQ) * the node’s IPF * the node’s RRS factor, 5) if
+* the node is designated as PCU
+*/
+rule "A.9_ rrss_for_primary_contigency_units - Calculate PCU RRS"
+ruleflow-group "reserve"
+    when
+        $n : Facility( rrs == null, rts != null && ipw != null && ipf != null, pcu == true, $rts : rts, $ipw : ipw, $ipf : ipf, $idx : sizeIndex, $period : periodId )
+    	$m : Market( $period == periodId, prq != null && trq != null, $prq : prq, $trq : trq )
+    	$ns : List() from collect( Facility( $period == periodId, pcu == true ) )
+        $rrsFactor : BigDecimal() from SettlementFunctions.getOrderedReserveShareFactor( $ns, $idx, $rts, $ipw )
+    then
+        $n.setRrsFactor( $rrsFactor );
+        $n.setRrs( $prq.divide($trq).multiply($ipf).multiply($rrsFactor).setScale(5, BigDecimal.ROUND_HALF_UP) );
+        update( $n );
+end
+

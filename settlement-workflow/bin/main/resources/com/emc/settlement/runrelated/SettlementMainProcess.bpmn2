@@ -1,0 +1,2277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- origin at X=0.0 Y=0.0 -->
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmn20="http://www.omg.org/bpmn20" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:bpsim="http://www.bpsim.org/schemas/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" xmlns="http://www.jboss.org/drools" xmlns:java="http://www.java.com/javaTypes" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd" id="_tTphIBu2EeiH3d1CIAp2xA" exporter="org.eclipse.bpmn2.modeler.core" exporterVersion="1.4.3.Final-v20180418-1358-B1" expressionLanguage="http://www.mvel.org/2.0" targetNamespace="http://www.omg.org/bpmn20" typeLanguage="http://www.java.com/javaTypes">
+  <bpmn2:itemDefinition id="_runFormItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="_backUpModeItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="_bizDayItem" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="_commentsItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="_ExceptionHolderItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="_ignoreScheduledRunCheckItem" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="_invokedByItem" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="_isFSCEffectiveItem" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="_mainEventIdItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="_mcrStringItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="_msgStepItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="_nemsControllerEveIdItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="_nemsControllerSchEveIdItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="_pdItem" isCollection="false" structureRef="com.emc.settlement.PeriodNumber"/>
+  <bpmn2:itemDefinition id="_runFormItem161" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="_schEventIdItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="_settRunIdItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="_settlementParamItem" isCollection="false" structureRef="com.emc.settlement.SettlementRunParam"/>
+  <bpmn2:itemDefinition id="_usernameItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="_startMsgItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="_startTimeItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="_testRunItem" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="_logPrefixItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="_settlementDateItem" isCollection="false" structureRef="java.util.Date"/>
+  <bpmn2:itemDefinition id="_runDateItem" isCollection="false" structureRef="java.util.Date"/>
+  <bpmn2:itemDefinition id="_endTimeItem" isCollection="false" structureRef="java.util.Date"/>
+  <bpmn2:itemDefinition id="_settlementTypeItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_commentsInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_ignoreScheduledRunCheckInputXItem" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_invokedByInputXItem" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_testRunInputXItem" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_mainEventIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_mcrStringInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_nemsControllerEveIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_nemsControllerSchEveIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_pdInputXItem" isCollection="false" structureRef="com.emc.settlement.PeriodNumber"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_runDateInputXItem" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_runFormInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_schEventIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_SettlementDateInputXItem" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_usernameInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_settlementPrama.runTypeInputXItem" isCollection="false" structureRef="com.entoss.actnow.emcs_settlement.SettlementParam"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_nemsControllerEveIdOutputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_settRunIdOutputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__47E19C85-233F-4804-AA04-32CC5904DAA3_settlementParamOutputXItem" isCollection="false" structureRef="com.emc.settlement.SettlementRunParam"/>
+  <bpmn2:itemDefinition id="__D4A8BBA7-9C40-446A-BD4E-CFC2F5811671_mainEventIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__D4A8BBA7-9C40-446A-BD4E-CFC2F5811671_runFormInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__D4A8BBA7-9C40-446A-BD4E-CFC2F5811671_settlementDateInputXItem" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="__6CA23EF6-C9A7-4417-8B6F-86CF5434523B_settlementDateInputXItem" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="__6CA23EF6-C9A7-4417-8B6F-86CF5434523B_settRunIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__6CA23EF6-C9A7-4417-8B6F-86CF5434523B_settlementTypeInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__EF185FF6-C8E1-4662-BEE0-53A92BD3E264_commentsInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__EF185FF6-C8E1-4662-BEE0-53A92BD3E264_ignoreScheduledRunCheckInputXItem" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="__EF185FF6-C8E1-4662-BEE0-53A92BD3E264_invokedByInputXItem" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="__EF185FF6-C8E1-4662-BEE0-53A92BD3E264_testRunInputXItem" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="__EF185FF6-C8E1-4662-BEE0-53A92BD3E264_mainEventIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__EF185FF6-C8E1-4662-BEE0-53A92BD3E264_mcrStringInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__EF185FF6-C8E1-4662-BEE0-53A92BD3E264_nemsControllerEveIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__EF185FF6-C8E1-4662-BEE0-53A92BD3E264_nemsControllerSchEveIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__EF185FF6-C8E1-4662-BEE0-53A92BD3E264_pdInputXItem" isCollection="false" structureRef="com.emc.settlement.PeriodNumber"/>
+  <bpmn2:itemDefinition id="__EF185FF6-C8E1-4662-BEE0-53A92BD3E264_runDateInputXItem" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="__EF185FF6-C8E1-4662-BEE0-53A92BD3E264_runFormInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__EF185FF6-C8E1-4662-BEE0-53A92BD3E264_schEventIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__EF185FF6-C8E1-4662-BEE0-53A92BD3E264_SettlementDateInputXItem" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="__EF185FF6-C8E1-4662-BEE0-53A92BD3E264_usernameInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__EF185FF6-C8E1-4662-BEE0-53A92BD3E264_nemsControllerEveIdOutputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__EF185FF6-C8E1-4662-BEE0-53A92BD3E264_settRunIdOutputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__EF185FF6-C8E1-4662-BEE0-53A92BD3E264_settlementParamOutputXItem" isCollection="false" structureRef="com.emc.settlement.SettlementRunParam"/>
+  <bpmn2:itemDefinition id="__128A66E0-58C3-4E3E-AAF4-C0A29E9B74DB_commentsInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__128A66E0-58C3-4E3E-AAF4-C0A29E9B74DB_ignoreScheduledRunCheckInputXItem" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="__128A66E0-58C3-4E3E-AAF4-C0A29E9B74DB_invokedByInputXItem" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="__128A66E0-58C3-4E3E-AAF4-C0A29E9B74DB_testRunInputXItem" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="__128A66E0-58C3-4E3E-AAF4-C0A29E9B74DB_mainEventIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__128A66E0-58C3-4E3E-AAF4-C0A29E9B74DB_mcrStringInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__128A66E0-58C3-4E3E-AAF4-C0A29E9B74DB_nemsControllerEveIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__128A66E0-58C3-4E3E-AAF4-C0A29E9B74DB_nemsControllerSchEveIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__128A66E0-58C3-4E3E-AAF4-C0A29E9B74DB_pdInputXItem" isCollection="false" structureRef="com.emc.settlement.PeriodNumber"/>
+  <bpmn2:itemDefinition id="__128A66E0-58C3-4E3E-AAF4-C0A29E9B74DB_runDateInputXItem" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="__128A66E0-58C3-4E3E-AAF4-C0A29E9B74DB_runFormInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__128A66E0-58C3-4E3E-AAF4-C0A29E9B74DB_schEventIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__128A66E0-58C3-4E3E-AAF4-C0A29E9B74DB_SettlementDateInputXItem" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="__128A66E0-58C3-4E3E-AAF4-C0A29E9B74DB_usernameInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__128A66E0-58C3-4E3E-AAF4-C0A29E9B74DB_nemsControllerEveIdOutputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__128A66E0-58C3-4E3E-AAF4-C0A29E9B74DB_settRunIdOutputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__128A66E0-58C3-4E3E-AAF4-C0A29E9B74DB_settlementParamOutputXItem" isCollection="false" structureRef="com.emc.settlement.SettlementRunParam"/>
+  <bpmn2:itemDefinition id="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_commentsInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_ignoreScheduledRunCheckInputXItem" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_invokedByInputXItem" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_testRunInputXItem" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_mainEventIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_mcrStringInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_nemsControllerEveIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_nemsControllerSchEveIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_pdInputXItem" isCollection="false" structureRef="com.emc.settlement.PeriodNumber"/>
+  <bpmn2:itemDefinition id="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_runDateInputXItem" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_runFormInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_schEventIdInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_SettlementDateInputXItem" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_usernameInputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_nemsControllerEveIdOutputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_settRunIdOutputXItem" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_settlementParamOutputXItem" isCollection="false" structureRef="com.emc.settlement.SettlementRunParam"/>
+  <bpmn2:itemDefinition id="ItemDefinition_12" isCollection="false" structureRef="com.emc.settlement.model.backend.pojo.PeriodNumber"/>
+  <bpmn2:itemDefinition id="ItemDefinition_604" isCollection="false" structureRef="com.emc.settlement.model.backend.pojo.SettlementRunParams"/>
+  <bpmn2:itemDefinition id="ItemDefinition_1594" isCollection="false" structureRef="java.lang.Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_2505" isCollection="false" structureRef="com.emc.drcap.nemsprerequisite.ShareplexValidationDO"/>
+  <bpmn2:itemDefinition id="ItemDefinition_2507" isCollection="false" structureRef="com.emc.drcap.nemsprerequisite.CreateEventScheduleDO"/>
+  <bpmn2:itemDefinition id="ItemDefinition_2509" isCollection="false" structureRef="com.emc.drcap.nemsprerequisite.CheckBusinessDayDO"/>
+  <bpmn2:itemDefinition id="ItemDefinition_2851" isCollection="false" structureRef="java.lang.String"/>
+  <bpmn2:itemDefinition id="ItemDefinition_2528" isCollection="false" structureRef="com.emc.settlement.common.ParamUtil"/>
+  <bpmn2:itemDefinition id="ItemDefinition_6754" isCollection="false" structureRef="java.lang.Boolean"/>
+  <bpmn2:itemDefinition id="ItemDefinition_1" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_2" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_3" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_4" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_5" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_6" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_204" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_205" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_206" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_207" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_208" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_244" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_245" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_246" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_247" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_248" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_249" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_544" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_545" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_107" isCollection="false" structureRef="com.emc.drcap.nemsprerequisite.CheckRunStatusDO"/>
+  <bpmn2:itemDefinition id="ItemDefinition_420" isCollection="false" structureRef="java.text.SimpleDateFormat"/>
+  <bpmn2:itemDefinition id="ItemDefinition_326" isCollection="false" structureRef="java.lang.Short"/>
+  <bpmn2:itemDefinition id="ItemDefinition_328" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_329" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_360" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_733" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_734" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_1153" isCollection="false" structureRef="java.lang.Long"/>
+  <bpmn2:itemDefinition id="ItemDefinition_185" isCollection="false" structureRef="org.slf4j.Logger"/>
+  <bpmn2:itemDefinition id="ItemDefinition_187" isCollection="false" structureRef="org.slf4j.LoggerFactory"/>
+  <bpmn2:itemDefinition id="ItemDefinition_7" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_8" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_9" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_10" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_11" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_13" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_19" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_55" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_56" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_57" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_58" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_59" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_172" isCollection="false" structureRef="com.emc.settlement.model.backend.exceptions.SettlementRunException"/>
+  <bpmn2:itemDefinition id="ItemDefinition_1652" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_2797" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_14" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_15" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_16" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_17" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_18" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_20" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_21" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_22" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_23" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_24" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_25" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_26" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_27" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_28" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_29" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_156" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_157" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_158" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_159" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_160" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_166" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_167" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_168" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_30" isCollection="false" structureRef="Object"/>
+  <bpmn2:itemDefinition id="ItemDefinition_31" isCollection="false"/>
+  <bpmn2:itemDefinition id="ItemDefinition_37" isCollection="false"/>
+  <bpmn2:error id="Error_1" name="Error 1" structureRef="ItemDefinition_1594"/>
+  <bpmn2:error id="Error_2" name="Error 2"/>
+  <bpmn2:process id="SettlementMainProcess" drools:packageName="com.emc.settlement.runrelated" drools:version="1.0" name="SettlementMainProcess" isExecutable="true">
+    <bpmn2:extensionElements>
+      <drools:import name="java.util.Map"/>
+      <drools:import name="java.util.Date"/>
+      <drools:import name="com.emc.settlement.model.backend.pojo.PeriodNumber"/>
+      <drools:import name="com.emc.settlement.model.backend.pojo.SettlementRunParams"/>
+      <drools:import name="com.emc.drcap.nemsprerequisite.ShareplexValidationDO"/>
+      <drools:import name="com.emc.drcap.nemsprerequisite.CreateEventScheduleDO"/>
+      <drools:import name="com.emc.drcap.nemsprerequisite.CheckBusinessDayDO"/>
+      <drools:import name="com.emc.settlement.common.ParamUtil"/>
+      <drools:import name="com.emc.drcap.nemsprerequisite.IsBusinessDay"/>
+      <drools:import name="com.emc.drcap.nemsprerequisite.CheckRunStatusDO"/>
+      <drools:import name="java.text.SimpleDateFormat"/>
+      <drools:import name="org.slf4j.Logger"/>
+      <drools:import name="org.slf4j.LoggerFactory"/>
+      <drools:import name="com.emc.settlement.model.backend.exceptions.SettlementRunException"/>
+    </bpmn2:extensionElements>
+    <bpmn2:property id="backUpMode" itemSubjectRef="ItemDefinition_2851" name="backUpMode"/>
+    <bpmn2:property id="bizDay" itemSubjectRef="ItemDefinition_6754" name="bizDay"/>
+    <bpmn2:property id="comments" itemSubjectRef="ItemDefinition_2851" name="comments"/>
+    <bpmn2:property id="endTime" itemSubjectRef="_endTimeItem" name="endTime"/>
+    <bpmn2:property id="ignoreScheduledRunCheck" itemSubjectRef="ItemDefinition_6754" name="ignoreScheduledRunCheck"/>
+    <bpmn2:property id="invokedBy" itemSubjectRef="ItemDefinition_6754" name="invokedBy"/>
+    <bpmn2:property id="isFSCEffective" itemSubjectRef="ItemDefinition_6754" name="isFSCEffective"/>
+    <bpmn2:property id="mainEventId" itemSubjectRef="ItemDefinition_2851" name="mainEventId"/>
+    <bpmn2:property id="mcrString" itemSubjectRef="ItemDefinition_2851" name="mcrString"/>
+    <bpmn2:property id="msgStep" itemSubjectRef="ItemDefinition_2851" name="msgStep"/>
+    <bpmn2:property id="nemsControllerEveId" itemSubjectRef="ItemDefinition_2851" name="nemsControllerEveId"/>
+    <bpmn2:property id="nemsControllerSchEveId" itemSubjectRef="ItemDefinition_2851" name="nemsControllerSchEveId"/>
+    <bpmn2:property id="pd" itemSubjectRef="ItemDefinition_12" name="pd"/>
+    <bpmn2:property id="runDate" itemSubjectRef="_runDateItem" name="runDate"/>
+    <bpmn2:property id="runFrom" itemSubjectRef="ItemDefinition_2851" name="runFrom"/>
+    <bpmn2:property id="schEventId" itemSubjectRef="ItemDefinition_2851" name="schEventId"/>
+    <bpmn2:property id="settRunId" itemSubjectRef="ItemDefinition_2851" name="settRunId"/>
+    <bpmn2:property id="settlementDate" itemSubjectRef="_endTimeItem" name="settlementDate"/>
+    <bpmn2:property id="settlementParam" itemSubjectRef="ItemDefinition_604" name="settlementParam"/>
+    <bpmn2:property id="settlementType" itemSubjectRef="ItemDefinition_2851" name="settlementType"/>
+    <bpmn2:property id="startMsg" itemSubjectRef="ItemDefinition_2851" name="startMsg"/>
+    <bpmn2:property id="startTime" itemSubjectRef="_endTimeItem" name="startTime"/>
+    <bpmn2:property id="testRun" itemSubjectRef="ItemDefinition_6754" name="testRun"/>
+    <bpmn2:property id="username" itemSubjectRef="ItemDefinition_2851" name="username"/>
+    <bpmn2:property id="logPrefix" itemSubjectRef="ItemDefinition_2851" name="logPrefix"/>
+    <bpmn2:property id="wsParam" itemSubjectRef="ItemDefinition_1594" name="wsParam"/>
+    <bpmn2:property id="wsResponse" itemSubjectRef="ItemDefinition_1594" name="wsResponse"/>
+    <bpmn2:property id="wsShareplexResponse" itemSubjectRef="ItemDefinition_2505" name="wsShareplexResponse"/>
+    <bpmn2:property id="wsCheckBusinessDayResponse" itemSubjectRef="ItemDefinition_2509" name="wsCheckBusinessDayResponse"/>
+    <bpmn2:property id="restResponse" itemSubjectRef="ItemDefinition_1594" name="restResponse"/>
+    <bpmn2:property id="wsCreateEventScheduleResponse" itemSubjectRef="ItemDefinition_2507" name="wsCreateEventScheduleResponse"/>
+    <bpmn2:property id="wsCheckRunStatusResponse" itemSubjectRef="ItemDefinition_107" name="wsCheckRunStatusResponse"/>
+    <bpmn2:property id="strRunDate" itemSubjectRef="ItemDefinition_2851" name="strRunDate"/>
+    <bpmn2:property id="strSettlementDate" itemSubjectRef="ItemDefinition_2851" name="strSettlementDate"/>
+    <bpmn2:property id="soapServiceUrl" itemSubjectRef="ItemDefinition_2851" name="soapServiceUrl"/>
+    <bpmn2:property id="scriptlogger" itemSubjectRef="ItemDefinition_185" name="scriptlogger"/>
+    <bpmn2:property id="runtimeException" itemSubjectRef="ItemDefinition_1594" name="runtimeException"/>
+    <bpmn2:property id="exception" itemSubjectRef="ItemDefinition_172" name="exception"/>
+    <bpmn2:property id="isSchedule" itemSubjectRef="ItemDefinition_6754" name="isSchedule"/>
+    <bpmn2:property id="mceDataLoadByController" itemSubjectRef="ItemDefinition_6754" name="mceDataLoadByController"/>
+    <bpmn2:startEvent id="_290C2E72-59E5-4AE0-978D-5AEEDBDCBE57" drools:selectable="true" color:background-color="#9acd32" color:border-color="#000000" color:color="#000000" name="">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>SequenceFlow_29</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:endEvent id="_F7787A11-7210-48F1-AE44-6CAA19B36984" drools:selectable="true" color:background-color="#ff6347" color:border-color="#000000" color:color="#000000" name="">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_42</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:task id="Task_3" drools:selectable="true" drools:taskName="WebService" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" name="WS Call Shareplex Web Service">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[WS Call Shareplex Web Service]]></drools:metaValue>
+        </drools:metaData>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Before Service Call soapServiceUrl: &quot;+soapServiceUrl);
+log.info(&quot;Calling web service testing shareplex&quot;);
+
+log.info(&quot;String runDate : &quot;+strRunDate);
+log.info(&quot;String settlementDate : &quot;+strSettlementDate);
+
+	SimpleDateFormat UTC_DATE_FORMATTER = new SimpleDateFormat(&quot;yyyy-MM-dd'T'HH:mm:ss.SSSZ&quot;);
+	try {
+
+		if(strRunDate != null &amp;&amp; !strRunDate.equalsIgnoreCase(&quot;&quot;) )
+		{
+				runDate = UTC_DATE_FORMATTER.parse(strRunDate);
+				kcontext.setVariable(&quot;runDate&quot;, runDate);
+		}
+		if(strSettlementDate != null &amp;&amp; !strSettlementDate.equalsIgnoreCase(&quot;&quot;) )
+		{
+				settlementDate = UTC_DATE_FORMATTER.parse(strSettlementDate);
+				kcontext.setVariable(&quot;settlementDate&quot;, settlementDate);
+		}
+			
+	} catch (Exception e) {
+			e.printStackTrace();
+	}
+
+log.info(&quot;soapServiceUrl : &quot;+soapServiceUrl);
+log.info(&quot;Date runDate : &quot;+runDate);
+log.info(&quot;Date settlementDate : &quot;+settlementDate);</drools:script>
+        </drools:onEntry-script>
+        <drools:onExit-script scriptFormat="http://www.java.com/java">
+          <drools:script>//kcontext.setVariable(&quot;wsShareplexResponse&quot;, wsShareplexResponse);
+//wsShareplexResponse.setBackUpMode(&quot;N&quot;);
+kcontext.setVariable(&quot;wsShareplexResponse&quot;, wsShareplexResponse);
+backUpMode = wsShareplexResponse.getBackUpMode();
+kcontext.setVariable(&quot;backUpMode&quot;, backUpMode);
+Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Context Shareplex BackUp Mode : &quot;+kcontext.getVariable(&quot;backUpMode&quot;));
+
+
+</drools:script>
+        </drools:onExit-script>
+        <drools:metaData name="customAsync">
+          <drools:metaValue><![CDATA[true]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_15</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_3">
+        <bpmn2:dataInput id="DataInput_53" drools:dtype="String" name="Url"/>
+        <bpmn2:dataInput id="DataInput_54" drools:dtype="String" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_57" drools:dtype="String" name="Endpoint"/>
+        <bpmn2:dataInput id="DataInput_58" drools:dtype="String" name="Interface"/>
+        <bpmn2:dataInput id="DataInput_61" drools:dtype="String" itemSubjectRef="ItemDefinition_1594" name="Parameter"/>
+        <bpmn2:dataInput id="DataInput_62" itemSubjectRef="__B6FE177B-62E5-4C8C-B335-91FF6094A29B_settRunIdOutputXItem" name="TaskName"/>
+        <bpmn2:dataInput id="DataInput_76" itemSubjectRef="ItemDefinition_328" name="Namespace"/>
+        <bpmn2:dataOutput id="DataOutput_17" drools:dtype="java.lang.Object" itemSubjectRef="ItemDefinition_2505" name="Result"/>
+        <bpmn2:inputSet id="InputSet_1">
+          <bpmn2:dataInputRefs>DataInput_53</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_54</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_57</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_58</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_61</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_62</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_76</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_4">
+          <bpmn2:dataOutputRefs>DataOutput_17</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_39">
+        <bpmn2:targetRef>DataInput_53</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_34">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_50">#{soapServiceUrl}/NEMSPrerequisiteService/ShareplexValidation?WSDL</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_51">_0134342A-7B90-4177-B5E8-570D3039ACA4_UrlInputX</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_40">
+        <bpmn2:targetRef>DataInput_54</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_35">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_52">checkBackUpMode</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_53">_0134342A-7B90-4177-B5E8-570D3039ACA4_OperationInputX</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_41">
+        <bpmn2:targetRef>DataInput_57</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_36">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_54">#{soapServiceUrl}/NEMSPrerequisiteService/ShareplexValidation</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_55">_0134342A-7B90-4177-B5E8-570D3039ACA4_EndpointInputX</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_42">
+        <bpmn2:targetRef>DataInput_58</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_37">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_56">ShareplexValidationWS</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_59">_0134342A-7B90-4177-B5E8-570D3039ACA4_InterfaceInputX</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_59">
+        <bpmn2:sourceRef>wsParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_61</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_62">
+        <bpmn2:targetRef>DataInput_62</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_39">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_63">WebService</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_61">DataInput_62</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_69">
+        <bpmn2:targetRef>DataInput_76</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_4">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_18">http://nemsprerequisite.drcap.emc.com/</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_7">DataInput_76</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_14">
+        <bpmn2:sourceRef>DataOutput_17</bpmn2:sourceRef>
+        <bpmn2:targetRef>wsShareplexResponse</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:task id="Task_7" drools:taskName="WebService" drools:displayName="WS" drools:icon="defaultservicenodeicon.png" name="WS Call Check Business Day">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[WS Call Check Business Day]]></drools:metaValue>
+        </drools:metaData>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script>wsParam = new Object[]{ParamUtil.toXMLGregorianCalendar(new java.util.Date()), &quot;test&quot;};
+kcontext.setVariable(&quot;wsParam&quot;, wsParam);</drools:script>
+        </drools:onEntry-script>
+        <drools:onExit-script scriptFormat="http://www.java.com/java">
+          <drools:script>kcontext.setVariable(&quot;wsCheckBusinessDayResponse&quot;, wsCheckBusinessDayResponse);
+kcontext.setVariable(&quot;bizDay&quot;, wsCheckBusinessDayResponse.isBizDayResult());
+Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Is Business Day =&quot; + wsCheckBusinessDayResponse.isBizDayResult());
+</drools:script>
+        </drools:onExit-script>
+        <drools:metaData name="customAsync">
+          <drools:metaValue><![CDATA[true]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_10</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_8">
+        <bpmn2:dataInput id="DataInput_11" name="Url"/>
+        <bpmn2:dataInput id="DataInput_12" name="Namespace"/>
+        <bpmn2:dataInput id="DataInput_13" name="Interface"/>
+        <bpmn2:dataInput id="DataInput_14" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_59" itemSubjectRef="ItemDefinition_1594" name="Parameter"/>
+        <bpmn2:dataInput id="DataInput_65" name="Endpoint"/>
+        <bpmn2:dataInput id="DataInput_67" name="Mode"/>
+        <bpmn2:dataOutput id="DataOutput_18" itemSubjectRef="ItemDefinition_2509" name="Result"/>
+        <bpmn2:inputSet id="_InputSet_33">
+          <bpmn2:dataInputRefs>DataInput_11</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_12</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_13</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_14</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_59</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_65</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_67</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="_OutputSet_7">
+          <bpmn2:dataOutputRefs>DataOutput_18</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_93">
+        <bpmn2:targetRef>DataInput_11</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_6">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_12">#{soapServiceUrl}/NEMSPrerequisiteService/CheckBusinessDay?WSDL</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_4">DataInput_11</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_94">
+        <bpmn2:targetRef>DataInput_12</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_10">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_21">http://nemsprerequisite.drcap.emc.com/</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_17">DataInput_12</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_95">
+        <bpmn2:targetRef>DataInput_13</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_11">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_27">CheckBusinessDayWS</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_22">DataInput_13</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_96">
+        <bpmn2:targetRef>DataInput_14</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_12">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_31">isBusinessDay</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_28">DataInput_14</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_97">
+        <bpmn2:sourceRef>wsParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_59</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_98">
+        <bpmn2:targetRef>DataInput_65</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_14">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_34">#{soapServiceUrl}/NEMSPrerequisiteService/CheckBusinessDay</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_32">DataInput_65</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_99">
+        <bpmn2:targetRef>DataInput_67</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_15">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_38">SYNC</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_35">DataInput_67</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="_DataOutputAssociation_7">
+        <bpmn2:sourceRef>DataOutput_18</bpmn2:sourceRef>
+        <bpmn2:targetRef>wsCheckBusinessDayResponse</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_1" drools:priority="1" sourceRef="Task_7" targetRef="ExclusiveGateway_4"/>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_1" gatewayDirection="Diverging">
+      <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_5</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_6</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_2" gatewayDirection="Diverging">
+      <bpmn2:incoming>SequenceFlow_5</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_10</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_12</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_3" drools:priority="1" sourceRef="Task_3" targetRef="ExclusiveGateway_1"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_5" drools:priority="1" name="Shareplex Mode !Y" sourceRef="ExclusiveGateway_1" targetRef="ExclusiveGateway_2">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_2" language="http://www.java.com/java">Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Checking N : &quot;+ wsShareplexResponse.getBackUpMode());
+return !(wsShareplexResponse.getBackUpMode().equalsIgnoreCase(&quot;Y&quot;));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SequenceFlow_6" drools:priority="1" name="Backup Mode" sourceRef="ExclusiveGateway_1" targetRef="ExclusiveGateway_3">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_6" language="http://www.java.com/java">Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Checking Y : &quot;+ wsShareplexResponse.getBackUpMode());
+return (wsShareplexResponse.getBackUpMode().equalsIgnoreCase(&quot;Y&quot;));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_3" gatewayDirection="Converging">
+      <bpmn2:incoming>SequenceFlow_6</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_11</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_9</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:endEvent id="EndEvent_2" name="End">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[End]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_9</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_9" drools:priority="1" sourceRef="ExclusiveGateway_3" targetRef="EndEvent_2"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_10" drools:priority="1" name="Scheduled Run" sourceRef="ExclusiveGateway_2" targetRef="Task_7">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_9" language="http://www.java.com/java">Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;runFrom : &quot;+ runFrom);
+return (runFrom.equalsIgnoreCase(&quot;B&quot;));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_4" gatewayDirection="Diverging">
+      <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_11</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_39</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_11" drools:priority="1" name="Not Business Day" sourceRef="ExclusiveGateway_4" targetRef="ExclusiveGateway_3">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_13" language="http://www.java.com/java">return  (wsCheckBusinessDayResponse.isBizDayResult() != true);</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_5" gatewayDirection="Diverging">
+      <bpmn2:incoming>SequenceFlow_12</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_13</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_14</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_12" drools:priority="1" name="Manual Run" sourceRef="ExclusiveGateway_2" targetRef="ExclusiveGateway_5">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_16" language="http://www.java.com/java">Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;runFrom : &quot;+ runFrom);
+return !(runFrom.equalsIgnoreCase(&quot;B&quot;));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_6" gatewayDirection="Converging">
+      <bpmn2:incoming>SequenceFlow_13</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_39</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_18</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_13" drools:priority="1" name="Run from GUI" sourceRef="ExclusiveGateway_5" targetRef="ExclusiveGateway_6">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_20" language="http://www.java.com/java">Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;settlementDate : &quot;+ settlementDate);
+return (settlementDate != null);</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:endEvent id="EndEvent_3" name="End">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[End]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_14</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_14" drools:priority="1" sourceRef="ExclusiveGateway_5" targetRef="EndEvent_3">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_25" language="http://www.java.com/java">Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;settlementDate : &quot;+ settlementDate);
+return (settlementDate == null);</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SequenceFlow_18" drools:priority="1" sourceRef="ExclusiveGateway_6" targetRef="Task_10"/>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_7" gatewayDirection="Diverging">
+      <bpmn2:incoming>SequenceFlow_36</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_19</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_22</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_23</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_24</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:callActivity id="CallActivity_1" drools:waitForCompletion="true" drools:independent="false" name="Call Execute Run (P)" calledElement="ExecuteRun">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Call Execute Run (P)]]></drools:metaValue>
+        </drools:metaData>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Calling P ....&quot;);
+log.info(&quot;comments.......&quot;+comments);
+settlementParam.setComment(comments); 
+log.info(&quot;mainEventId.......&quot;+mainEventId);
+settlementParam.setMainEveId(mainEventId);
+log.info(&quot;runDate.......&quot;+runDate);
+settlementParam.setRunDate(runDate);
+log.info(&quot;runFrom.......&quot;+runFrom);
+settlementParam.setRunFrom(runFrom);
+log.info(&quot;Run Type.......P&quot;);
+settlementParam.setRunType(&quot;P&quot;);
+log.info(&quot;schEventId.......&quot;+schEventId);
+settlementParam.setSchEveId(schEventId);
+log.info(&quot;settlementDate.......&quot;+settlementDate);
+settlementParam.setSettlementDate(settlementDate);
+log.info(&quot;ignoreScheduledRunCheck.......&quot;+ignoreScheduledRunCheck);
+settlementParam.setIgnoreScheduledRunCheck(ignoreScheduledRunCheck);
+
+settlementParam.setRunUser(username); 
+log.info(&quot;User Name : &quot;+username);
+
+log.info(&quot;mceDataLoadByController : &quot;+mceDataLoadByController);
+settlementParam.setMceDataLoadByController(mceDataLoadByController);
+
+
+kcontext.setVariable(&quot;settlementParam&quot;,settlementParam);
+log.info(&quot;Calling Execute Run Process.......&quot;);
+
+</drools:script>
+        </drools:onEntry-script>
+        <drools:onExit-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Completed Execute Run Process.......&quot;);</drools:script>
+        </drools:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_19</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_25</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_5">
+        <bpmn2:dataInput id="DataInput_33" itemSubjectRef="ItemDefinition_6754" name="invokedBy"/>
+        <bpmn2:dataInput id="DataInput_34" itemSubjectRef="ItemDefinition_6754" name="isTestRun"/>
+        <bpmn2:dataInput id="DataInput_35" itemSubjectRef="ItemDefinition_2851" name="mcrString"/>
+        <bpmn2:dataInput id="DataInput_36" itemSubjectRef="ItemDefinition_2851" name="nemsControllerEveId"/>
+        <bpmn2:dataInput id="DataInput_37" itemSubjectRef="ItemDefinition_2851" name="nemsControllerSchEveId"/>
+        <bpmn2:dataInput id="DataInput_38" itemSubjectRef="ItemDefinition_12" name="pd"/>
+        <bpmn2:dataInput id="DataInput_39" itemSubjectRef="ItemDefinition_604" name="settlementParam"/>
+        <bpmn2:dataInput id="DataInput_40" itemSubjectRef="ItemDefinition_2851" name="username"/>
+        <bpmn2:dataInput id="DataInput_96" itemSubjectRef="ItemDefinition_2851" name="soapServiceUrl"/>
+        <bpmn2:dataInput id="DataInput_1" itemSubjectRef="_endTimeItem" name="startTime"/>
+        <bpmn2:dataOutput id="DataOutput_3" itemSubjectRef="ItemDefinition_604" name="settlementParam"/>
+        <bpmn2:dataOutput id="DataOutput_4" itemSubjectRef="ItemDefinition_2851" name="nemsControllerEveId"/>
+        <bpmn2:dataOutput id="DataOutput_5" itemSubjectRef="ItemDefinition_2851" name="settRunId"/>
+        <bpmn2:dataOutput id="DataOutput_16" itemSubjectRef="ItemDefinition_172" name="exception"/>
+        <bpmn2:inputSet id="InputSet_3" name="Input Set 3">
+          <bpmn2:dataInputRefs>DataInput_33</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_34</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_35</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_36</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_37</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_38</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_39</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_40</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_96</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_1</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_3" name="Output Set 3">
+          <bpmn2:dataOutputRefs>DataOutput_3</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_4</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_5</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_16</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_21">
+        <bpmn2:sourceRef>invokedBy</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_33</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_22">
+        <bpmn2:sourceRef>testRun</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_34</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_23">
+        <bpmn2:sourceRef>mcrString</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_35</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_24">
+        <bpmn2:sourceRef>nemsControllerEveId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_36</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_25">
+        <bpmn2:sourceRef>nemsControllerSchEveId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_37</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_26">
+        <bpmn2:sourceRef>pd</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_38</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_27">
+        <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_39</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_28">
+        <bpmn2:sourceRef>username</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_40</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_74">
+        <bpmn2:sourceRef>soapServiceUrl</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_96</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_1">
+        <bpmn2:sourceRef>startTime</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_1</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_2">
+        <bpmn2:sourceRef>DataOutput_3</bpmn2:sourceRef>
+        <bpmn2:targetRef>settlementParam</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_3">
+        <bpmn2:sourceRef>DataOutput_4</bpmn2:sourceRef>
+        <bpmn2:targetRef>nemsControllerEveId</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_4">
+        <bpmn2:sourceRef>DataOutput_5</bpmn2:sourceRef>
+        <bpmn2:targetRef>settRunId</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_17">
+        <bpmn2:sourceRef>DataOutput_16</bpmn2:sourceRef>
+        <bpmn2:targetRef>exception</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_19" drools:priority="1" name="P Run" sourceRef="ExclusiveGateway_7" targetRef="CallActivity_1">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_44" language="http://www.java.com/java">return (settlementType.equalsIgnoreCase(&quot;P&quot;) || settlementType == null) ;</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:callActivity id="CallActivity_2" drools:waitForCompletion="true" drools:independent="false" name="Call Execute Run (F)" calledElement="ExecuteRun">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Call Execute Run (F)]]></drools:metaValue>
+        </drools:metaData>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Calling F ....&quot;);
+log.info(&quot;comments.......&quot;+comments);
+settlementParam.setComment(comments); 
+log.info(&quot;mainEventId.......&quot;+mainEventId);
+settlementParam.setMainEveId(mainEventId);
+log.info(&quot;runDate.......&quot;+runDate);
+settlementParam.setRunDate(runDate);
+log.info(&quot;runFrom.......&quot;+runFrom);
+settlementParam.setRunFrom(runFrom);
+log.info(&quot;Run Type.......F&quot;);
+settlementParam.setRunType(&quot;F&quot;);
+log.info(&quot;schEventId.......&quot;+schEventId);
+settlementParam.setSchEveId(schEventId);
+log.info(&quot;settlementDate.......&quot;+settlementDate);
+settlementParam.setSettlementDate(settlementDate);
+log.info(&quot;ignoreScheduledRunCheck.......&quot;+ignoreScheduledRunCheck);
+settlementParam.setIgnoreScheduledRunCheck(ignoreScheduledRunCheck);
+
+settlementParam.setRunUser(username); 
+log.info(&quot;User Name : &quot;+username);
+
+log.info(&quot;mceDataLoadByController : &quot;+mceDataLoadByController);
+settlementParam.setMceDataLoadByController(mceDataLoadByController);
+
+kcontext.setVariable(&quot;settlementParam&quot;,settlementParam);
+log.info(&quot;Calling Execute Run Process.......&quot;);</drools:script>
+        </drools:onEntry-script>
+        <drools:onExit-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Completed Execute Run Process - settRunId : &quot;+settRunId);</drools:script>
+        </drools:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_22</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_26</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_6">
+        <bpmn2:dataInput id="DataInput_41" itemSubjectRef="ItemDefinition_6754" name="invokedBy"/>
+        <bpmn2:dataInput id="DataInput_42" itemSubjectRef="ItemDefinition_6754" name="isTestRun"/>
+        <bpmn2:dataInput id="DataInput_43" itemSubjectRef="ItemDefinition_2851" name="mcrString"/>
+        <bpmn2:dataInput id="DataInput_44" itemSubjectRef="ItemDefinition_2851" name="nemsControllerEveId"/>
+        <bpmn2:dataInput id="DataInput_45" itemSubjectRef="ItemDefinition_2851" name="nemsControllerSchEveId"/>
+        <bpmn2:dataInput id="DataInput_46" itemSubjectRef="ItemDefinition_12" name="pd"/>
+        <bpmn2:dataInput id="DataInput_47" itemSubjectRef="ItemDefinition_604" name="settlementParam"/>
+        <bpmn2:dataInput id="DataInput_48" itemSubjectRef="ItemDefinition_2851" name="username"/>
+        <bpmn2:dataInput id="DataInput_97" itemSubjectRef="ItemDefinition_2851" name="soapServiceUrl"/>
+        <bpmn2:dataOutput id="DataOutput_6" itemSubjectRef="ItemDefinition_604" name="settlementParam"/>
+        <bpmn2:dataOutput id="DataOutput_7" itemSubjectRef="ItemDefinition_2851" name="nemsControllerEveId"/>
+        <bpmn2:dataOutput id="DataOutput_8" itemSubjectRef="ItemDefinition_2851" name="settRunId"/>
+        <bpmn2:dataOutput id="DataOutput_19" itemSubjectRef="ItemDefinition_172" name="exception"/>
+        <bpmn2:inputSet id="InputSet_4" name="Input Set 3">
+          <bpmn2:dataInputRefs>DataInput_41</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_42</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_43</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_44</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_45</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_46</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_47</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_48</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_97</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_5" name="Output Set 3">
+          <bpmn2:dataOutputRefs>DataOutput_6</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_7</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_8</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_19</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_29">
+        <bpmn2:sourceRef>invokedBy</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_41</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_30">
+        <bpmn2:sourceRef>testRun</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_42</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_31">
+        <bpmn2:sourceRef>mcrString</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_43</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_32">
+        <bpmn2:sourceRef>nemsControllerEveId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_44</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_33">
+        <bpmn2:sourceRef>nemsControllerSchEveId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_45</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_34">
+        <bpmn2:sourceRef>pd</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_46</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_35">
+        <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_47</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_36">
+        <bpmn2:sourceRef>username</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_48</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_75">
+        <bpmn2:sourceRef>soapServiceUrl</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_97</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_5">
+        <bpmn2:sourceRef>DataOutput_6</bpmn2:sourceRef>
+        <bpmn2:targetRef>settlementParam</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_6">
+        <bpmn2:sourceRef>DataOutput_7</bpmn2:sourceRef>
+        <bpmn2:targetRef>nemsControllerEveId</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_7">
+        <bpmn2:sourceRef>DataOutput_8</bpmn2:sourceRef>
+        <bpmn2:targetRef>settRunId</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_18">
+        <bpmn2:sourceRef>DataOutput_19</bpmn2:sourceRef>
+        <bpmn2:targetRef>exception</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_22" drools:priority="1" name="F Run" sourceRef="ExclusiveGateway_7" targetRef="CallActivity_2">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_46" language="http://www.java.com/java">return (settlementType.equalsIgnoreCase(&quot;F&quot;) || settlementType == null) ;</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:callActivity id="CallActivity_3" drools:waitForCompletion="true" drools:independent="false" name="Call Execute Run (S)" calledElement="ExecuteRun">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Call Execute Run (S)]]></drools:metaValue>
+        </drools:metaData>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+
+log.info(&quot;Calling S ....&quot;);
+log.info(&quot;comments.......&quot;+comments);
+settlementParam.setComment(comments); 
+log.info(&quot;mainEventId.......&quot;+mainEventId);
+settlementParam.setMainEveId(mainEventId);
+log.info(&quot;runDate.......&quot;+runDate);
+settlementParam.setRunDate(runDate);
+log.info(&quot;runFrom.......&quot;+runFrom);
+settlementParam.setRunFrom(runFrom);
+log.info(&quot;Run Type.......S&quot;);
+settlementParam.setRunType(&quot;S&quot;);
+log.info(&quot;schEventId.......&quot;+schEventId);
+settlementParam.setSchEveId(schEventId);
+log.info(&quot;settlementDate.......&quot;+settlementDate);
+settlementParam.setSettlementDate(settlementDate);
+log.info(&quot;ignoreScheduledRunCheck.......&quot;+ignoreScheduledRunCheck);
+settlementParam.setIgnoreScheduledRunCheck(ignoreScheduledRunCheck);
+
+settlementParam.setRunUser(username); 
+log.info(&quot;User Name : &quot;+username);
+
+log.info(&quot;mceDataLoadByController : &quot;+mceDataLoadByController);
+settlementParam.setMceDataLoadByController(mceDataLoadByController);
+
+kcontext.setVariable(&quot;settlementParam&quot;,settlementParam);
+log.info(&quot;Calling Execute Run Process.......&quot;);</drools:script>
+        </drools:onEntry-script>
+        <drools:onExit-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Completed Execute Run Process - settRunId : &quot;+settRunId);</drools:script>
+        </drools:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_24</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_28</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_7">
+        <bpmn2:dataInput id="DataInput_49" itemSubjectRef="ItemDefinition_6754" name="invokedBy"/>
+        <bpmn2:dataInput id="DataInput_50" itemSubjectRef="ItemDefinition_6754" name="isTestRun"/>
+        <bpmn2:dataInput id="DataInput_55" itemSubjectRef="ItemDefinition_2851" name="mcrString"/>
+        <bpmn2:dataInput id="DataInput_56" itemSubjectRef="ItemDefinition_2851" name="nemsControllerEveId"/>
+        <bpmn2:dataInput id="DataInput_60" itemSubjectRef="ItemDefinition_2851" name="nemsControllerSchEveId"/>
+        <bpmn2:dataInput id="DataInput_63" itemSubjectRef="ItemDefinition_12" name="pd"/>
+        <bpmn2:dataInput id="DataInput_64" itemSubjectRef="ItemDefinition_604" name="settlementParam"/>
+        <bpmn2:dataInput id="DataInput_66" itemSubjectRef="ItemDefinition_2851" name="username"/>
+        <bpmn2:dataInput id="DataInput_99" itemSubjectRef="ItemDefinition_2851" name="soapServiceUrl"/>
+        <bpmn2:dataOutput id="DataOutput_9" itemSubjectRef="ItemDefinition_604" name="settlementParam"/>
+        <bpmn2:dataOutput id="DataOutput_10" itemSubjectRef="ItemDefinition_2851" name="nemsControllerEveId"/>
+        <bpmn2:dataOutput id="DataOutput_11" itemSubjectRef="ItemDefinition_2851" name="settRunId"/>
+        <bpmn2:dataOutput id="DataOutput_21" itemSubjectRef="ItemDefinition_172" name="exception"/>
+        <bpmn2:inputSet id="InputSet_5" name="Input Set 3">
+          <bpmn2:dataInputRefs>DataInput_49</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_50</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_55</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_56</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_60</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_63</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_64</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_66</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_99</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_6" name="Output Set 3">
+          <bpmn2:dataOutputRefs>DataOutput_9</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_10</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_11</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_21</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_43">
+        <bpmn2:sourceRef>invokedBy</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_49</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_44">
+        <bpmn2:sourceRef>testRun</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_50</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_45">
+        <bpmn2:sourceRef>mcrString</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_55</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_46">
+        <bpmn2:sourceRef>nemsControllerEveId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_56</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_47">
+        <bpmn2:sourceRef>nemsControllerSchEveId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_60</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_48">
+        <bpmn2:sourceRef>pd</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_63</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_49">
+        <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_64</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_50">
+        <bpmn2:sourceRef>username</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_66</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_77">
+        <bpmn2:sourceRef>soapServiceUrl</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_99</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_8">
+        <bpmn2:sourceRef>DataOutput_9</bpmn2:sourceRef>
+        <bpmn2:targetRef>settlementParam</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_9">
+        <bpmn2:sourceRef>DataOutput_10</bpmn2:sourceRef>
+        <bpmn2:targetRef>nemsControllerEveId</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_10">
+        <bpmn2:sourceRef>DataOutput_11</bpmn2:sourceRef>
+        <bpmn2:targetRef>settRunId</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_20">
+        <bpmn2:sourceRef>DataOutput_21</bpmn2:sourceRef>
+        <bpmn2:targetRef>exception</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:callActivity>
+    <bpmn2:callActivity id="CallActivity_4" drools:waitForCompletion="true" drools:independent="false" name="Call Execute Run (R)" calledElement="ExecuteRun">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Call Execute Run (R)]]></drools:metaValue>
+        </drools:metaData>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+
+log.info(&quot;Calling R ....&quot;);
+log.info(&quot;comments.......&quot;+comments);
+settlementParam.setComment(comments); 
+log.info(&quot;mainEventId.......&quot;+mainEventId);
+settlementParam.setMainEveId(mainEventId);
+log.info(&quot;runDate.......&quot;+runDate);
+settlementParam.setRunDate(runDate);
+log.info(&quot;runFrom.......&quot;+runFrom);
+settlementParam.setRunFrom(runFrom);
+log.info(&quot;Run Type.......R&quot;);
+settlementParam.setRunType(&quot;R&quot;);
+log.info(&quot;schEventId.......&quot;+schEventId);
+settlementParam.setSchEveId(schEventId);
+log.info(&quot;settlementDate.......&quot;+settlementDate);
+settlementParam.setSettlementDate(settlementDate);
+log.info(&quot;ignoreScheduledRunCheck.......&quot;+ignoreScheduledRunCheck);
+settlementParam.setIgnoreScheduledRunCheck(ignoreScheduledRunCheck);
+
+settlementParam.setRunUser(username); 
+log.info(&quot;User Name : &quot;+username);
+
+log.info(&quot;mceDataLoadByController : &quot;+mceDataLoadByController);
+settlementParam.setMceDataLoadByController(mceDataLoadByController);
+
+kcontext.setVariable(&quot;settlementParam&quot;,settlementParam);
+log.info(&quot;Calling Execute Run Process.......&quot;);</drools:script>
+        </drools:onEntry-script>
+        <drools:onExit-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Completed Execute Run Process - settRunId : &quot;+settRunId);</drools:script>
+        </drools:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_23</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_27</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_9">
+        <bpmn2:dataInput id="DataInput_68" itemSubjectRef="ItemDefinition_6754" name="invokedBy"/>
+        <bpmn2:dataInput id="DataInput_69" itemSubjectRef="ItemDefinition_6754" name="isTestRun"/>
+        <bpmn2:dataInput id="DataInput_70" itemSubjectRef="ItemDefinition_2851" name="mcrString"/>
+        <bpmn2:dataInput id="DataInput_71" itemSubjectRef="ItemDefinition_2851" name="nemsControllerEveId"/>
+        <bpmn2:dataInput id="DataInput_72" itemSubjectRef="ItemDefinition_2851" name="nemsControllerSchEveId"/>
+        <bpmn2:dataInput id="DataInput_73" itemSubjectRef="ItemDefinition_12" name="pd"/>
+        <bpmn2:dataInput id="DataInput_74" itemSubjectRef="ItemDefinition_604" name="settlementParam"/>
+        <bpmn2:dataInput id="DataInput_75" itemSubjectRef="ItemDefinition_2851" name="username"/>
+        <bpmn2:dataInput id="DataInput_98" itemSubjectRef="ItemDefinition_2851" name="soapServiceUrl"/>
+        <bpmn2:dataOutput id="DataOutput_12" itemSubjectRef="ItemDefinition_604" name="settlementParam"/>
+        <bpmn2:dataOutput id="DataOutput_13" itemSubjectRef="ItemDefinition_2851" name="nemsControllerEveId"/>
+        <bpmn2:dataOutput id="DataOutput_14" itemSubjectRef="ItemDefinition_2851" name="settRunId"/>
+        <bpmn2:dataOutput id="DataOutput_20" itemSubjectRef="ItemDefinition_172" name="exception"/>
+        <bpmn2:inputSet id="InputSet_6" name="Input Set 3">
+          <bpmn2:dataInputRefs>DataInput_68</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_69</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_70</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_71</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_72</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_73</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_74</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_75</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_98</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_7" name="Output Set 3">
+          <bpmn2:dataOutputRefs>DataOutput_12</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_13</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_14</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_20</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_51">
+        <bpmn2:sourceRef>invokedBy</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_68</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_52">
+        <bpmn2:sourceRef>testRun</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_69</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_53">
+        <bpmn2:sourceRef>mcrString</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_70</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_54">
+        <bpmn2:sourceRef>nemsControllerEveId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_71</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_55">
+        <bpmn2:sourceRef>nemsControllerSchEveId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_72</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_56">
+        <bpmn2:sourceRef>pd</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_73</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_57">
+        <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_74</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_58">
+        <bpmn2:sourceRef>username</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_75</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_76">
+        <bpmn2:sourceRef>soapServiceUrl</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_98</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_11">
+        <bpmn2:sourceRef>DataOutput_12</bpmn2:sourceRef>
+        <bpmn2:targetRef>settlementParam</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_12">
+        <bpmn2:sourceRef>DataOutput_13</bpmn2:sourceRef>
+        <bpmn2:targetRef>nemsControllerEveId</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_13">
+        <bpmn2:sourceRef>DataOutput_14</bpmn2:sourceRef>
+        <bpmn2:targetRef>settRunId</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_19">
+        <bpmn2:sourceRef>DataOutput_20</bpmn2:sourceRef>
+        <bpmn2:targetRef>exception</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_23" drools:priority="1" name="R Run" sourceRef="ExclusiveGateway_7" targetRef="CallActivity_4">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_48" language="http://www.java.com/java">return (settlementType.equalsIgnoreCase(&quot;R&quot;) || settlementType == null) ;</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SequenceFlow_24" drools:priority="1" name="S Run" sourceRef="ExclusiveGateway_7" targetRef="CallActivity_3">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_57" language="http://www.java.com/java">return (settlementType.equalsIgnoreCase(&quot;S&quot;) || settlementType == null) ;</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_8" gatewayDirection="Converging">
+      <bpmn2:incoming>SequenceFlow_25</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_26</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_27</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_28</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_8</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_25" drools:priority="1" sourceRef="CallActivity_1" targetRef="ExclusiveGateway_8"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_26" drools:priority="1" sourceRef="CallActivity_2" targetRef="ExclusiveGateway_8"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_27" drools:priority="1" sourceRef="CallActivity_4" targetRef="ExclusiveGateway_8"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_28" drools:priority="1" sourceRef="CallActivity_3" targetRef="ExclusiveGateway_8"/>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_9" gatewayDirection="Diverging">
+      <bpmn2:incoming>SequenceFlow_8</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_16</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_20</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_8" drools:priority="1" sourceRef="ExclusiveGateway_8" targetRef="ExclusiveGateway_9"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_16" drools:priority="1" sourceRef="ExclusiveGateway_9" targetRef="Task_14">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_1" language="http://www.java.com/java">return (runFrom.equalsIgnoreCase(&quot;F&quot;));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_10" gatewayDirection="Diverging">
+      <bpmn2:incoming>SequenceFlow_21</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_32</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_37</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_20" drools:priority="1" sourceRef="ExclusiveGateway_9" targetRef="ExclusiveGateway_12">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_3" language="http://www.java.com/java">return !(runFrom.equalsIgnoreCase(&quot;F&quot;));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_11" gatewayDirection="Converging">
+      <bpmn2:incoming>SequenceFlow_32</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_38</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_7</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_32" drools:priority="1" sourceRef="ExclusiveGateway_10" targetRef="ExclusiveGateway_11">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_29" language="http://www.java.com/java">return !(settlementType.equalsIgnoreCase(&quot;F&quot;));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_12" gatewayDirection="Converging">
+      <bpmn2:incoming>SequenceFlow_20</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_44</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:callActivity id="CallActivity_5" drools:waitForCompletion="true" drools:independent="false" name="Call Invoice Generate" calledElement="GenerateInvoice">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Call Invoice Generate]]></drools:metaValue>
+        </drools:metaData>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Calling sub-process Generate Invoice&quot;);</drools:script>
+        </drools:onEntry-script>
+        <drools:onExit-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Completed sub-process Generate Invoice&quot;);</drools:script>
+        </drools:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_37</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_38</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_11">
+        <bpmn2:dataInput id="DataInput_77" itemSubjectRef="_endTimeItem" name="settlementDate"/>
+        <bpmn2:dataInput id="DataInput_78" itemSubjectRef="ItemDefinition_2851" name="settlementType"/>
+        <bpmn2:dataInput id="DataInput_100" itemSubjectRef="ItemDefinition_2851" name="soapServiceUrl"/>
+        <bpmn2:dataInput id="DataInput_88" itemSubjectRef="ItemDefinition_2851" name="settRunId"/>
+        <bpmn2:dataOutput id="DataOutput_2" itemSubjectRef="ItemDefinition_172" name="exception"/>
+        <bpmn2:inputSet id="InputSet_7" name="Input Set 7">
+          <bpmn2:dataInputRefs>DataInput_77</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_78</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_100</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_88</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_10" name="Output Set 10">
+          <bpmn2:dataOutputRefs>DataOutput_2</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_67">
+        <bpmn2:sourceRef>settlementDate</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_77</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_68">
+        <bpmn2:sourceRef>settlementType</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_78</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_78">
+        <bpmn2:sourceRef>soapServiceUrl</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_100</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_100">
+        <bpmn2:sourceRef>settRunId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_88</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_1">
+        <bpmn2:sourceRef>DataOutput_2</bpmn2:sourceRef>
+        <bpmn2:targetRef>exception</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_37" drools:priority="1" sourceRef="ExclusiveGateway_10" targetRef="CallActivity_5">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_36" language="http://www.java.com/java">return (settlementType.equalsIgnoreCase(&quot;F&quot;));</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SequenceFlow_38" drools:priority="1" sourceRef="CallActivity_5" targetRef="ExclusiveGateway_11"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_7" drools:priority="1" sourceRef="ExclusiveGateway_11" targetRef="Task_11"/>
+    <bpmn2:callActivity id="CallActivity_6" drools:waitForCompletion="true" drools:independent="false" name="Account Interface" calledElement="AccountingInterface">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Account Interface]]></drools:metaValue>
+        </drools:metaData>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Calling sub-process Accounting Interface&quot;);</drools:script>
+        </drools:onEntry-script>
+        <drools:onExit-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Completed sub-process Accounting Interface&quot;);</drools:script>
+        </drools:onExit-script>
+        <drools:metaData name="customAsync">
+          <drools:metaValue><![CDATA[true]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_21</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_16">
+        <bpmn2:dataInput id="DataInput_52" itemSubjectRef="ItemDefinition_2851" name="eveId"/>
+        <bpmn2:dataInput id="DataInput_79" itemSubjectRef="ItemDefinition_2851" name="runFrom"/>
+        <bpmn2:dataInput id="DataInput_80" itemSubjectRef="_endTimeItem" name="settlementDate"/>
+        <bpmn2:inputSet id="InputSet_9" name="Input Set 9">
+          <bpmn2:dataInputRefs>DataInput_52</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_79</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_80</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_15" name="Output Set 15"/>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_37">
+        <bpmn2:sourceRef>mainEventId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_52</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_38">
+        <bpmn2:sourceRef>runFrom</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_79</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_85">
+        <bpmn2:sourceRef>settlementDate</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_80</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_29" drools:priority="1" sourceRef="_290C2E72-59E5-4AE0-978D-5AEEDBDCBE57" targetRef="Task_9"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_4" drools:priority="1" sourceRef="ExclusiveGateway_12" targetRef="CallActivity_6"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_21" drools:priority="1" sourceRef="CallActivity_6" targetRef="ExclusiveGateway_10"/>
+    <bpmn2:subProcess id="SubProcess_1" name="Event Handler" triggeredByEvent="true">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Event Handler]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:startEvent id="StartEvent_1" name="Error Start Event">
+        <bpmn2:extensionElements>
+          <drools:metaData name="elementname">
+            <drools:metaValue><![CDATA[Error Start Event]]></drools:metaValue>
+          </drools:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:outgoing>SequenceFlow_33</bpmn2:outgoing>
+        <bpmn2:dataOutput id="DataOutput_1" name="Error_1_Output"/>
+        <bpmn2:dataOutputAssociation id="DataOutputAssociation_16">
+          <bpmn2:sourceRef>DataOutput_1</bpmn2:sourceRef>
+          <bpmn2:targetRef>runtimeException</bpmn2:targetRef>
+        </bpmn2:dataOutputAssociation>
+        <bpmn2:outputSet id="OutputSet_13" name="Output Set 13">
+          <bpmn2:dataOutputRefs>DataOutput_1</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+        <bpmn2:errorEventDefinition id="ErrorEventDefinition_1" errorRef="Error_2"/>
+      </bpmn2:startEvent>
+      <bpmn2:sequenceFlow id="SequenceFlow_33" drools:priority="1" sourceRef="StartEvent_1" targetRef="Task_13"/>
+      <bpmn2:endEvent id="EndEvent_1" name="Error End Event">
+        <bpmn2:extensionElements>
+          <drools:metaData name="elementname">
+            <drools:metaValue><![CDATA[Error End Event]]></drools:metaValue>
+          </drools:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SequenceFlow_43</bpmn2:incoming>
+      </bpmn2:endEvent>
+      <bpmn2:task id="Task_13" drools:taskName="SettlementMainProcessWIH" drools:displayName="SettlementMainProcessWIH" drools:icon="icon-info.gif" name="Call Exception Handler">
+        <bpmn2:extensionElements>
+          <drools:metaData name="elementname">
+            <drools:metaValue><![CDATA[Call Exception Handler]]></drools:metaValue>
+          </drools:metaData>
+          <drools:metaData name="customAsync">
+            <drools:metaValue><![CDATA[true]]></drools:metaValue>
+          </drools:metaData>
+          <drools:onEntry-script scriptFormat="http://www.java.com/java">
+            <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Main Process - Stacktrace: &quot;+runtimeException.toString());
+log.info(&quot;Main Process - Calling Exception : &quot;+exception);
+if(exception == null){
+exception = (runtimeException instanceof SettlementRunException) ? (SettlementRunException) runtimeException : exception;
+}
+log.info(&quot;Inside Handle Exception: &quot;+exception);
+
+kcontext.setVariable(&quot;exception&quot;, exception);</drools:script>
+          </drools:onEntry-script>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SequenceFlow_33</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_43</bpmn2:outgoing>
+        <bpmn2:ioSpecification id="InputOutputSpecification_19">
+          <bpmn2:dataInput id="DataInput_166" name="className"/>
+          <bpmn2:dataInput id="DataInput_167" itemSubjectRef="ItemDefinition_2851" name="TaskName"/>
+          <bpmn2:dataInput id="DataInput_168" itemSubjectRef="ItemDefinition_2851" name="Operation"/>
+          <bpmn2:dataInput id="DataInput_169" itemSubjectRef="ItemDefinition_604" name="settlementParam"/>
+          <bpmn2:dataInput id="DataInput_170" itemSubjectRef="ItemDefinition_172" name="exception"/>
+          <bpmn2:inputSet id="InputSet_11">
+            <bpmn2:dataInputRefs>DataInput_166</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_167</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_168</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_169</bpmn2:dataInputRefs>
+            <bpmn2:dataInputRefs>DataInput_170</bpmn2:dataInputRefs>
+          </bpmn2:inputSet>
+          <bpmn2:outputSet id="OutputSet_19" name="Output Set 14"/>
+        </bpmn2:ioSpecification>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_151">
+          <bpmn2:targetRef>DataInput_166</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_152">
+          <bpmn2:targetRef>DataInput_167</bpmn2:targetRef>
+          <bpmn2:assignment id="Assignment_38">
+            <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_95">SettlementMainProcessWIH</bpmn2:from>
+            <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_96">DataInput_87</bpmn2:to>
+          </bpmn2:assignment>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_153">
+          <bpmn2:targetRef>DataInput_168</bpmn2:targetRef>
+          <bpmn2:assignment id="Assignment_40">
+            <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_97">exceptionHandler</bpmn2:from>
+            <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_98">DataInput_94</bpmn2:to>
+          </bpmn2:assignment>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_154">
+          <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+          <bpmn2:targetRef>DataInput_169</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataInputAssociation id="DataInputAssociation_155">
+          <bpmn2:sourceRef>exception</bpmn2:sourceRef>
+          <bpmn2:targetRef>DataInput_170</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+      </bpmn2:task>
+      <bpmn2:sequenceFlow id="SequenceFlow_43" drools:priority="1" sourceRef="Task_13" targetRef="EndEvent_1"/>
+    </bpmn2:subProcess>
+    <bpmn2:sequenceFlow id="SequenceFlow_39" drools:priority="1" sourceRef="ExclusiveGateway_4" targetRef="ExclusiveGateway_6">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_62" language="http://www.java.com/java">return  !(wsCheckBusinessDayResponse.isBizDayResult() != true);</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:task id="Task_9" drools:taskName="SettlementMainProcessWIH" drools:displayName="SettlementMainProcessWIH" drools:icon="icon-info.gif" name="Initialize Variables">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Initialize Variables]]></drools:metaValue>
+        </drools:metaData>
+        <drools:metaData name="customAsync">
+          <drools:metaValue><![CDATA[true]]></drools:metaValue>
+        </drools:metaData>
+        <drools:onExit-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;soapServiceUrl: &quot;+soapServiceUrl);
+kcontext.setVariable(&quot;soapServiceUrl&quot;,soapServiceUrl);</drools:script>
+        </drools:onExit-script>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script>//Logger logger = LoggerFactory.getLogger(&quot;Script Task Logger&quot;);
+//kcontext.setVariable(&quot;scriptlogger&quot;,logger);
+
+
+Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Calling Initialize Variables....&quot;);</drools:script>
+        </drools:onEntry-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_29</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_15</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_14">
+        <bpmn2:dataInput id="DataInput_86" name="className"/>
+        <bpmn2:dataInput id="DataInput_87" itemSubjectRef="ItemDefinition_2851" name="TaskName"/>
+        <bpmn2:dataInput id="DataInput_94" itemSubjectRef="ItemDefinition_2851" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_95" itemSubjectRef="ItemDefinition_2851" name="soapServiceUrl"/>
+        <bpmn2:dataOutput id="DataOutput_22" itemSubjectRef="ItemDefinition_2851" name="soapServiceUrl"/>
+        <bpmn2:inputSet id="_InputSet_91">
+          <bpmn2:dataInputRefs>DataInput_86</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_87</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_94</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_95</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_14" name="Output Set 14">
+          <bpmn2:dataOutputRefs>DataOutput_22</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="_DataInputAssociation_313">
+        <bpmn2:targetRef>DataInput_86</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_98">
+        <bpmn2:targetRef>DataInput_87</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_26">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_45">SettlementMainProcessWIH</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_24">DataInput_87</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_99">
+        <bpmn2:targetRef>DataInput_94</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_27">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_70">initializeVariables</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_68">DataInput_94</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_101">
+        <bpmn2:sourceRef>soapServiceUrl</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_95</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_21">
+        <bpmn2:sourceRef>DataOutput_22</bpmn2:sourceRef>
+        <bpmn2:targetRef>soapServiceUrl</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_15" drools:priority="1" sourceRef="Task_9" targetRef="Task_3"/>
+    <bpmn2:task id="Task_10" drools:taskName="SettlementMainProcessWIH" drools:displayName="SettlementMainProcessWIH" drools:icon="icon-info.gif" name="Create Event Schedule">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Create Event Schedule]]></drools:metaValue>
+        </drools:metaData>
+        <drools:metaData name="customAsync">
+          <drools:metaValue><![CDATA[true]]></drools:metaValue>
+        </drools:metaData>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Calling create Schedule Event : &quot;);
+if(pd == null)
+{
+pd = new com.emc.settlement.model.backend.pojo.PeriodNumber();
+}
+kcontext.setVariable(&quot;pd&quot;, pd);
+
+if(settlementParam == null)
+{
+settlementParam = new com.emc.settlement.model.backend.pojo.SettlementRunParams();
+}
+kcontext.setVariable(&quot;settlementParam&quot;, settlementParam);
+log.info(&quot;Initialized variables &quot;);</drools:script>
+        </drools:onEntry-script>
+        <drools:onExit-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Completed create Schedule Event : &quot;);
+log.info(&quot;startTime : &quot;+startTime);</drools:script>
+        </drools:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_18</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_36</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_15">
+        <bpmn2:dataInput id="DataInput_109" name="className"/>
+        <bpmn2:dataInput id="DataInput_117" itemSubjectRef="ItemDefinition_2851" name="TaskName"/>
+        <bpmn2:dataInput id="DataInput_118" itemSubjectRef="ItemDefinition_2851" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_119" itemSubjectRef="ItemDefinition_2851" name="comments"/>
+        <bpmn2:dataInput id="DataInput_120" itemSubjectRef="ItemDefinition_6754" name="ignoreScheduledRunCheck"/>
+        <bpmn2:dataInput id="DataInput_121" itemSubjectRef="ItemDefinition_6754" name="invokedBy"/>
+        <bpmn2:dataInput id="DataInput_122" itemSubjectRef="ItemDefinition_2851" name="nemsControllerEveId"/>
+        <bpmn2:dataInput id="DataInput_123" itemSubjectRef="ItemDefinition_2851" name="nemsControllerSchEveId"/>
+        <bpmn2:dataInput id="DataInput_124" itemSubjectRef="_runDateItem" name="runDate"/>
+        <bpmn2:dataInput id="DataInput_125" itemSubjectRef="ItemDefinition_2851" name="runFrom"/>
+        <bpmn2:dataInput id="DataInput_126" itemSubjectRef="_endTimeItem" name="settlementDate"/>
+        <bpmn2:dataInput id="DataInput_127" itemSubjectRef="ItemDefinition_2851" name="settlementType"/>
+        <bpmn2:dataInput id="DataInput_128" itemSubjectRef="ItemDefinition_6754" name="testRun"/>
+        <bpmn2:dataInput id="DataInput_129" itemSubjectRef="ItemDefinition_2851" name="username"/>
+        <bpmn2:dataInput id="DataInput_130" itemSubjectRef="ItemDefinition_2851" name="logPrefix"/>
+        <bpmn2:dataInput id="DataInput_131" itemSubjectRef="ItemDefinition_2851" name="mainEventId"/>
+        <bpmn2:dataInput id="DataInput_132" itemSubjectRef="ItemDefinition_2851" name="schEventId"/>
+        <bpmn2:dataInput id="DataInput_133" itemSubjectRef="ItemDefinition_2851" name="startMsg"/>
+        <bpmn2:dataInput id="DataInput_134" itemSubjectRef="ItemDefinition_12" name="pd"/>
+        <bpmn2:dataInput id="DataInput_135" itemSubjectRef="_endTimeItem" name="startTime"/>
+        <bpmn2:dataOutput id="DataOutput_23" itemSubjectRef="ItemDefinition_12" name="pd"/>
+        <bpmn2:dataOutput id="DataOutput_24" itemSubjectRef="_endTimeItem" name="startTime"/>
+        <bpmn2:dataOutput id="DataOutput_25" itemSubjectRef="ItemDefinition_2851" name="schEventId"/>
+        <bpmn2:dataOutput id="DataOutput_26" itemSubjectRef="ItemDefinition_2851" name="mainEventId"/>
+        <bpmn2:dataOutput id="DataOutput_27" itemSubjectRef="ItemDefinition_6754" name="ignoreScheduledRunCheck"/>
+        <bpmn2:dataOutput id="DataOutput_28" itemSubjectRef="ItemDefinition_6754" name="invokedBy"/>
+        <bpmn2:dataOutput id="DataOutput_29" itemSubjectRef="_runDateItem" name="runDate"/>
+        <bpmn2:dataOutput id="DataOutput_15" itemSubjectRef="ItemDefinition_6754" name="mceDataLoadByController"/>
+        <bpmn2:inputSet id="InputSet_2">
+          <bpmn2:dataInputRefs>DataInput_109</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_117</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_118</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_119</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_120</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_121</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_122</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_123</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_124</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_125</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_126</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_127</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_128</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_129</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_130</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_131</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_132</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_133</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_134</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_135</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_16" name="Output Set 14">
+          <bpmn2:dataOutputRefs>DataOutput_23</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_24</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_25</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_26</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_27</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_28</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_29</bpmn2:dataOutputRefs>
+          <bpmn2:dataOutputRefs>DataOutput_15</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_102">
+        <bpmn2:targetRef>DataInput_109</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_103">
+        <bpmn2:targetRef>DataInput_117</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_28">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_72">SettlementMainProcessWIH</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_75">DataInput_87</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_104">
+        <bpmn2:targetRef>DataInput_118</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_29">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_78">createScheduleEvent</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_81">DataInput_94</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_105">
+        <bpmn2:sourceRef>comments</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_119</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_106">
+        <bpmn2:sourceRef>ignoreScheduledRunCheck</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_120</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_107">
+        <bpmn2:sourceRef>invokedBy</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_121</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_108">
+        <bpmn2:sourceRef>nemsControllerEveId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_122</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_109">
+        <bpmn2:sourceRef>nemsControllerSchEveId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_123</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_110">
+        <bpmn2:sourceRef>runDate</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_124</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_111">
+        <bpmn2:sourceRef>runFrom</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_125</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_112">
+        <bpmn2:sourceRef>settlementDate</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_126</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_113">
+        <bpmn2:sourceRef>settlementType</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_127</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_114">
+        <bpmn2:sourceRef>testRun</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_128</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_115">
+        <bpmn2:sourceRef>username</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_129</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_116">
+        <bpmn2:sourceRef>logPrefix</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_130</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_117">
+        <bpmn2:sourceRef>mainEventId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_131</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_118">
+        <bpmn2:sourceRef>schEventId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_132</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_119">
+        <bpmn2:sourceRef>startMsg</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_133</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_120">
+        <bpmn2:sourceRef>pd</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_134</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_121">
+        <bpmn2:sourceRef>startTime</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_135</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_22">
+        <bpmn2:sourceRef>DataOutput_23</bpmn2:sourceRef>
+        <bpmn2:targetRef>pd</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_23">
+        <bpmn2:sourceRef>DataOutput_24</bpmn2:sourceRef>
+        <bpmn2:targetRef>startTime</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_24">
+        <bpmn2:sourceRef>DataOutput_25</bpmn2:sourceRef>
+        <bpmn2:targetRef>schEventId</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_25">
+        <bpmn2:sourceRef>DataOutput_26</bpmn2:sourceRef>
+        <bpmn2:targetRef>mainEventId</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_26">
+        <bpmn2:sourceRef>DataOutput_27</bpmn2:sourceRef>
+        <bpmn2:targetRef>ignoreScheduledRunCheck</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_27">
+        <bpmn2:sourceRef>DataOutput_28</bpmn2:sourceRef>
+        <bpmn2:targetRef>invokedBy</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_28">
+        <bpmn2:sourceRef>DataOutput_29</bpmn2:sourceRef>
+        <bpmn2:targetRef>runDate</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:dataOutputAssociation id="DataOutputAssociation_15">
+        <bpmn2:sourceRef>DataOutput_15</bpmn2:sourceRef>
+        <bpmn2:targetRef>mceDataLoadByController</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_36" drools:priority="1" sourceRef="Task_10" targetRef="ExclusiveGateway_7"/>
+    <bpmn2:task id="Task_11" drools:taskName="SettlementMainProcessWIH" drools:displayName="SettlementMainProcessWIH" drools:icon="icon-info.gif" name="Start Daily Prudential Process">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Start Daily Prudential Process]]></drools:metaValue>
+        </drools:metaData>
+        <drools:metaData name="customAsync">
+          <drools:metaValue><![CDATA[true]]></drools:metaValue>
+        </drools:metaData>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Calling Start Prudential Process&quot;);</drools:script>
+        </drools:onEntry-script>
+        <drools:onExit-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Completed Start Prudential Process&quot;);</drools:script>
+        </drools:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_41</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_17">
+        <bpmn2:dataInput id="DataInput_137" name="className"/>
+        <bpmn2:dataInput id="DataInput_138" itemSubjectRef="ItemDefinition_2851" name="TaskName"/>
+        <bpmn2:dataInput id="DataInput_139" itemSubjectRef="ItemDefinition_2851" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_156" itemSubjectRef="_runDateItem" name="runDate"/>
+        <bpmn2:inputSet id="InputSet_8">
+          <bpmn2:dataInputRefs>DataInput_137</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_138</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_139</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_156</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_17" name="Output Set 14"/>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_122">
+        <bpmn2:targetRef>DataInput_137</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_123">
+        <bpmn2:targetRef>DataInput_138</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_30">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_84">SettlementMainProcessWIH</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_87">DataInput_87</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_124">
+        <bpmn2:targetRef>DataInput_139</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_31">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_89">startDailyPrudentialProcess</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_90">DataInput_94</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_141">
+        <bpmn2:sourceRef>runDate</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_156</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+    </bpmn2:task>
+    <bpmn2:task id="Task_12" drools:taskName="SettlementMainProcessWIH" drools:displayName="SettlementMainProcessWIH" drools:icon="icon-info.gif" name="Update Event Status">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Update Event Status]]></drools:metaValue>
+        </drools:metaData>
+        <drools:metaData name="customAsync">
+          <drools:metaValue><![CDATA[true]]></drools:metaValue>
+        </drools:metaData>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Calling Update Event Status&quot;);</drools:script>
+        </drools:onEntry-script>
+        <drools:onExit-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Completed Update Event Status&quot;);</drools:script>
+        </drools:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_41</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_42</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_18">
+        <bpmn2:dataInput id="DataInput_157" name="className"/>
+        <bpmn2:dataInput id="DataInput_158" itemSubjectRef="ItemDefinition_2851" name="TaskName"/>
+        <bpmn2:dataInput id="DataInput_159" itemSubjectRef="ItemDefinition_2851" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_160" itemSubjectRef="ItemDefinition_2851" name="mainEventId"/>
+        <bpmn2:dataInput id="DataInput_161" itemSubjectRef="ItemDefinition_2851" name="schEventId"/>
+        <bpmn2:dataInput id="DataInput_162" itemSubjectRef="ItemDefinition_604" name="settlementParam"/>
+        <bpmn2:dataInput id="DataInput_163" itemSubjectRef="_endTimeItem" name="startTime"/>
+        <bpmn2:dataInput id="DataInput_164" itemSubjectRef="_endTimeItem" name="endTime"/>
+        <bpmn2:dataInput id="DataInput_165" itemSubjectRef="_runDateItem" name="runDate"/>
+        <bpmn2:inputSet id="InputSet_10">
+          <bpmn2:dataInputRefs>DataInput_157</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_158</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_159</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_160</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_161</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_162</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_163</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_164</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_165</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_18" name="Output Set 14"/>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_142">
+        <bpmn2:targetRef>DataInput_157</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_143">
+        <bpmn2:targetRef>DataInput_158</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_32">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_91">SettlementMainProcessWIH</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_92">DataInput_87</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_144">
+        <bpmn2:targetRef>DataInput_159</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_33">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_93">updateEventStatus</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_94">DataInput_94</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_145">
+        <bpmn2:sourceRef>mainEventId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_160</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_146">
+        <bpmn2:sourceRef>schEventId</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_161</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_147">
+        <bpmn2:sourceRef>settlementParam</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_162</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_148">
+        <bpmn2:sourceRef>startTime</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_163</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_149">
+        <bpmn2:sourceRef>endTime</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_164</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_150">
+        <bpmn2:sourceRef>runDate</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_165</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_41" drools:priority="1" sourceRef="Task_11" targetRef="Task_12"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_42" drools:priority="1" sourceRef="Task_12" targetRef="_F7787A11-7210-48F1-AE44-6CAA19B36984"/>
+    <bpmn2:task id="Task_14" drools:taskName="SettlementMainProcessWIH" drools:displayName="SettlementMainProcessWIH" drools:icon="icon-info.gif" name="Call Create Risk Report">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Call Create Risk Report]]></drools:metaValue>
+        </drools:metaData>
+        <drools:metaData name="customAsync">
+          <drools:metaValue><![CDATA[true]]></drools:metaValue>
+        </drools:metaData>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Calling Create Risk Report&quot;);
+kcontext.setVariable(&quot;isSchedule&quot;, false);</drools:script>
+        </drools:onEntry-script>
+        <drools:onExit-script scriptFormat="http://www.java.com/java">
+          <drools:script>Logger log = LoggerFactory.getLogger(&quot;SettlementMainProcess&quot;);
+log.info(&quot;Completed Create Risk Report&quot;);</drools:script>
+        </drools:onExit-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_16</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_44</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="InputOutputSpecification_20">
+        <bpmn2:dataInput id="DataInput_171" name="className"/>
+        <bpmn2:dataInput id="DataInput_172" itemSubjectRef="ItemDefinition_2851" name="TaskName"/>
+        <bpmn2:dataInput id="DataInput_173" itemSubjectRef="ItemDefinition_2851" name="Operation"/>
+        <bpmn2:dataInput id="DataInput_174" itemSubjectRef="_endTimeItem" name="settlementDate"/>
+        <bpmn2:dataInput id="DataInput_175" itemSubjectRef="ItemDefinition_2851" name="settlementType"/>
+        <bpmn2:dataInput id="DataInput_179" itemSubjectRef="_runDateItem" name="runDate"/>
+        <bpmn2:dataInput id="DataInput_3" itemSubjectRef="ItemDefinition_6754" name="isSchedule"/>
+        <bpmn2:inputSet id="InputSet_12">
+          <bpmn2:dataInputRefs>DataInput_171</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_172</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_173</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_174</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_175</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_179</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>DataInput_3</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="OutputSet_20" name="Output Set 14"/>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_156">
+        <bpmn2:targetRef>DataInput_171</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_157">
+        <bpmn2:targetRef>DataInput_172</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_41">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_99">SettlementMainProcessWIH</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_100">DataInput_87</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_158">
+        <bpmn2:targetRef>DataInput_173</bpmn2:targetRef>
+        <bpmn2:assignment id="Assignment_42">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_101">createRiskReport</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_102">DataInput_94</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_159">
+        <bpmn2:sourceRef>settlementDate</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_174</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_160">
+        <bpmn2:sourceRef>settlementType</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_175</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_164">
+        <bpmn2:sourceRef>runDate</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_179</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="DataInputAssociation_3">
+        <bpmn2:sourceRef>isSchedule</bpmn2:sourceRef>
+        <bpmn2:targetRef>DataInput_3</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_44" drools:priority="1" sourceRef="Task_14" targetRef="ExclusiveGateway_12"/>
+    <bpmn2:textAnnotation id="_5F011579-E984-474B-8CF7-0696BCB787F2" drools:selectable="true" color:background-color="" color:border-color="#000000" color:color="#000000">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Initialize Automatic run schedule]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:text>Initialize Automatic run schedule</bpmn2:text>
+    </bpmn2:textAnnotation>
+    <bpmn2:association id="_BC40F38D-CF74-41E8-A7FC-76320DF39E4E" drools:selectable="true" drools:type="none" color:background-color="" color:border-color="#000000" color:color="" sourceRef="_290C2E72-59E5-4AE0-978D-5AEEDBDCBE57" targetRef="_5F011579-E984-474B-8CF7-0696BCB787F2"/>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="_tTqInBu2EeiH3d1CIAp2xA">
+    <bpmndi:BPMNPlane id="_tTqInRu2EeiH3d1CIAp2xA" bpmnElement="SettlementMainProcess">
+      <bpmndi:BPMNShape id="BPMNShape_SubProcess_1" bpmnElement="SubProcess_1" isExpanded="true">
+        <dc:Bounds height="150.0" width="431.0" x="0.0" y="605.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_1">
+          <dc:Bounds height="17.0" width="91.0" x="6.0" y="608.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_tTqInhu2EeiH3d1CIAp2xA" bpmnElement="_290C2E72-59E5-4AE0-978D-5AEEDBDCBE57">
+        <dc:Bounds height="30.0" width="30.0" x="94.0" y="375.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_2"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_tTr9ZBu2EeiH3d1CIAp2xA" bpmnElement="_F7787A11-7210-48F1-AE44-6CAA19B36984">
+        <dc:Bounds height="28.0" width="28.0" x="1471.0" y="123.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_3"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_tTr9ahu2EeiH3d1CIAp2xA" bpmnElement="_5F011579-E984-474B-8CF7-0696BCB787F2">
+        <dc:Bounds height="50.0" width="100.0" x="123.0" y="225.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_4">
+          <dc:Bounds height="44.0" width="88.0" x="129.0" y="228.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_3" bpmnElement="Task_3">
+        <dc:Bounds height="80.0" width="100.0" x="180.0" y="350.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_5">
+          <dc:Bounds height="51.0" width="88.0" x="186.0" y="364.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_7" bpmnElement="Task_7" isExpanded="true">
+        <dc:Bounds height="65.0" width="110.0" x="452.0" y="248.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_6">
+          <dc:Bounds height="51.0" width="95.0" x="459.0" y="255.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_1" bpmnElement="ExclusiveGateway_1" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="345.0" y="365.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_7"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_2" bpmnElement="ExclusiveGateway_2" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="482.0" y="365.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_8"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_3" bpmnElement="ExclusiveGateway_3" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="605.0" y="85.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_9"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_2" bpmnElement="EndEvent_2">
+        <dc:Bounds height="36.0" width="36.0" x="723.0" y="92.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_10">
+          <dc:Bounds height="17.0" width="26.0" x="728.0" y="128.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_4" bpmnElement="ExclusiveGateway_4" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="605.0" y="199.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_11"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_5" bpmnElement="ExclusiveGateway_5" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="483.0" y="480.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_12"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_6" bpmnElement="ExclusiveGateway_6" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="605.0" y="480.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_13"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_3" bpmnElement="EndEvent_3">
+        <dc:Bounds height="36.0" width="36.0" x="491.0" y="632.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_14">
+          <dc:Bounds height="17.0" width="26.0" x="496.0" y="668.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_7" bpmnElement="ExclusiveGateway_7" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="861.0" y="480.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_16"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CallActivity_1" bpmnElement="CallActivity_1" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="990.0" y="256.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_17">
+          <dc:Bounds height="34.0" width="94.0" x="998.0" y="264.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CallActivity_2" bpmnElement="CallActivity_2" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="990.0" y="350.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_18">
+          <dc:Bounds height="34.0" width="94.0" x="998.0" y="358.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CallActivity_3" bpmnElement="CallActivity_3" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="998.0" y="693.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_19">
+          <dc:Bounds height="34.0" width="94.0" x="1006.0" y="701.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CallActivity_4" bpmnElement="CallActivity_4" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="998.0" y="603.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_20">
+          <dc:Bounds height="34.0" width="94.0" x="1006.0" y="611.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_8" bpmnElement="ExclusiveGateway_8" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="1140.0" y="480.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_21"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_9" bpmnElement="ExclusiveGateway_9" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="1250.0" y="480.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_23"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_10" bpmnElement="ExclusiveGateway_10" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="1600.0" y="488.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_24"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_11" bpmnElement="ExclusiveGateway_11" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="1460.0" y="391.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_25"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_12" bpmnElement="ExclusiveGateway_12" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="1360.0" y="480.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_26"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CallActivity_5" bpmnElement="CallActivity_5" isExpanded="true">
+        <dc:Bounds height="70.0" width="110.0" x="1630.0" y="381.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_27">
+          <dc:Bounds height="34.0" width="86.0" x="1642.0" y="399.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CallActivity_6" bpmnElement="CallActivity_6" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="1445.0" y="488.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_31">
+          <dc:Bounds height="34.0" width="61.0" x="1469.0" y="496.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_StartEvent_1" bpmnElement="StartEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="23.0" y="657.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_32">
+          <dc:Bounds height="34.0" width="80.0" x="1.0" y="693.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_1" bpmnElement="EndEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="298.0" y="657.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_34">
+          <dc:Bounds height="34.0" width="75.0" x="279.0" y="693.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_9" bpmnElement="Task_9" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="175.0" y="480.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_15">
+          <dc:Bounds height="34.0" width="60.0" x="200.0" y="488.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_10" bpmnElement="Task_10" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="710.0" y="480.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_22">
+          <dc:Bounds height="34.0" width="97.0" x="716.0" y="488.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_11" bpmnElement="Task_11" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="1430.0" y="306.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_28">
+          <dc:Bounds height="51.0" width="79.0" x="1445.0" y="306.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_12" bpmnElement="Task_12" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="1430.0" y="225.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_29">
+          <dc:Bounds height="34.0" width="99.0" x="1435.0" y="233.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_13" bpmnElement="Task_13" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="140.0" y="650.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_30">
+          <dc:Bounds height="34.0" width="105.0" x="142.0" y="658.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_14" bpmnElement="Task_14" isExpanded="true">
+        <dc:Bounds height="50.0" width="110.0" x="1220.0" y="665.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_33">
+          <dc:Bounds height="34.0" width="85.0" x="1232.0" y="673.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="_tTr9bRu2EeiH3d1CIAp2xA" bpmnElement="_BC40F38D-CF74-41E8-A7FC-76320DF39E4E" sourceElement="_tTqInhu2EeiH3d1CIAp2xA" targetElement="_tTr9ahu2EeiH3d1CIAp2xA">
+        <di:waypoint xsi:type="dc:Point" x="109.0" y="375.0"/>
+        <di:waypoint xsi:type="dc:Point" x="109.0" y="250.0"/>
+        <di:waypoint xsi:type="dc:Point" x="123.0" y="250.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="SequenceFlow_1" sourceElement="BPMNShape_Task_7" targetElement="BPMNShape_ExclusiveGateway_4">
+        <di:waypoint xsi:type="dc:Point" x="507.0" y="248.0"/>
+        <di:waypoint xsi:type="dc:Point" x="507.0" y="224.0"/>
+        <di:waypoint xsi:type="dc:Point" x="605.0" y="224.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_35"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="SequenceFlow_3" sourceElement="BPMNShape_Task_3" targetElement="BPMNShape_ExclusiveGateway_1">
+        <di:waypoint xsi:type="dc:Point" x="280.0" y="390.0"/>
+        <di:waypoint xsi:type="dc:Point" x="312.0" y="390.0"/>
+        <di:waypoint xsi:type="dc:Point" x="345.0" y="390.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_36"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_5" bpmnElement="SequenceFlow_5" sourceElement="BPMNShape_ExclusiveGateway_1" targetElement="BPMNShape_ExclusiveGateway_2">
+        <di:waypoint xsi:type="dc:Point" x="395.0" y="390.0"/>
+        <di:waypoint xsi:type="dc:Point" x="438.0" y="390.0"/>
+        <di:waypoint xsi:type="dc:Point" x="482.0" y="390.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_37">
+          <dc:Bounds height="34.0" width="73.0" x="403.0" y="391.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_6" bpmnElement="SequenceFlow_6" sourceElement="BPMNShape_ExclusiveGateway_1" targetElement="BPMNShape_ExclusiveGateway_3">
+        <di:waypoint xsi:type="dc:Point" x="370.0" y="365.0"/>
+        <di:waypoint xsi:type="dc:Point" x="370.0" y="110.0"/>
+        <di:waypoint xsi:type="dc:Point" x="605.0" y="110.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_38">
+          <dc:Bounds height="34.0" width="57.0" x="342.0" y="121.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_9" bpmnElement="SequenceFlow_9" sourceElement="BPMNShape_ExclusiveGateway_3" targetElement="BPMNShape_EndEvent_2">
+        <di:waypoint xsi:type="dc:Point" x="655.0" y="110.0"/>
+        <di:waypoint xsi:type="dc:Point" x="689.0" y="110.0"/>
+        <di:waypoint xsi:type="dc:Point" x="723.0" y="110.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_39"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_10" bpmnElement="SequenceFlow_10" sourceElement="BPMNShape_ExclusiveGateway_2" targetElement="BPMNShape_Task_7">
+        <di:waypoint xsi:type="dc:Point" x="507.0" y="365.0"/>
+        <di:waypoint xsi:type="dc:Point" x="507.0" y="339.0"/>
+        <di:waypoint xsi:type="dc:Point" x="507.0" y="313.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_40">
+          <dc:Bounds height="34.0" width="77.0" x="469.0" y="340.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_11" bpmnElement="SequenceFlow_11" sourceElement="BPMNShape_ExclusiveGateway_4" targetElement="BPMNShape_ExclusiveGateway_3">
+        <di:waypoint xsi:type="dc:Point" x="630.0" y="199.0"/>
+        <di:waypoint xsi:type="dc:Point" x="630.0" y="167.0"/>
+        <di:waypoint xsi:type="dc:Point" x="630.0" y="135.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_41">
+          <dc:Bounds height="51.0" width="69.0" x="596.0" y="168.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_12" bpmnElement="SequenceFlow_12" sourceElement="BPMNShape_ExclusiveGateway_2" targetElement="BPMNShape_ExclusiveGateway_5">
+        <di:waypoint xsi:type="dc:Point" x="507.0" y="415.0"/>
+        <di:waypoint xsi:type="dc:Point" x="508.0" y="447.0"/>
+        <di:waypoint xsi:type="dc:Point" x="508.0" y="480.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_42">
+          <dc:Bounds height="17.0" width="77.0" x="470.0" y="448.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_13" bpmnElement="SequenceFlow_13" sourceElement="BPMNShape_ExclusiveGateway_5" targetElement="BPMNShape_ExclusiveGateway_6">
+        <di:waypoint xsi:type="dc:Point" x="533.0" y="505.0"/>
+        <di:waypoint xsi:type="dc:Point" x="569.0" y="505.0"/>
+        <di:waypoint xsi:type="dc:Point" x="605.0" y="505.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_43">
+          <dc:Bounds height="34.0" width="70.0" x="535.0" y="506.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_14" bpmnElement="SequenceFlow_14" sourceElement="BPMNShape_ExclusiveGateway_5" targetElement="BPMNShape_EndEvent_3">
+        <di:waypoint xsi:type="dc:Point" x="508.0" y="530.0"/>
+        <di:waypoint xsi:type="dc:Point" x="508.0" y="581.0"/>
+        <di:waypoint xsi:type="dc:Point" x="509.0" y="632.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_44"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_18" bpmnElement="SequenceFlow_18" sourceElement="BPMNShape_ExclusiveGateway_6" targetElement="BPMNShape_Task_10">
+        <di:waypoint xsi:type="dc:Point" x="655.0" y="505.0"/>
+        <di:waypoint xsi:type="dc:Point" x="682.0" y="505.0"/>
+        <di:waypoint xsi:type="dc:Point" x="710.0" y="505.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_46"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_19" bpmnElement="SequenceFlow_19" sourceElement="BPMNShape_ExclusiveGateway_7" targetElement="BPMNShape_CallActivity_1">
+        <di:waypoint xsi:type="dc:Point" x="886.0" y="480.0"/>
+        <di:waypoint xsi:type="dc:Point" x="886.0" y="281.0"/>
+        <di:waypoint xsi:type="dc:Point" x="990.0" y="281.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_47">
+          <dc:Bounds height="17.0" width="41.0" x="866.0" y="330.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_22" bpmnElement="SequenceFlow_22" sourceElement="BPMNShape_ExclusiveGateway_7" targetElement="BPMNShape_CallActivity_2">
+        <di:waypoint xsi:type="dc:Point" x="886.0" y="480.0"/>
+        <di:waypoint xsi:type="dc:Point" x="886.0" y="375.0"/>
+        <di:waypoint xsi:type="dc:Point" x="990.0" y="375.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_48">
+          <dc:Bounds height="17.0" width="40.0" x="867.0" y="377.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_23" bpmnElement="SequenceFlow_23" sourceElement="BPMNShape_ExclusiveGateway_7" targetElement="BPMNShape_CallActivity_4">
+        <di:waypoint xsi:type="dc:Point" x="886.0" y="530.0"/>
+        <di:waypoint xsi:type="dc:Point" x="886.0" y="628.0"/>
+        <di:waypoint xsi:type="dc:Point" x="998.0" y="628.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_49">
+          <dc:Bounds height="17.0" width="42.0" x="873.0" y="629.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_24" bpmnElement="SequenceFlow_24" sourceElement="BPMNShape_ExclusiveGateway_7" targetElement="BPMNShape_CallActivity_3">
+        <di:waypoint xsi:type="dc:Point" x="886.0" y="530.0"/>
+        <di:waypoint xsi:type="dc:Point" x="886.0" y="718.0"/>
+        <di:waypoint xsi:type="dc:Point" x="998.0" y="718.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_50">
+          <dc:Bounds height="17.0" width="41.0" x="866.0" y="681.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_25" bpmnElement="SequenceFlow_25" sourceElement="BPMNShape_CallActivity_1" targetElement="BPMNShape_ExclusiveGateway_8">
+        <di:waypoint xsi:type="dc:Point" x="1100.0" y="281.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1165.0" y="281.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1165.0" y="480.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_51"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_26" bpmnElement="SequenceFlow_26" sourceElement="BPMNShape_CallActivity_2" targetElement="BPMNShape_ExclusiveGateway_8">
+        <di:waypoint xsi:type="dc:Point" x="1100.0" y="375.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1165.0" y="375.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1165.0" y="480.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_52"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_27" bpmnElement="SequenceFlow_27" sourceElement="BPMNShape_CallActivity_4" targetElement="BPMNShape_ExclusiveGateway_8">
+        <di:waypoint xsi:type="dc:Point" x="1108.0" y="628.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1165.0" y="628.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1165.0" y="530.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_53"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_28" bpmnElement="SequenceFlow_28" sourceElement="BPMNShape_CallActivity_3" targetElement="BPMNShape_ExclusiveGateway_8">
+        <di:waypoint xsi:type="dc:Point" x="1108.0" y="718.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1165.0" y="718.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1165.0" y="530.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_54"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_8" bpmnElement="SequenceFlow_8" sourceElement="BPMNShape_ExclusiveGateway_8" targetElement="BPMNShape_ExclusiveGateway_9">
+        <di:waypoint xsi:type="dc:Point" x="1190.0" y="505.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1220.0" y="505.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1250.0" y="505.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_55"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_16" bpmnElement="SequenceFlow_16" sourceElement="BPMNShape_ExclusiveGateway_9" targetElement="BPMNShape_Task_14">
+        <di:waypoint xsi:type="dc:Point" x="1275.0" y="530.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1275.0" y="597.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1275.0" y="665.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_56"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_20" bpmnElement="SequenceFlow_20" sourceElement="BPMNShape_ExclusiveGateway_9" targetElement="BPMNShape_ExclusiveGateway_12">
+        <di:waypoint xsi:type="dc:Point" x="1300.0" y="505.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1330.0" y="505.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1360.0" y="505.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_57"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_32" bpmnElement="SequenceFlow_32" sourceElement="BPMNShape_ExclusiveGateway_10" targetElement="BPMNShape_ExclusiveGateway_11">
+        <di:waypoint xsi:type="dc:Point" x="1625.0" y="488.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1625.0" y="465.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1485.0" y="465.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1485.0" y="441.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_58"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_37" bpmnElement="SequenceFlow_37" sourceElement="BPMNShape_ExclusiveGateway_10" targetElement="BPMNShape_CallActivity_5">
+        <di:waypoint xsi:type="dc:Point" x="1650.0" y="513.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1685.0" y="513.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1685.0" y="451.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_59"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_38" bpmnElement="SequenceFlow_38" sourceElement="BPMNShape_CallActivity_5" targetElement="BPMNShape_ExclusiveGateway_11">
+        <di:waypoint xsi:type="dc:Point" x="1630.0" y="416.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1570.0" y="416.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1510.0" y="416.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_60"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_7" bpmnElement="SequenceFlow_7" sourceElement="BPMNShape_ExclusiveGateway_11">
+        <di:waypoint xsi:type="dc:Point" x="1485.0" y="391.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1485.0" y="374.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1484.0" y="357.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_62"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_29" bpmnElement="SequenceFlow_29" sourceElement="_tTqInhu2EeiH3d1CIAp2xA" targetElement="BPMNShape_Task_9">
+        <di:waypoint xsi:type="dc:Point" x="109.0" y="405.0"/>
+        <di:waypoint xsi:type="dc:Point" x="109.0" y="505.0"/>
+        <di:waypoint xsi:type="dc:Point" x="175.0" y="505.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_66"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_4" bpmnElement="SequenceFlow_4" sourceElement="BPMNShape_ExclusiveGateway_12" targetElement="BPMNShape_CallActivity_6">
+        <di:waypoint xsi:type="dc:Point" x="1410.0" y="505.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1427.0" y="505.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1427.0" y="513.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1445.0" y="513.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_67"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_21" bpmnElement="SequenceFlow_21" sourceElement="BPMNShape_CallActivity_6" targetElement="BPMNShape_ExclusiveGateway_10">
+        <di:waypoint xsi:type="dc:Point" x="1555.0" y="513.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1577.0" y="513.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1600.0" y="513.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_68"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_33" bpmnElement="SequenceFlow_33" sourceElement="BPMNShape_StartEvent_1" targetElement="BPMNShape_Task_13">
+        <di:waypoint xsi:type="dc:Point" x="59.0" y="675.0"/>
+        <di:waypoint xsi:type="dc:Point" x="99.0" y="675.0"/>
+        <di:waypoint xsi:type="dc:Point" x="140.0" y="675.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_69"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_39" bpmnElement="SequenceFlow_39" sourceElement="BPMNShape_ExclusiveGateway_4" targetElement="BPMNShape_ExclusiveGateway_6">
+        <di:waypoint xsi:type="dc:Point" x="630.0" y="249.0"/>
+        <di:waypoint xsi:type="dc:Point" x="630.0" y="364.0"/>
+        <di:waypoint xsi:type="dc:Point" x="630.0" y="480.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_71"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_15" bpmnElement="SequenceFlow_15" sourceElement="BPMNShape_Task_9" targetElement="BPMNShape_Task_3">
+        <di:waypoint xsi:type="dc:Point" x="230.0" y="480.0"/>
+        <di:waypoint xsi:type="dc:Point" x="230.0" y="455.0"/>
+        <di:waypoint xsi:type="dc:Point" x="230.0" y="430.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_45"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_36" bpmnElement="SequenceFlow_36" sourceElement="BPMNShape_Task_10" targetElement="BPMNShape_ExclusiveGateway_7">
+        <di:waypoint xsi:type="dc:Point" x="820.0" y="505.0"/>
+        <di:waypoint xsi:type="dc:Point" x="840.0" y="505.0"/>
+        <di:waypoint xsi:type="dc:Point" x="861.0" y="505.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_61"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_41" bpmnElement="SequenceFlow_41" sourceElement="BPMNShape_Task_11" targetElement="BPMNShape_Task_12">
+        <di:waypoint xsi:type="dc:Point" x="1485.0" y="306.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1485.0" y="291.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1485.0" y="275.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_63"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_42" bpmnElement="SequenceFlow_42" sourceElement="BPMNShape_Task_12" targetElement="_tTr9ZBu2EeiH3d1CIAp2xA">
+        <di:waypoint xsi:type="dc:Point" x="1485.0" y="225.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1485.0" y="188.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1485.0" y="151.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_64"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_43" bpmnElement="SequenceFlow_43" sourceElement="BPMNShape_Task_13" targetElement="BPMNShape_EndEvent_1">
+        <di:waypoint xsi:type="dc:Point" x="250.0" y="675.0"/>
+        <di:waypoint xsi:type="dc:Point" x="274.0" y="675.0"/>
+        <di:waypoint xsi:type="dc:Point" x="298.0" y="675.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_65"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_44" bpmnElement="SequenceFlow_44" sourceElement="BPMNShape_Task_14" targetElement="BPMNShape_ExclusiveGateway_12">
+        <di:waypoint xsi:type="dc:Point" x="1330.0" y="690.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1385.0" y="690.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1385.0" y="530.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_70"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>
